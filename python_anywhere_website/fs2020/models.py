@@ -1,3 +1,4 @@
+from random import choices
 from django.db import models
 
 # Create your models here.
@@ -16,3 +17,15 @@ class Aircraft(models.Model):
     
     class Meta():
         verbose_name_plural = "Aircraft"
+
+
+class Flight(models.Model):
+    RULES_CHOICES = (('VFR', 'VFR'), ('IFR', 'IFR'))
+    rules = models.CharField(max_length=100, choices=RULES_CHOICES)
+    n_num = models.ForeignKey(to="Aircraft", on_delete=models.CASCADE)
+    icao_origin = models.CharField(max_length=10)
+    departure_datetime = models.DateTimeField()
+    altitude = models.IntField()
+    route = models.TextField()
+    icao_destination = models.CharField(max_length=10)
+    
