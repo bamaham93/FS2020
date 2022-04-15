@@ -1,0 +1,22 @@
+{% extends 'fs2020/fs2020_base.html' %}
+
+{% block section1 %}
+    <h1>Welcome to the FS2020 Home!</h1>
+    <div class="d-flex p-3 m-3">
+        {% for plane in aircraft %}
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                <h5 class="card-title">{{ plane.n_num }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ plane.icao_location }} - {{ plane.make }} {{ plane.model }}</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="card-link">Charts</a>
+                <a href="http://airnav.com/airport/{{ plane.icao_location }}" class="card-link">Chart Supplement</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <a href="https://www.flightsimulator.com/">Flight Simulator Product Page</a>
+{% endblock %}
