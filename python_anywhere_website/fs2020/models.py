@@ -25,7 +25,7 @@ class Flight(models.Model):
     n_num = models.ForeignKey(to="Aircraft", on_delete=models.CASCADE)
     icao_origin = models.CharField(max_length=10)
     departure_datetime = models.DateTimeField()
-    altitude = models.IntField()
+    altitude = models.IntegerField()
     route = models.TextField()
     icao_destination = models.CharField(max_length=10)
     
