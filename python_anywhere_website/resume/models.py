@@ -35,3 +35,12 @@ class Certification(models.Model):
         """
         """
         return f"{self.name}"
+
+
+class Technology(models.Model):
+    """
+    """
+    name = models.CharField(max_length=100)
+    short_description = models.CharField(max_length=100)
+    long_description = models.TextField(blank=True)
+    start_date = models.DateField(blank=True, null=True)
