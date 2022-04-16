@@ -21,7 +21,7 @@
                 <div class="d-flex flex-column gap-2 border">
                     <a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="btn btn-primary">Chart</a>
                     <a href="http://airnav.com/airport/{{plane.icao_location}}" class=" btn btn-primary">Chart Supplement</a>
-                    <a href="{% url 'fs2020:flights' %}" class="btn btn-primary">Flight History</a>
+                    <a href="{% url 'fs2020:flights' n_number=plane.id %}" class="btn btn-primary">Flight History</a>
                 </div>
                 </div>
             </div>
