@@ -22,3 +22,15 @@ class Race(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+class Driver(models.Model):
+    """
+    """
+    name = models.CharField(max_length=100)
+    points = models.IntegerField()
+
+    def __str__(self):
+        """
+        """
+        return f"{self.name}"
