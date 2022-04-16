@@ -5,5 +5,5 @@ from .models import Race
 def index(request):
     """
     """
-    context = {'races': Race.objects.all()}
+    context = {'races': Race.objects.all().order_by('datetime')}
     return render(request, "douglas/index.html", context)

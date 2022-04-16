@@ -6,23 +6,27 @@
     </div>
 
     <table class="table-striped">
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Track</th>
-            <th scope="col">Date/Time</th>
-            <th scope="col">Laps</th>
-            <th scope="col">Day Race?</th>
-            <th scope="col">Raining?</th>
-        </tr>
+        <thread>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Track</th>
+                <th scope="col">Date/Time</th>
+                <th scope="col">Laps</th>
+                <th scope="col">Day Race?</th>
+                <th scope="col">Raining?</th>
+            </tr>
+        </thread>
         {% for race in races %}
-        <tr>
-            <td>{{ race.name }}</td>
-            <td>{{ race.track }}</td>
-            <td>{{ race.datetime }}</td>
-            <td>{{ race.laps }}</td>
-            <td>{{ race.day_race }}</td>
-            <td>{{ race.raining }}</td>
-        </tr>
+            <thread>
+                <tr>
+                    <td>{{ race.name }}</td>
+                    <td>{{ race.track }}</td>
+                    <td>{{ race.datetime }}</td>
+                    <td>{{ race.laps }}</td>
+                    <td>{{ race.day_race }}</td>
+                    <td>{{ race.raining }}</td>
+                </tr>
+            </thread>
         {% endfor %}
     </table>
 {% endblock %}
