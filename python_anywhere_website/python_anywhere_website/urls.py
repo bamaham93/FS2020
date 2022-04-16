@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', include('core.urls', namespace='core')),
     path('fs2020/', include('fs2020.urls', namespace='fs2020')),
+    path('racing/', include('douglas.urls', namespace='racing')),
 ]

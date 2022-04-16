@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fs2020',
     'core',
+    'douglas',
 ]
 
 MIDDLEWARE = [
