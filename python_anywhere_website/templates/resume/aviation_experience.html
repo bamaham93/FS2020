@@ -1,0 +1,27 @@
+{% extends "resume/resume_base.html" %}
+
+{% block section1 %}
+    <h1>Welcome to aviation, where is sky is no longer limiting - it's home!</h1>
+    <table class="table table-striped">
+        <tr>
+            <th>Job Title</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Company</th>
+            <th>Notes</th>
+        </tr>
+        {% for job in aviation_jobs %}
+        <tr>
+            <td>{{ job.title }}</td>
+            <td>{{ job.start_date }}</td>
+            {% if job.end_date %}
+                <td>{{ job.end_date }}</td>
+            {% else %}
+                <td>Present</td>
+            {% endif %}
+            <td>{{ job.company }}</td>
+            <td>{{ job.notes }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
