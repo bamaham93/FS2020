@@ -3,8 +3,19 @@
 {% block section1 %}
     <h1>Flights Home</h1>
     <div class="container">
-        {% for flight in flights %}
-            {{flight.n_num}} {{flight.icao_origin}} {{flight.icao_destination}}
-        {% endfor %}
+        <table class="table table-striped">
+            <tr>
+                <th>N Number</th>
+                <th>ICAO Departure</th>
+                <th>ICAO Destination</th>
+            </tr>
+            {% for flight in flights %}
+                <tr>
+                    <td>{{flight.n_num}}</td>
+                    <td>{{flight.icao_origin}}</td>
+                    <td>{{flight.icao_destination}}</td>
+                </tr>
+            {% endfor %}
+          </table>
     </div>
 {% endblock %}
