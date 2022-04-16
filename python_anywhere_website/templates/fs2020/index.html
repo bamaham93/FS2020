@@ -1,6 +1,15 @@
 {% extends 'fs2020/fs2020_base.html' %}
 
 {% block section1 %}
+
+{% load static %}
+<!-- <img src="{% static 'img/approach.jpg' %}"> -->
+<style>
+    body {
+      background-image: url('{% static "img/clouds.jpg" %}');
+    }
+</style>
+
     <h1>Welcome to the FS2020 Home!</h1>
     <div class="d-flex p-3 m-3">
         {% for plane in aircraft %}

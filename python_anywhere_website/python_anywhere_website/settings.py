@@ -119,7 +119,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "python_anywhere_website/static",
+    BASE_DIR / "static",
     '/var/www/static/',
 ]
 
