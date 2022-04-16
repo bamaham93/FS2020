@@ -6,6 +6,9 @@ class Track(models.Model):
     """
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 class Race(models.Model):
     """
@@ -16,3 +19,6 @@ class Race(models.Model):
     laps = models.IntegerField()
     day_race = models.BooleanField()
     raining = models.BooleanField()
+
+    def __str__(self):
+        return f"{self.name}"
