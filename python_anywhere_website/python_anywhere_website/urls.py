@@ -21,4 +21,5 @@ urlpatterns = [
     path('home/', include('core.urls', namespace='core')),
     path('fs2020/', include('fs2020.urls', namespace='fs2020')),
     path('racing/', include('douglas.urls', namespace='racing')),
+    path('resume/', include('resume.urls', namespace="resume")),
 ]

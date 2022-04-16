@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'fs2020',
     'core',
     'douglas',
+    'resume',
 ]
 
 MIDDLEWARE = [
