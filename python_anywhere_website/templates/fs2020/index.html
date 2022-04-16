@@ -10,16 +10,19 @@
     }
 </style>
 
-    <h1>Welcome to the FS2020 Home!</h1>
-    <div class="d-flex p-3 m-3">
+    <h1>Welcome to my FS2020 Home!</h1>
+    <div class="d-flex p-3 m-3 gap-4">
         {% for plane in aircraft %}
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
                 <h5 class="card-title">{{ plane.n_num }}</h5>
                 <h6 class="card-subtitle mb-2 text-muted">{{ plane.icao_location }} - {{ plane.make }} {{ plane.model }}</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="card-link">Charts</a>
-                <a href="http://airnav.com/airport/{{ plane.icao_location }}" class="card-link">Chart Supplement</a>
+                <p class="card-text">{{plane.notes}}</p>
+                <div class="d-flex flex-column gap-2 border">
+                    <a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="btn btn-primary">Chart</a>
+                    <a href="http://airnav.com/airport/{{plane.icao_location}}" class=" btn btn-primary">Chart Supplement</a>
+                    <a href="#" class="btn btn-primary disabled">Flight History</a>
+                </div>
                 </div>
             </div>
         {% endfor %}
@@ -29,3 +32,8 @@
 {% block footer %}
     <a href="https://www.flightsimulator.com/">Flight Simulator Product Page</a>
 {% endblock %}
+
+
+<a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart</a>
+<a href="http://airnav.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart Supplement</a>
+<a href="#" class="btn btn-primary card-link">Flight History</a>

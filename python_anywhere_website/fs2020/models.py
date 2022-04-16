@@ -28,4 +28,7 @@ class Flight(models.Model):
     altitude = models.IntegerField()
     route = models.TextField()
     icao_destination = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.icao_origin}-{self.icao_destination}"
     
