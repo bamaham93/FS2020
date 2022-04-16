@@ -1,0 +1,10 @@
+{% extends 'fs2020/fs2020_base.html' %}
+
+{% block section1 %}
+    <h1>Flights Home</h1>
+    <div class="container">
+        {% for flight in flights %}
+            {{flight.n_num}} {{flight.icao_origin}} {{flight.icao_destination}}
+        {% endfor %}
+    </div>
+{% endblock %}

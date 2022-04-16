@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Aircraft
+from .models import Aircraft, Flight
 
 # Create your views here.
 def index(request):
@@ -9,3 +9,11 @@ def index(request):
     context = {'title':'FS2020 Home'}
     context['aircraft'] =   Aircraft.objects.all()
     return render(request, 'fs2020/index.html', context)
+
+def flights(request, n_number):
+    """
+    """
+    context = {}
+    context['flights'] = Flight.objects.filter(n_num__exact=n_number)
+    print(context['flights'])
+    return render(request, 'fs2020/flights.html', context)

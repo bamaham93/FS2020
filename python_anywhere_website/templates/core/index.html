@@ -2,4 +2,41 @@
 
 {% block section1 %}
     <h1>Welcome to Jacob-McGowin.us!</h1>
+    <div class="container d-flex gap-4">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+            <h5 class="card-title">FS2020</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Tools and Tracking</h6>
+            <p class="card-text">Aircraft listing and location as well as flight history.</p>
+            <a href="{% url 'fs2020:index' %}" class="card-link btn btn-primary">FS2020 Page</a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Meet Jacob!</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Aircraft and Software Professional</h6>
+              <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid atque vero aliquam ipsum natus praesentium fuga sed obcaecati repellendus nulla officia accusamus, totam quaerat sint labore sit vel aperiam quisquam?</p>
+              <a href="#" class="card-link btn btn-primary disabled">More about Jacob</a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="card-link btn btn-primary disabled">Card link</a>
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="card-link btn btn-primary disabled">Card link</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
