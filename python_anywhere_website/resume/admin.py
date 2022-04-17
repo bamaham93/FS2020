@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from django.contrib import admin
 from .models import Job, Certification, Technology
 
@@ -17,6 +18,7 @@ class CertificationAdmin(admin.ModelAdmin):
 class TechnologyAdmin(admin.ModelAdmin):
     """
     """
+    verbose_name_plural = "Technologies"
     list_display = ("name", "start_date", "short_description")
 
 admin.site.register(Job, JobAdmin)

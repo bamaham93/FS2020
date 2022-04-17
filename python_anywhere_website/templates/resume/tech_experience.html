@@ -2,4 +2,19 @@
 
 {% block section1 %}
     <h1>Welcome to Tech!</h1>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Tech</th>
+            <th>Start Date</th>
+            <th>Description</th>
+        </tr>
+        {% for tech in technologies %}
+            <tr>
+                <td>{{ tech.name }}</td>
+                <td>{{ tech.start_date }}</td>
+                <td>{{ tech.short_description }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
