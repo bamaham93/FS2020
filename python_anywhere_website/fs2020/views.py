@@ -8,7 +8,7 @@ def index(request):
     """
     context = {'title':'FS2020 Home'}
     context['aircraft'] =   Aircraft.objects.all()
-    return render(request, 'fs2020/nis_index.html', context)
+    return render(request, 'fs2020/index.html', context)
 
 def flights(request, n_number):
     """
