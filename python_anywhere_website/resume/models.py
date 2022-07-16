@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class Job(models.Model):
@@ -30,6 +31,13 @@ class Certification(models.Model):
     short_description = models.CharField(max_length=100)
     long_description = models.TextField(blank=True)
     date_earned = models.DateField()
+
+    class Field(models.TextChoices):
+        """
+        """
+        AVIATION = 'AVIA', _('Aviation')
+        TECH = 'TECH', _('Technology')
+    field = models.CharField(max_length=4, choices=Field.choices, default=Field.AVIATION)
 
     def __str__(self):
         """

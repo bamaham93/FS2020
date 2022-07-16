@@ -17,5 +17,8 @@ def tech(request):
     """
     Tech resume, related experience, and highlights.
     """
-    context = {'technologies': Technology.objects.all().order_by('-start_date')}
+    context = {
+        'technologies': Technology.objects.all().order_by('-start_date'),
+        'jobs':Job.objects.all().filter(aviation=False).order_by('-start_date')
+               }
     return render(request, "resume/tech_experience.html", context)

@@ -2,19 +2,51 @@
 
 {% block section1 %}
     <h1>Welcome to Tech!</h1>
+    <div class="container p-2">
+        <table class="table table-striped">
+            <tr>
+                <th>Tech</th>
+                <th>Start Date</th>
+                <th>Description</th>
+            </tr>
+            {% for tech in technologies %}
+                <tr>
+                    <td>{{ tech.name }}</td>
+                    <td>{{ tech.start_date }}</td>
+                    <td>{{ tech.short_description }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 
+<hr>
+{% endblock %}
+
+{% block section2 %}
+{% if jobs %}
+<div class="container p-2">
     <table class="table table-striped">
         <tr>
-            <th>Tech</th>
+            <th>Job Title</th>
+            <th>Location</th>
             <th>Start Date</th>
-            <th>Description</th>
+            <th>End Date</th>
+            <th>Current Job?</th>
+            <th>Company</th>
+            <th>Notes</th>
         </tr>
-        {% for tech in technologies %}
-            <tr>
-                <td>{{ tech.name }}</td>
-                <td>{{ tech.start_date }}</td>
-                <td>{{ tech.short_description }}</td>
-            </tr>
+        {% for job in jobs %}
+        <tr>
+            <td>{{ job.title }}</td>
+            <td>{{ job.location }}</td>
+            <td>{{ job.start_date }}</td>
+            <td>{{ job.end_date }}</td>
+            <td>{{ job.is_current }}</td>
+            <td>{{ job.company }}</td>
+            <td>{{ job.notes }}</td>
+        </tr>
         {% endfor %}
     </table>
+</div>
+{% endif %}
 {% endblock %}
