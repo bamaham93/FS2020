@@ -5,14 +5,17 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 def index(request):
     """
+    Keeping this to make a racing home page.
     """
-    context = {}
-    return render(request, 'douglas/index.html', context=context)
+    context = {'races':Race.objects.all().filter().order_by('datetime')}
+    # context = {}
+    return render(request, 'douglas/nis_index.html', context=context)
 
 def nis_index(request):
     """
     """
     context = {'races': Race.objects.all().filter().order_by('datetime')}
+    # context = {}
     return render(request, "douglas/nis_index.html", context)
 
 @login_required

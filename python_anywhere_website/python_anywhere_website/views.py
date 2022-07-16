@@ -7,5 +7,5 @@ def redirect_home(request):
     """
     Redirects to the FS2020 app home page.
     """
-    response = redirect('/redirect-success/')
+    response = redirect('core:index')
     return response
