@@ -1,0 +1,33 @@
+{% extends "douglas/douglas_base.html" %}
+
+{% block section2 %}
+    <div class="container">
+        <h1>Welcome to the NAPA Indycar Series!</h1>
+        <p>This the racing schedule for NAPA Indycar Series racing league. We are a Forza Motorsports 7 league that races regularly.</p>
+    </div>
+
+    <table class="table table-striped">
+        <thread>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Track</th>
+                <th scope="col">Date/Time</th>
+                <th scope="col">Laps</th>
+                <th scope="col">Day Race?</th>
+                <th scope="col">Raining?</th>
+            </tr>
+        </thread>
+        {% for race in races %}
+            <thread>
+                <tr>
+                    <td>{{ race.name }}</td>
+                    <td>{{ race.track }}</td>
+                    <td>{{ race.datetime }}</td>
+                    <td>{{ race.laps }}</td>
+                    <td>{{ race.day_race }}</td>
+                    <td>{{ race.raining }}</td>
+                </tr>
+            </thread>
+        {% endfor %}
+    </table>
+{% endblock %}
