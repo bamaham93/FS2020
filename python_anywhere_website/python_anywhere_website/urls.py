@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# from django.shortcuts import redirect
+from .views import redirect_home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', redirect_home),
     path('home/', include('core.urls', namespace='core')),
     path('fs2020/', include('fs2020.urls', namespace='fs2020')),
     path('racing/', include('douglas.urls', namespace='racing')),
