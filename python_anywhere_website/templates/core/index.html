@@ -1,41 +1,46 @@
 {% extends 'base.html' %}
 
 {% block section1 %}
-    <h1>Welcome to Jacob-McGowin.us!</h1>
-    <div class="container d-flex gap-4">
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">FS2020</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Tools and Tracking</h6>
-                <p class="card-text">Aircraft listing and location as well as flight history.</p>
-                <a href="{% url 'fs2020:index' %}" class="card-link btn btn-primary">FS2020 Page</a>
-            </div>
-        </div>
 
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">Meet Jacob!</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Aircraft and Software Professional</h6>
-              <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid atque vero aliquam ipsum natus praesentium fuga sed obcaecati repellendus nulla officia accusamus, totam quaerat sint labore sit vel aperiam quisquam?</p>
-              <a href="{% url 'resume:index' %}" class="card-link btn btn-primary">More about Jacob</a>
-            </div>
-        </div>
+<body id="bg-img" style="background-image: url(https://images.unsplash.com/photo-1551633166-23c7aed83e48?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80);"></body>
 
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">NAPA Indycar Series</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Forza Motorsports 7</h6>
-              <p class="card-text">Welcome to the home of the NAPA Indycar Series racing league!</p>
-              <a href="{% url 'racing:index' %}" class="card-link btn btn-primary">NAPA Indycar Home</a>
+    <h1 id="index-header">Welcome to Jacob-McGowin.us!</h1>
+    <div class="container-fluid" id="index-page-card-container">
+        <div class="row">
+            <div class="card home-card col-lg m-2 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">FS2020</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Tools and Tracking</h6>
+                    <p class="card-text">Aircraft listing and location as well as flight history.</p>
+                    <a href="{% url 'fs2020:index' %}" class="card-link btn btn-primary">FS2020 Page</a>
+                </div>
             </div>
-        </div>
 
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-              <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorum, animi natus necessitatibus dolores architecto ducimus quis culpa tenetur iure sit pariatur sapiente itaque? Maiores obcaecati repellendus velit! Quo, deserunt autem?</p>
-              <a href="#" class="card-link btn btn-primary disabled">Card link</a>
+            <div class="card home-card col-lg m-2 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">Meet Jacob!</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Aircraft and Software Professional</h6>
+                  <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid atque vero aliquam ipsum natus praesentium fuga sed obcaecati repellendus nulla officia accusamus, totam quaerat sint labore sit vel aperiam quisquam?</p>
+                  <a href="{% url 'resume:index' %}" class="card-link btn btn-primary">More about Jacob</a>
+                </div>
+            </div>
+
+            <div class="card home-card col-lg m-2 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">NAPA Indycar Series</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Forza Motorsports 7</h6>
+                  <p class="card-text">Welcome to the home of the NAPA Indycar Series racing league!</p>
+                  <a href="{% url 'racing:index' %}" class="card-link btn btn-primary">NAPA Indycar Home</a>
+                </div>
+            </div>
+
+            <div class="card home-card col-lg m-2 shadow-sm visually-hidden">
+                <div class="card-body">
+                  <h5 class="card-title">Card title</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorum, animi natus necessitatibus dolores architecto ducimus quis culpa tenetur iure sit pariatur sapiente itaque? Maiores obcaecati repellendus velit! Quo, deserunt autem?</p>
+                  <a href="#" class="card-link btn btn-primary disabled">Card link</a>
+                </div>
             </div>
         </div>
     </div>

@@ -1,16 +1,13 @@
 {% extends 'fs2020/fs2020_base.html' %}
 
+{% load static %}
+
 {% block section1 %}
 
-{% load static %}
-<!-- <img src="{% static 'img/approach.jpg' %}"> -->
-<style>
-    body {
-      background-image: url('{% static "img/clouds.jpg" %}');
-    }
-</style>
+<body class="bg-img"
+        style="background-image: url(https://images.unsplash.com/photo-1568214672761-e4ffc3b53dcc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80); background-size: cover;"></body>
 
-    <h1>Welcome to my FS2020 Home!</h1>
+    <h1 id="fs2020-index-header">Welcome to my FS2020 Home!</h1>
     <div class="d-flex p-3 m-3 gap-4">
         {% for plane in aircraft %}
             <div class="card" style="width: 18rem;">
@@ -63,6 +60,6 @@
 {% endblock %}
 
 
-<a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart</a>
-<a href="http://airnav.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart Supplement</a>
-<a href="#" class="btn btn-primary card-link">Flight History</a>
+<!--<a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart</a>-->
+<!--<a href="http://airnav.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart Supplement</a>-->
+<!--<a href="#" class="btn btn-primary card-link">Flight History</a>-->

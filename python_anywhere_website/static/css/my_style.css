@@ -3,8 +3,16 @@ img {
     height: auto;
 }
 
+.bg-img {
+    /*filter: blur(8px);*/
+    background-size: cover;
+
+}
+
 .card {
     display: flex
+    /*flex: 1 1 18rem;*/
+    /*max-width: 18rem;*/
 }
 
 .card-body {
@@ -18,38 +26,31 @@ img {
 
 .card-link {
     width: 100%;
+    color: lightgrey;
 }
 
-
-
-
-
-
-
-/*
-img {
-    width: 100%;
-    height: auto;
+.home-card {
+    background-color: lightgrey;
 }
 
-.card-body {
-    background-color: lightcyan;
+.resume-carousel-img {
+    max-width: auto;
+    max-height: 40rem;
+}
+
+#index-page-card-container {
+    /*background-color: pink;*/
     display: flex;
-    flex-direction: column;
 }
 
-.card-text {
-    color: orange;
-    flex-grow: 1;
+#index-header {
+    color: lightgrey;
 }
 
-.card-link {
-    width: 100%;
-    background-color: green;
-    align-self: center
+#fs2020-index-header {
+    color: lightgrey;
 }
 
-.card-link:hover {
-    background-color: blue;
+#flights-page-header {
+    color: lightgrey;
 }
-*/
