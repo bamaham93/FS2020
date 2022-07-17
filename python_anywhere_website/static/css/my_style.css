@@ -3,6 +3,53 @@ img {
     height: auto;
 }
 
+.card {
+    display: flex
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-text {
+    flex-grow: 1;
+}
+
 .card-link {
     width: 100%;
 }
+
+
+
+
+
+
+
+/*
+img {
+    width: 100%;
+    height: auto;
+}
+
+.card-body {
+    background-color: lightcyan;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-text {
+    color: orange;
+    flex-grow: 1;
+}
+
+.card-link {
+    width: 100%;
+    background-color: green;
+    align-self: center
+}
+
+.card-link:hover {
+    background-color: blue;
+}
+*/
