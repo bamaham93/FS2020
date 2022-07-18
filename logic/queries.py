@@ -1,8 +1,9 @@
 """
+
 """
 
 from douglas.models import Driver, Race, League
-from Django.db import QuerySet
+from django.contrib.auth.models import User, Group
 
 
 class DriverQueries:
@@ -10,7 +11,7 @@ class DriverQueries:
     """
 
     @staticmethod
-    def get_nis_drivers() -> QuerySet:
+    def get_nis_drivers():
         """
         Returns a Django QuerySet
         """
@@ -18,7 +19,7 @@ class DriverQueries:
         return drivers
 
     @staticmethod
-    def get_ashoc_drivers() -> QuerySet:
+    def get_ashoc_drivers():
         """
         Returns a django QuerySet
         """
@@ -31,25 +32,23 @@ class RaceQueries:
     """
 
     @staticmethod
-    def get_races() -> QuerySet:
+    def get_races():
         """
         A list of all races in all leagues, ordered by datetime.
         """
         races = Race.objects.all().filter().order_by('datetime')
         return races
 
-
     @staticmethod
-    def get_nis_races() -> QuerySet:
+    def get_nis_races():
         """
         Returns Django QuerySet object of NIS races ordered by date.
         """
         races = Race.objects.all().filter(league__name='NAPA Indycar Series - Forza Motorsports 7').order_by('datetime')
         return races
 
-
     @staticmethod
-    def get_ashoc_races() -> QuerySet:
+    def get_ashoc_races():
         """
         Returns Django QuerySet of Ashoc races ordered by date.
         """
@@ -62,7 +61,7 @@ class LeagueQueries:
     """
 
     @staticmethod
-    def get_leagues() -> QuerySet:
+    def get_leagues():
         """
         Get a QuerySet object of all races.
         """

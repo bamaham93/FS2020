@@ -22,5 +22,10 @@
                 <li>{{ driver }}</li>
             {% endfor %}
         </ul>
+
+        {% if is_staff %}
+            <hr>
+            <h3>Hello, {{ user.username }}.</h3>
+        {% endif %}
     </div>
 {% endblock %}

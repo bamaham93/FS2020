@@ -2,6 +2,7 @@ from django.shortcuts import render
 # from .models import Race, League  # May be able to delete in favor of using the central logic.queries package.
 from django.contrib.auth.decorators import login_required
 from logic.queries import DriverQueries, RaceQueries, LeagueQueries
+from logic.users_groups import is_group
 
 
 # Create your views here.
@@ -28,10 +29,10 @@ def standings(request):
     """
     """
     context = {
-        # 'leagues' : League.objects.all(),
         'leagues': LeagueQueries.get_leagues(),
         'nis_drivers': DriverQueries.get_nis_drivers(),
         'ashoc_drivers': DriverQueries.get_ashoc_drivers(),
+        'is_staff': is_group(request.user, 'Staff')
     }
     return render(request, "douglas/standings.html", context)
 
