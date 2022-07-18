@@ -15,7 +15,8 @@ season.
 
 # Pre-Deployment Checklist
 
+* Check TODOs in PyCharm
 * Run Django testing locally
 * Git Comit and Push
 * Check Build Passing
-* Check TODOs in PyCharm
+
