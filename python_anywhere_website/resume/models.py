@@ -52,3 +52,8 @@ class Technology(models.Model):
     short_description = models.CharField(max_length=100)
     long_description = models.TextField(blank=True)
     start_date = models.DateField(blank=True, null=True)
+
+    def __str(self):
+        """
+        """
+        return f"{self.name}"
