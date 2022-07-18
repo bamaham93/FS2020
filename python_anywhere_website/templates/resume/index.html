@@ -4,42 +4,51 @@
 {% endblock %}
 
 {% block section2 %}
-<div id="resume-index-container" class="container">
-    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+<div class="container" id="resume-index-container">
+    <div class="carousel slide" data-bs-ride="carousel" id="carouselExampleCaptions">
         <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button aria-current="true" aria-label="Slide 1" class="active" data-bs-slide-to="0"
+                    data-bs-target="#carouselExampleCaptions" type="button"></button>
+            <button aria-label="Slide 2" data-bs-slide-to="1" data-bs-target="#carouselExampleCaptions"
+                    type="button"></button>
+            <button aria-label="Slide 3" data-bs-slide-to="2" data-bs-target="#carouselExampleCaptions"
+                    type="button"></button>
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <a href="{% url 'resume:aviation' %}">
-                    <img class="resume-carousel-img"
-                            src="https://images.unsplash.com/photo-1552773346-ca6976a5d4ca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=869&q=80" class="d-block w-100" alt="...">
+                    <img alt="..."
+                         class="d-block w-100"
+                         class="resume-carousel-img" src="https://images.unsplash.com/photo-1552773346-ca6976a5d4ca?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=869&q=80">
                 </a>
                 <div class="carousel-caption d-none d-md-block">
-                <h1>Aviation</h1>
-                <p>Need qualified help from an experienced A&P Mechanic?</p>
+                    <h1>Aviation</h1>
+                    <p>Need qualified help from an experienced A&P Mechanic?</p>
                 </div>
             </div>
-        <div class="carousel-item">
-            <a href="{% url 'resume:tech' %}">
-                <img class="resume-carousel-img" src="https://images.unsplash.com/photo-1605379399642-870262d3d051?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=906&q=80" class="d-block w-100" alt="...">
-            </a>
-            <div class="carousel-caption d-none d-md-block">
-            <h1>Python Developer</h1>
-            <p>Need to hire a Python Developer with an eye for detail?</p>
+            <div class="carousel-item">
+                <a href="{% url 'resume:tech' %}">
+                    <img alt="..."
+                         class="d-block w-100"
+                         class="resume-carousel-img" src="https://images.unsplash.com/photo-1605379399642-870262d3d051?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=906&q=80">
+                </a>
+                <div class="carousel-caption d-none d-md-block">
+                    <h1>Python Developer</h1>
+                    <p>Need to hire a Python Developer with an eye for detail?</p>
+                </div>
             </div>
-        </div>
 
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-        </button>
+            <button class="carousel-control-prev" data-bs-slide="prev" data-bs-target="#carouselExampleCaptions"
+                    type="button">
+                <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" data-bs-slide="next" data-bs-target="#carouselExampleCaptions"
+                    type="button">
+                <span aria-hidden="true" class="carousel-control-next-icon"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
     </div>
 </div>
 {% endblock %}

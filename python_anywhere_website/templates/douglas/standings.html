@@ -1,0 +1,26 @@
+{% extends 'douglas/douglas_base.html' %}
+
+{% block section1 %}
+    <div>
+        <h3>Welcome to the leagues home page!</h3>
+        <ul>
+            {% for league in leagues %}
+                <li>{{ league.name }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>NIS Drivers</h3>
+            <ul>
+                {% for driver in nis_drivers %}
+                    <li>{{ driver }}</li>
+                {% endfor %}
+            </ul>
+
+        <h3>Ashoc Drivers</h3>
+        <ul>
+            {% for driver in ashoc_drivers %}
+                <li>{{ driver }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
