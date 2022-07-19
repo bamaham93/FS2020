@@ -1,5 +1,8 @@
+"""
+
+"""
+
 from django.shortcuts import render
-# from .models import Race, League  # May be able to delete in favor of using the central logic.queries package.
 from django.contrib.auth.decorators import login_required
 from logic.queries import DriverQueries, RaceQueries, LeagueQueries
 from logic.users_groups import is_group
@@ -11,10 +14,8 @@ def index(request):
     Keeping this to make a racing home page.
     """
     context = {
-        # 'races' : Race.objects.all().filter().order_by('datetime'),
         'races': RaceQueries.get_races()
     }
-    # context = {}
     return render(request, 'douglas/nis_index.html', context=context)
 
 

@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 # Create your models here.
 class Job(models.Model):
     """
@@ -57,3 +58,11 @@ class Technology(models.Model):
         """
         """
         return f"{self.name}"
+
+
+class Message(models.Model):
+    """
+    """
+    from_email = models.EmailField(max_length=254),
+    subject = models.CharField(max_length=100),
+    message = models.TextField(),

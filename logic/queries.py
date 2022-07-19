@@ -1,9 +1,10 @@
 """
-
+Database queries common to
 """
 
 from douglas.models import Driver, Race, League
-from django.contrib.auth.models import User, Group
+from resume.models import Job
+# from django.contrib.auth.models import User, Group
 
 
 class DriverQueries:
@@ -58,6 +59,7 @@ class RaceQueries:
 
 class LeagueQueries:
     """
+    Contains a set of queries related to Douglas League model.
     """
 
     @staticmethod
@@ -67,3 +69,25 @@ class LeagueQueries:
         """
         leagues = League.objects.all()
         return leagues
+
+
+class JobQueries:
+    """
+    Contains  a set of queries related to the Resume Jobs model.
+    """
+
+    @staticmethod
+    def get_aviation_jobs():
+        """
+        Returns a QuerySet of aviation jobs.
+        """
+        jobs = Job.objects.all().filter(aviation=True).order_by('-start-date')
+        return jobs
+
+    @staticmethod
+    def get_tech_jobs():
+        """
+        Returns QuerySet of other-than-aviation jobs.
+        """
+        jobs = Job.objects.all().filter(aviation=False).order_by('-start-date')
+        return jobs

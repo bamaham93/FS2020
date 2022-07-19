@@ -14,3 +14,7 @@ def is_group(user, group):
         return True
     else:
         return False
+
+def is_groups(*args):
+    """
+    """

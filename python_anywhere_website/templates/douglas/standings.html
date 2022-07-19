@@ -1,7 +1,7 @@
 {% extends 'douglas/douglas_base.html' %}
 
 {% block section1 %}
-    <div>
+    <div class="container">
         <h3>Welcome to the leagues home page!</h3>
         <ul>
             {% for league in leagues %}
@@ -24,6 +24,7 @@
         </ul>
 
         {% if is_staff %}
+<!--            This section for testing.-->
             <hr>
             <h3>Hello, {{ user.username }}.</h3>
         {% endif %}

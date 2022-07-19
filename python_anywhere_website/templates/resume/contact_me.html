@@ -1,0 +1,10 @@
+{% extends 'resume/resume_base.html' %}
+
+{% block section1 %}
+    <div class="container d-flex flex-column">
+        <form action="#" method="POST" class="form" id="contact-me-form">
+            {% csrf_token %}
+            {{ form }}
+        </form>
+    </div>
+{% endblock %}
