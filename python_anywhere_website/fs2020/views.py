@@ -15,5 +15,4 @@ def flights(request, n_number):
     """
     context = {}
     context['flights'] = Flight.objects.filter(n_num__exact=n_number)
-    print(context['flights'])
     return render(request, 'fs2020/flights.html', context)

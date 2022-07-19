@@ -36,5 +36,10 @@ def tech(request):
 def contact_me(request):
     """
     """
-    context = {'form': ContactMeForm()}
+    form = ContactMeForm()
+    context = {'form': form}
+    if request.method == "POST":
+        form = ContactMeForm(request.POST)
+        if form.is_valid():
+            form.save()
     return render(request, 'resume/contact_me.html', context)

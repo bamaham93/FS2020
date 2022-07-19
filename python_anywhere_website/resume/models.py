@@ -63,6 +63,12 @@ class Technology(models.Model):
 class Message(models.Model):
     """
     """
-    from_email = models.EmailField(max_length=254),
-    subject = models.CharField(max_length=100),
-    message = models.TextField(),
+    from_email = models.EmailField(max_length=254)
+    subject = models.CharField(max_length=254)
+    message = models.TextField()
+
+
+    def __str__(self):
+        """
+        """
+        return f"{self.from_email}: {self.subject}"

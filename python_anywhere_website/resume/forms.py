@@ -13,4 +13,4 @@ class ContactMeForm(ModelForm):
 
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = "__all__"
