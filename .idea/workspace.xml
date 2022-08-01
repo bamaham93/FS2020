@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added link to prayer index to prayer navbar.">
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/groups.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/new_message.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_request.html" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added models to Prayer module, added admin registrations for models.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +22,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="2BufQuhBvgIklGcKLHmJ0eBXovo" />
   <component name="ProjectViewState">
@@ -330,7 +335,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659389603881</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Added pages to prayer app.">
+      <created>1659390474625</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1659390474625</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -365,6 +377,8 @@
     <MESSAGE value="Added favicon" />
     <MESSAGE value="Added prayer_base.html as base html doc for prayer app." />
     <MESSAGE value="Added link to prayer index to prayer navbar." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added link to prayer index to prayer navbar." />
+    <MESSAGE value="Added pages to prayer app." />
+    <MESSAGE value="Added models to Prayer module, added admin registrations for models." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added models to Prayer module, added admin registrations for models." />
   </component>
 </project>
