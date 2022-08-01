@@ -54,3 +54,25 @@ img {
 #flights-page-header {
     color: lightgrey;
 }
+
+#contact-me-carousel-header {
+    color: black;
+}
+
+#contact-me-carousel-text {
+    color: black;
+}
+
+#contact-me-form-submit-button {
+    border-radius: 10px;
+    border-color: 5px purple;
+}
+
+#contact-me-form-submit-button:hover {
+    background-color: grey;
+}
+
+#contact-form-container {
+    background-color: lightgrey;
+    border-radius: 20px;
+}

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'core',
     'douglas',
     'resume',
+    'prayer',
 ]
 
 MIDDLEWARE = [
