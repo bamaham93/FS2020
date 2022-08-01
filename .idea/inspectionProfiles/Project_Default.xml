@@ -1,0 +1,24 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="pptx.Presentation" />
+          <option value="flask.request" />
+          <option value="flask.render_template" />
+          <option value="flask.url_for" />
+          <option value="flask.redirect" />
+          <option value="flask.Flask" />
+          <option value="django.contrib.admin" />
+          <option value="django.db.models" />
+          <option value="django.apps.AppConfig" />
+          <option value="django.urls.path" />
+          <option value="blogger.blog.views" />
+          <option value="django.urls.include" />
+          <option value="blogger.store.views" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

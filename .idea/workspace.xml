@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Got contact-me page working. Needs to be styled.">
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/resume/migrations/0008_message.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/resume/migrations/0009_remove_message_message_remove_message_subject.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/resume/migrations/0010_message_from_email_message_message_message_subject.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/static/css/my_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/static/css/my_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/resume/contact_me.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/resume/contact_me.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/resume/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/resume/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/resume/resume_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/resume/resume_base.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2BufQuhBvgIklGcKLHmJ0eBXovo" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/python_anywhere_website/manage.py" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Python" />
+  </component>
+  <component name="RunManager" selected="Python.Runserver - Shared Local Network">
+    <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
+      <module name="FS2020" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python_anywhere_website" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_anywhere_website/manage.py" />
+      <option name="PARAMETERS" value="migrate" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2">
+        <option name="RunConfigurationTask" enabled="true" run_configuration_name="_database_make_migration" run_configuration_type="PythonConfigurationType" />
+      </method>
+    </configuration>
+    <configuration name="Run Server" type="PythonConfigurationType" factoryName="Python">
+      <module name="FS2020" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python_anywhere_website" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_anywhere_website/manage.py" />
+      <option name="PARAMETERS" value="runserver" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Run Tests" type="PythonConfigurationType" factoryName="Python">
+      <module name="FS2020" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python_anywhere_website" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_anywhere_website/manage.py" />
+      <option name="PARAMETERS" value="test" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Runserver - Shared Local Network" type="PythonConfigurationType" factoryName="Python">
+      <module name="FS2020" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python_anywhere_website" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_anywhere_website/manage.py" />
+      <option name="PARAMETERS" value="runserver 0.0.0.0:8000" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="_database_make_migration" type="PythonConfigurationType" factoryName="Python">
+      <module name="FS2020" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python_anywhere_website" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python_anywhere_website/manage.py" />
+      <option name="PARAMETERS" value="makemigrations" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python._database_make_migration" />
+      <item itemvalue="Python.Database Migrate" />
+      <item itemvalue="Python.Run Server" />
+      <item itemvalue="Python.Runserver - Shared Local Network" />
+      <item itemvalue="Python.Run Tests" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="" />
+      <created>1657760878048</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1657760878048</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Added CSS style sheel type attribute to base.html">
+      <created>1657940067033</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1657940067033</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fixed incorrect refactoring that directed all index pages to nis_index.">
+      <created>1658008927696</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1658008927696</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Fixed broken redirect to the home page.">
+      <created>1658010154774</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1658010154774</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added content to resume app.">
+      <created>1658013432618</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1658013432618</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added content to resume app.">
+      <created>1658013548700</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1658013548700</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fixed layout issues in CSS">
+      <created>1658017208534</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1658017208534</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Major style changed. Added background images on several pages.">
+      <created>1658025997784</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1658025997784</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Added STATIC_ROOT, troubleshooting Admin CSS in deployment. Github Issue #1.">
+      <created>1658026487926</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1658026487926</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Updated to Django 4.0.6">
+      <created>1658027241944</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1658027241944</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Updated to Django 4.0.6">
+      <created>1658034914158</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1658034914158</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Added __str__ to Technology model.">
+      <created>1658110304519</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1658110304519</updated>
+    </task>
+    <task id="LOCAL-00012" summary="README update.">
+      <created>1658157130226</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1658157130226</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Created logic module and logic.queries file to centralize business logic.">
+      <created>1658178111561</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1658178111561</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Added Type hinting to logic module.">
+      <created>1658178905210</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1658178905210</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Added logic.users_groups.py to flag whether a user is a member of a specific group.">
+      <created>1658182234238</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1658182234238</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Added Contact-Me form; doesn't currently work.">
+      <created>1658249348085</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1658249348085</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Got contact-me page working. Needs to be styled.">
+      <created>1658269573031</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1658269573031</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added CSS style sheel type attribute to base.html" />
+    <MESSAGE value="Fixed incorrect refactoring that directed all index pages to nis_index." />
+    <MESSAGE value="Fixed broken redirect to the home page." />
+    <MESSAGE value="Added content to resume app." />
+    <MESSAGE value="Fixed layout issues in CSS" />
+    <MESSAGE value="Major style changed. Added background images on several pages." />
+    <MESSAGE value="Added STATIC_ROOT, troubleshooting Admin CSS in deployment. Github Issue #1." />
+    <MESSAGE value="Updated to Django 4.0.6" />
+    <MESSAGE value="Added __str__ to Technology model." />
+    <MESSAGE value="README update." />
+    <MESSAGE value="Created logic module and logic.queries file to centralize business logic." />
+    <MESSAGE value="Added Type hinting to logic module." />
+    <MESSAGE value="Added logic.users_groups.py to flag whether a user is a member of a specific group." />
+    <MESSAGE value="Added Contact-Me form; doesn't currently work." />
+    <MESSAGE value="Got contact-me page working. Needs to be styled." />
+    <option name="LAST_COMMIT_MESSAGE" value="Got contact-me page working. Needs to be styled." />
+  </component>
+</project>
