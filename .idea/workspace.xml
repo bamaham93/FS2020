@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Got contact-me page working. Needs to be styled.">
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/resume/migrations/0008_message.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/resume/migrations/0009_remove_message_message_remove_message_subject.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/resume/migrations/0010_message_from_email_message_message_message_subject.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/static/css/my_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/static/css/my_style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/resume/contact_me.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/resume/contact_me.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/resume/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/resume/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/resume/resume_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/resume/resume_base.html" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added prayer_base.html as base html doc for prayer app.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +32,12 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/python_anywhere_website/manage.py" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Python" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static\img" />
+      <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.Runserver - Shared Local Network">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
@@ -287,7 +283,42 @@
       <option name="project" value="LOCAL" />
       <updated>1658269573031</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Created prayer request app.">
+      <created>1659384965781</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1659384965781</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Created prayer request app.">
+      <created>1659385036341</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1659385036341</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Created prayer request app.">
+      <created>1659385134358</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1659385134358</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Added favicon">
+      <created>1659387967129</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1659387967129</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Added prayer_base.html as base html doc for prayer app.">
+      <created>1659387985080</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1659387985080</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -318,6 +349,9 @@
     <MESSAGE value="Added logic.users_groups.py to flag whether a user is a member of a specific group." />
     <MESSAGE value="Added Contact-Me form; doesn't currently work." />
     <MESSAGE value="Got contact-me page working. Needs to be styled." />
-    <option name="LAST_COMMIT_MESSAGE" value="Got contact-me page working. Needs to be styled." />
+    <MESSAGE value="Created prayer request app." />
+    <MESSAGE value="Added favicon" />
+    <MESSAGE value="Added prayer_base.html as base html doc for prayer app." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added prayer_base.html as base html doc for prayer app." />
   </component>
 </project>
