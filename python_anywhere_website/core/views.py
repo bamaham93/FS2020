@@ -18,15 +18,15 @@ class SignUpView(generic.CreateView):
     template_name = "core/signup.html"
 
 
-def login(request):
-    """
-    """
-    context = {}
-    return render(request, 'core/login.html', context)
-
-
-def logout(request):
-    """
-    """
-    context = {}
-    return redirect('core:index')
+# def login(request):
+#     """
+#     """
+#     context = {'form': }
+#     return render(request, 'core/login.html', context)
+#
+#
+# def logout(request):
+#     """
+#     """
+#     context = {}
+#     return redirect('core:index')

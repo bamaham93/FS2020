@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Black formatted project.">
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/core_base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/signup.html" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added signup, login, logout urls, html pages.">
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/core/forms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/registration/login.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/core_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/core_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/signup.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -441,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659413726182</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Added signup, login, logout urls, html pages.">
+      <created>1659462344833</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1659462344833</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -457,7 +464,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed layout issues in CSS" />
     <MESSAGE value="Major style changed. Added background images on several pages." />
     <MESSAGE value="Added STATIC_ROOT, troubleshooting Admin CSS in deployment. Github Issue #1." />
     <MESSAGE value="Updated to Django 4.0.6" />
@@ -482,6 +488,7 @@
     <MESSAGE value="Moved requirements.txt to project root." />
     <MESSAGE value="Formatting" />
     <MESSAGE value="Black formatted project." />
-    <option name="LAST_COMMIT_MESSAGE" value="Black formatted project." />
+    <MESSAGE value="Added signup, login, logout urls, html pages." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added signup, login, logout urls, html pages." />
   </component>
 </project>
