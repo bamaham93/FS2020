@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm
-from prayer.models import Person, PrayerGroup
+from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
+from prayer.models import Person, PrayerGroup, PrayerMessage
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -22,7 +22,8 @@ def new_message(request) -> render:
     Create a new message.
     """
     context = {
-        'form': NewMessageForm()
+        'form': NewMessageForm(),
+        'messages': PrayerMessage.objects.all()  # TODO move to logic/queries.py
     }
     if request.method == "POST":
         form = NewMessageForm(request.POST)
@@ -72,7 +73,7 @@ def delete_group(request, group_id):
     """
     Delete the group with id of group_id.
     """
-    group_ = PrayerGroup.objects.get(id=group_id)
+    group_ = PrayerGroup.objects.get(id=group_id)  # TODO Move to logic/queries.py
     group_.delete()
     messages.success(request, f"You've successfully deleted the {group_.name} group.")
     return redirect("prayer:groups")
@@ -93,7 +94,7 @@ def people(request) -> render:
     """
     context = {
         "new_person_form": NewPersonForm(),
-        "people_list": Person.objects.all(),
+        "people_list": Person.objects.all(),  # TODO Move to logic/queries.py
         # 'messages': get_messages(request)
     }
     if request.method == "POST":
@@ -115,3 +116,8 @@ def delete_person(request, person_id: int) -> redirect:
         request, f"You have successfully deleted {person.first_name} {person.last_name}"
     )
     return redirect("prayer:people")
+
+
+def permissions(request, id):
+    context = {'form': PermissionsForm()}
+    return render(request, 'prayer/permissions.html', context)

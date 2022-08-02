@@ -3,7 +3,22 @@
 {% load crispy_forms_tags %}
 
 {% block section1 %}
-    <h1>Create a new message</h1>
+    <h1>Messages</h1>
+    <div class="container">
+        {% for message in messages %}
+            <div class="card m-3">
+                <div class="card-header">
+                    {{ message.name }}
+                </div>
+                <div class="card-body">
+                    Subject: {{ message.subject }}
+                    <p class="card-text">{{ message.message }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h3>Create a new message</h3>
     {% include 'messages.html' %}
     <form action="#" method="POST">
         {% csrf_token %}

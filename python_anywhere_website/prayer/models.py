@@ -55,3 +55,9 @@ class PrayerMessage(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+class Permissions(models.Model):
+    profile = models.OneToOneField(PrayerProfile, on_delete=models.CASCADE)
+    may_send_emails = models.BooleanField()
+    may_send_sms = models.BooleanField()
