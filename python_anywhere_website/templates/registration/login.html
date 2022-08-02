@@ -7,7 +7,7 @@
         <h1>Hello, {{ user.username }}!</h1>
         <h3>You're already logged in!</h3>
     {% else %}
-    <form action="#">
+    <form action="#" method="POST">
         {% csrf_token %}
         {{ form | crispy }}
         <input type="submit" value="Login">
