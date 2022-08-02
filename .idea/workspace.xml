@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Layout changes to prayer:index.">
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added new packages to requirements.txt.">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/django.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/django.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -388,7 +388,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659412315411</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Added new packages to requirements.txt.">
+      <created>1659412716693</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1659412716693</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -404,7 +411,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added CSS style sheel type attribute to base.html" />
     <MESSAGE value="Fixed incorrect refactoring that directed all index pages to nis_index." />
     <MESSAGE value="Fixed broken redirect to the home page." />
     <MESSAGE value="Added content to resume app." />
@@ -429,6 +435,7 @@
     <MESSAGE value="Added ability to add, delete, edit PrayerGroups." />
     <MESSAGE value="Added cards to prayer:index" />
     <MESSAGE value="Layout changes to prayer:index." />
-    <option name="LAST_COMMIT_MESSAGE" value="Layout changes to prayer:index." />
+    <MESSAGE value="Added new packages to requirements.txt." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added new packages to requirements.txt." />
   </component>
 </project>
