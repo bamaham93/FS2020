@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from prayer.forms import NewGroupForm, NewPersonForm
+from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm
 from prayer.models import Person, PrayerGroup
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,7 +21,13 @@ def new_message(request) -> render:
     """
     Create a new message.
     """
-    context = {}
+    context = {
+        'form': NewMessageForm()
+    }
+    if request.method == "POST":
+        form = NewMessageForm(request.POST)
+        form.save()
+        messages.success(request, "Your message was saved!")
     return render(request, "prayer/new_message.html", context)
 
 

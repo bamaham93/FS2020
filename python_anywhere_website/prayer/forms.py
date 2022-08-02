@@ -1,5 +1,5 @@
 from django import forms
-from prayer.models import PrayerGroup, Person
+from prayer.models import PrayerGroup, Person, PrayerMessage
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit, HTML, Button, Row, Field
@@ -28,4 +28,16 @@ class NewPersonForm(forms.ModelForm):
             "last_name",
             "phone_number",
             "email",
+        ]
+
+
+class NewMessageForm(forms.ModelForm):
+    """
+    """
+    class Meta:
+        model = PrayerMessage
+        fields = [
+            "name",
+            "subject",
+            "message",
         ]

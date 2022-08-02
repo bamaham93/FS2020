@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Fixed broken DB queries.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Black formatted project.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/new_message.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/new_message.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +63,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Run Tests">
+  <component name="RunManager" selected="Python.Database Migrate">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -478,7 +482,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659464615812</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Black formatted project.">
+      <created>1659465683668</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1659465683668</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -512,13 +523,13 @@
     <MESSAGE value="Added new packages to requirements.txt." />
     <MESSAGE value="Moved requirements.txt to project root." />
     <MESSAGE value="Formatting" />
-    <MESSAGE value="Black formatted project." />
     <MESSAGE value="Added signup, login, logout urls, html pages." />
     <MESSAGE value="Added login input, handling." />
     <MESSAGE value="Added login, logout redirects." />
     <MESSAGE value="Changed to site index to inherit from core_base.html" />
     <MESSAGE value="Style changes to navbar." />
     <MESSAGE value="Fixed broken DB queries." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed broken DB queries." />
+    <MESSAGE value="Black formatted project." />
+    <option name="LAST_COMMIT_MESSAGE" value="Black formatted project." />
   </component>
 </project>

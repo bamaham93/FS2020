@@ -1,5 +1,13 @@
 {% extends 'prayer/prayer_base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block section1 %}
     <h1>Create a new message</h1>
+    {% include 'messages.html' %}
+    <form action="#" method="POST">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" value="Submit">
+    </form>
 {% endblock %}
