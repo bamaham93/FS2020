@@ -1,7 +1,6 @@
 from django.test import TestCase, TransactionTestCase
 from django.test import Client
-
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from http import HTTPStatus
 
 
@@ -20,6 +19,11 @@ class TestPrayerModule(TestCase):
         Performed once for the entire class.
         """
         super().setUpClass()
+        User.objects.create_user(
+            username="bama",
+            password="FortheWin!$",
+            email="bbgenius@geniusbar.com",
+        )
 
     def check_navbar(self, response):
         """
@@ -50,15 +54,29 @@ class TestPrayerModule(TestCase):
         """
         client = TestPrayerModule.client
         response = client.get("/prayer/new-message")
+        self.assertEqual(response.status_code, 302)
+
+        user = User.objects.get(id=1)
+        client.force_login(user)
+        response = client.get("/prayer/new-message")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
         self.assertContains(response, "Create a new message")
 
     def test_groups_view(self):
-        """ """
+        """
+        Test that this view is login protected.
+        Test that this view is accessible when logged in.
+        Test that this view contains...
+        """
         client = TestPrayerModule.client
         response = client.get("/prayer/groups")
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.status_code, 302)  # Check to ensure login is required
+
+        user = User.objects.get(id=1)
+        client.force_login(user)
+        response = client.get("/prayer/groups")
+        self.assertEqual(response.status_code, HTTPStatus.OK)  # Check works with login
 
         self.assertContains(response, "Groups")
         self.assertContains(response, "Name")

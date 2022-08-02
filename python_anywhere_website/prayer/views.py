@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from prayer.forms import NewGroupForm, NewPersonForm
 from prayer.models import Person, PrayerGroup
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 # from django.contrib.messages import get_messages
@@ -15,6 +16,7 @@ def index(request) -> render:
     return render(request, "prayer/index.html", context)
 
 
+@login_required
 def new_message(request) -> render:
     """
     Create a new message.
@@ -23,6 +25,7 @@ def new_message(request) -> render:
     return render(request, "prayer/new_message.html", context)
 
 
+@login_required()
 def groups(request) -> render:
     """
     List of groups.
@@ -37,6 +40,7 @@ def groups(request) -> render:
     return render(request, "prayer/groups.html", context)
 
 
+@login_required()
 def group(request, group_id):
     """
     Group detail page, user editable.
@@ -57,6 +61,7 @@ def group(request, group_id):
     return render(request, "prayer/group.html", context)
 
 
+@login_required()
 def delete_group(request, group_id):
     """
     Delete the group with id of group_id.
@@ -75,6 +80,7 @@ def prayer_requests(request) -> render:
     return render(request, "prayer/prayer_request.html", context)
 
 
+@login_required()
 def people(request) -> render:
     """
     List of people.
