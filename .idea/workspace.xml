@@ -2,10 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added models to Prayer module, added admin registrations for models.">
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/forms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/messages.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer-people.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/groups.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/groups.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -342,7 +348,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659390474625</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Added models to Prayer module, added admin registrations for models.">
+      <created>1659392946890</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1659392946890</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

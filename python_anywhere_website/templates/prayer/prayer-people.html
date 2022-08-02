@@ -1,0 +1,40 @@
+{% extends 'prayer/prayer_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block section1 %}
+    <h1>People</h1>
+
+    <div class="form-messages">{% include 'messages.html' %}</div>
+
+<!--    <h3>Existing People</h3>-->
+    <table class="table table-striped">
+        <tr>
+            <th class="col">Name</th>
+            <th class="col">Phone</th>
+            <th class="col">Email Address</th>
+            <th class="col"></th>
+        </tr>
+        {% for person in people_list %}
+        <tr>
+            <td>{{ person.first_name }} {{ person.last_name }}</td>
+            <td>{{ person.phone_number }}</td>
+            <td>{{ person.email }}</td>
+            <td>
+                <a class="btn btn-danger" role="button" href="{% url 'prayer:delete_person' person_id=person.id %}">
+                    Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Add New Person</h3>
+    <form action="#" method="POST">
+        {% csrf_token %}
+        {{ new_person_form | crispy }}
+        <input type="Submit">
+    </form>
+{% endblock %}
+
+{% block section2 %}
+{% endblock %}

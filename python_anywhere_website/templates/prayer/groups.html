@@ -1,5 +1,10 @@
 {% extends 'prayer/prayer_base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block section1 %}
     <h1>Groups</h1>
+    <form action="#" method="POST">
+        {{ new_group_form | crispy }}
+    </form>
 {% endblock %}

@@ -10,4 +10,6 @@ urlpatterns = [
     path('new-message', views.new_message, name='new_message'),
     path('groups', views.groups, name='groups'),
     path('prayer-requests', views.prayer_requests, name='prayer_requests'),
+    path('people', views.people, name='people'),
+    path('delete-person/<person_id>', views.delete_person, name='delete_person'),
 ]
