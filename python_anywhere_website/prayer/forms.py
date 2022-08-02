@@ -10,7 +10,7 @@ class NewGroupForm(forms.ModelForm):
     """
     class Meta:
         model = PrayerGroup
-        fields = ['name', 'short_description', 'long_description', 'people',]
+        fields = ['name', 'short_description', 'long_description',]
 
 
 class NewPersonForm(forms.ModelForm):

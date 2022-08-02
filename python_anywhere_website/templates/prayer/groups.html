@@ -4,7 +4,41 @@
 
 {% block section1 %}
     <h1>Groups</h1>
+    {% include 'messages.html' %}
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    {% for group in groups %}
+        <tr>
+            <td>
+                {{ group.name }}
+            </td>
+            <td>
+                {{ group.short_description }}
+            </td>
+            <td>
+                <a class="btn btn-secondary" href="{% url 'prayer:group' group_id=group.id %}">Details</a>
+            </td>
+            <td>
+                <a class="btn btn-danger" role="button" href="{% url 'prayer:delete_group' group_id=group.id %}">Delete
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <h3>New Group</h3>
     <form action="#" method="POST">
+        {% csrf_token %}
         {{ new_group_form | crispy }}
+        <input type="submit" value="Submit">
     </form>
 {% endblock %}

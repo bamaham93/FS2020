@@ -1,0 +1,12 @@
+{% extends 'prayer/prayer_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block section1 %}
+    {% include 'messages.html' %}
+    <form action="{% url 'prayer:group' group_id=group.id %}" method="POST">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" value="Save Edit">
+    </form>
+{% endblock %}
