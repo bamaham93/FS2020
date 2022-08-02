@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added login input, handling.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core/views.py" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added login, logout redirects.">
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/registration/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/registration/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -452,7 +449,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659463406803</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Added login, logout redirects.">
+      <created>1659464026739</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1659464026739</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -468,7 +472,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added STATIC_ROOT, troubleshooting Admin CSS in deployment. Github Issue #1." />
     <MESSAGE value="Updated to Django 4.0.6" />
     <MESSAGE value="Added __str__ to Technology model." />
     <MESSAGE value="README update." />
@@ -493,6 +496,7 @@
     <MESSAGE value="Black formatted project." />
     <MESSAGE value="Added signup, login, logout urls, html pages." />
     <MESSAGE value="Added login input, handling." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added login input, handling." />
+    <MESSAGE value="Added login, logout redirects." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added login, logout redirects." />
   </component>
 </project>
