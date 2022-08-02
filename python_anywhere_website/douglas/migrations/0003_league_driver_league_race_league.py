@@ -7,25 +7,37 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('douglas', '0002_driver'),
+        ("douglas", "0002_driver"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='League',
+            name="League",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.AddField(
-            model_name='driver',
-            name='league',
-            field=models.ManyToManyField(null=True, to='douglas.league'),
+            model_name="driver",
+            name="league",
+            field=models.ManyToManyField(null=True, to="douglas.league"),
         ),
         migrations.AddField(
-            model_name='race',
-            name='league',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='douglas.league'),
+            model_name="race",
+            name="league",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="douglas.league",
+            ),
         ),
     ]

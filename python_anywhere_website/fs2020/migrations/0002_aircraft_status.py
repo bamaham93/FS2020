@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fs2020', '0001_initial'),
+        ("fs2020", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='aircraft',
-            name='status',
-            field=models.CharField(blank=True, choices=[(1, 'Tied Down'), (2, 'Pre-Flight'), (3, 'In Flight')], max_length=100, null=True),
+            model_name="aircraft",
+            name="status",
+            field=models.CharField(
+                blank=True,
+                choices=[(1, "Tied Down"), (2, "Pre-Flight"), (3, "In Flight")],
+                max_length=100,
+                null=True,
+            ),
         ),
     ]

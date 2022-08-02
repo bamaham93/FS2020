@@ -6,4 +6,4 @@ def index(request):
     Website home page.
     """
     context = {}
-    return render(request, 'core/index.html', context)
+    return render(request, "core/index.html", context)

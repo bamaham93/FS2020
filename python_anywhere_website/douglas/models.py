@@ -6,17 +6,17 @@ class League(models.Model):
     """
     League model to store details related to each racing league.
     """
+
     name = models.CharField(max_length=100)
 
     def __str__(self):
-        """
-        """
+        """ """
         return f"{self.name}"
 
 
 class Track(models.Model):
-    """
-    """
+    """ """
+
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -24,8 +24,8 @@ class Track(models.Model):
 
 
 class Driver(models.Model):
-    """
-    """
+    """ """
+
     name = models.CharField(max_length=100)
     points = models.IntegerField()
     league = models.ManyToManyField(League)
@@ -36,16 +36,15 @@ class Driver(models.Model):
         """
 
     def __str__(self):
-        """
-        """
+        """ """
         return f"{self.name}"
 
 
 class Race(models.Model):
-    """
-    """
+    """ """
+
     name = models.CharField(max_length=100)
-    track = models.ForeignKey(to='Track', on_delete=models.CASCADE)
+    track = models.ForeignKey(to="Track", on_delete=models.CASCADE)
     datetime = models.DateTimeField()
     laps = models.IntegerField()
     day_race = models.BooleanField()

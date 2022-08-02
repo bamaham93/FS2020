@@ -7,9 +7,7 @@ from resume.models import Message
 
 
 class ContactMeForm(ModelForm):
-    """
-
-    """
+    """ """
 
     class Meta:
         model = Message

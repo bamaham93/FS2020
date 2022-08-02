@@ -4,19 +4,21 @@ Database queries common to
 
 from douglas.models import Driver, Race, League
 from resume.models import Job
+
 # from django.contrib.auth.models import User, Group
 
 
 class DriverQueries:
-    """
-    """
+    """ """
 
     @staticmethod
     def get_nis_drivers():
         """
         Returns a Django QuerySet
         """
-        drivers = Driver.objects.filter(league__name='NAPA Indycar Series - Forza Motorsports 7')
+        drivers = Driver.objects.filter(
+            league__name="NAPA Indycar Series - Forza Motorsports 7"
+        )
         return drivers
 
     @staticmethod
@@ -24,20 +26,21 @@ class DriverQueries:
         """
         Returns a django QuerySet
         """
-        drivers = Driver.objects.filter(league__name='Ashoc Indy Lights Challenge - Forza Motorsports 7')
+        drivers = Driver.objects.filter(
+            league__name="Ashoc Indy Lights Challenge - Forza Motorsports 7"
+        )
         return drivers
 
 
 class RaceQueries:
-    """
-    """
+    """ """
 
     @staticmethod
     def get_races():
         """
         A list of all races in all leagues, ordered by datetime.
         """
-        races = Race.objects.all().filter().order_by('datetime')
+        races = Race.objects.all().filter().order_by("datetime")
         return races
 
     @staticmethod
@@ -45,7 +48,11 @@ class RaceQueries:
         """
         Returns Django QuerySet object of NIS races ordered by date.
         """
-        races = Race.objects.all().filter(league__name='NAPA Indycar Series - Forza Motorsports 7').order_by('datetime')
+        races = (
+            Race.objects.all()
+            .filter(league__name="NAPA Indycar Series - Forza Motorsports 7")
+            .order_by("datetime")
+        )
         return races
 
     @staticmethod
@@ -53,7 +60,11 @@ class RaceQueries:
         """
         Returns Django QuerySet of Ashoc races ordered by date.
         """
-        races = Race.objects.all().filter('Ashoc Indy Lights Challenge - Forza Motorsports 7').order_by('datetime')
+        races = (
+            Race.objects.all()
+            .filter("Ashoc Indy Lights Challenge - Forza Motorsports 7")
+            .order_by("datetime")
+        )
         return races
 
 
@@ -81,7 +92,7 @@ class JobQueries:
         """
         Returns a QuerySet of aviation jobs.
         """
-        jobs = Job.objects.all().filter(aviation=True).order_by('-start-date')
+        jobs = Job.objects.all().filter(aviation=True).order_by("-start-date")
         return jobs
 
     @staticmethod
@@ -89,5 +100,5 @@ class JobQueries:
         """
         Returns QuerySet of other-than-aviation jobs.
         """
-        jobs = Job.objects.all().filter(aviation=False).order_by('-start-date')
+        jobs = Job.objects.all().filter(aviation=False).order_by("-start-date")
         return jobs

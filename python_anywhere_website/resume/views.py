@@ -16,7 +16,7 @@ def aviation(request):
     """
     context = {
         # 'aviation_jobs': Job.objects.filter(aviation=True).order_by("-start_date")
-        'aviation_jobs': JobQueries.get_aviation_jobs()
+        "aviation_jobs": JobQueries.get_aviation_jobs()
     }
     return render(request, "resume/aviation_experience.html", context)
 
@@ -26,20 +26,19 @@ def tech(request):
     Tech resume, related experience, and highlights.
     """
     context = {
-        'technologies': Technology.objects.all().order_by('-start_date'),
+        "technologies": Technology.objects.all().order_by("-start_date"),
         # 'jobs': Job.objects.all().filter(aviation=False).order_by('-start_date')
-        'jobs': JobQueries.get_tech_jobs()
+        "jobs": JobQueries.get_tech_jobs(),
     }
     return render(request, "resume/tech_experience.html", context)
 
 
 def contact_me(request):
-    """
-    """
+    """ """
     form = ContactMeForm()
-    context = {'form': form}
+    context = {"form": form}
     if request.method == "POST":
         form = ContactMeForm(request.POST)
         if form.is_valid():
             form.save()
-    return render(request, 'resume/contact_me.html', context)
+    return render(request, "resume/contact_me.html", context)
