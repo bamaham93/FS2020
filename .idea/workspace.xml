@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added cards to prayer:index">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Layout changes to prayer:index.">
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -369,7 +367,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659409546163</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Layout changes to prayer:index.">
+      <created>1659409919726</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1659409919726</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -409,6 +414,7 @@
     <MESSAGE value="Added form and views to see, delete, add people." />
     <MESSAGE value="Added ability to add, delete, edit PrayerGroups." />
     <MESSAGE value="Added cards to prayer:index" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added cards to prayer:index" />
+    <MESSAGE value="Layout changes to prayer:index." />
+    <option name="LAST_COMMIT_MESSAGE" value="Layout changes to prayer:index." />
   </component>
 </project>
