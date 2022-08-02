@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added login, logout redirects.">
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/index.html" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Changed to site index to inherit from core_base.html">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logic/queries.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/queries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/core_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/core_base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -456,7 +457,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659464026739</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Changed to site index to inherit from core_base.html">
+      <created>1659464241616</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1659464241616</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -472,7 +480,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Updated to Django 4.0.6" />
     <MESSAGE value="Added __str__ to Technology model." />
     <MESSAGE value="README update." />
     <MESSAGE value="Created logic module and logic.queries file to centralize business logic." />
@@ -497,6 +504,7 @@
     <MESSAGE value="Added signup, login, logout urls, html pages." />
     <MESSAGE value="Added login input, handling." />
     <MESSAGE value="Added login, logout redirects." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added login, logout redirects." />
+    <MESSAGE value="Changed to site index to inherit from core_base.html" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed to site index to inherit from core_base.html" />
   </component>
 </project>

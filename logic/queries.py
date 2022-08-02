@@ -1,5 +1,9 @@
 """
-Database queries common to
+Database queries common to the web app.
+
+The purpose of centralizing the queries like this is to allow a query to be written once, validated once, and tested
+once, rather than reimplementing it in each view that requires it. This speeds development, as well as allowing for
+better quality testing.
 """
 
 from douglas.models import Driver, Race, League
@@ -92,7 +96,7 @@ class JobQueries:
         """
         Returns a QuerySet of aviation jobs.
         """
-        jobs = Job.objects.all().filter(aviation=True).order_by("-start-date")
+        jobs = Job.objects.all().filter(aviation=True).order_by("-start_date")
         return jobs
 
     @staticmethod
@@ -100,5 +104,5 @@ class JobQueries:
         """
         Returns QuerySet of other-than-aviation jobs.
         """
-        jobs = Job.objects.all().filter(aviation=False).order_by("-start-date")
+        jobs = Job.objects.all().filter(aviation=False).order_by("-start_date")
         return jobs
