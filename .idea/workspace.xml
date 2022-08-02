@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Layout changes to prayer:index.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,7 +49,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver - Shared Local Network">
+  <component name="RunManager" selected="Python.Run Tests">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -374,7 +377,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659409919726</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Layout changes to prayer:index.">
+      <created>1659409992527</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1659409992527</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
