@@ -27,4 +27,6 @@ urlpatterns = [
     path("racing/", include("douglas.urls", namespace="racing")),
     path("resume/", include("resume.urls", namespace="resume")),
     path("prayer/", include("prayer.urls", namespace="prayer")),
+    path("core/", include('core.urls', namespace="core")),
+    path('core/', include('django.contrib.auth.urls')),
 ]

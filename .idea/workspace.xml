@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added new packages to requirements.txt.">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/django.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/django.yml" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Black formatted project.">
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/core_base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core/signup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +26,16 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitRewordedCommitMessages">
+    <option name="commitMessagesMapping">
+      <RewordedCommitMessageMapping>
+        <option name="originalMessage" value="Formatting" />
+        <option name="rewordedMessage" value="Black formatted project." />
+      </RewordedCommitMessageMapping>
+    </option>
+    <option name="currentCommit" value="1" />
+    <option name="onto" value="6673dccb14e65b90b55f07bf4a170d0cf9421073" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -42,11 +59,12 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static\img" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Run Tests">
+  <component name="RunManager" selected="Python.Runserver - Shared Local Network">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -395,7 +413,35 @@
       <option name="project" value="LOCAL" />
       <updated>1659412716693</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Moved requirements.txt to project root.">
+      <created>1659412860655</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1659412860655</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Formatting">
+      <created>1659413563167</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1659413563167</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Black formatted project.">
+      <created>1659413697668</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1659413697668</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Black formatted project.">
+      <created>1659413726182</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1659413726182</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -411,9 +457,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed incorrect refactoring that directed all index pages to nis_index." />
-    <MESSAGE value="Fixed broken redirect to the home page." />
-    <MESSAGE value="Added content to resume app." />
     <MESSAGE value="Fixed layout issues in CSS" />
     <MESSAGE value="Major style changed. Added background images on several pages." />
     <MESSAGE value="Added STATIC_ROOT, troubleshooting Admin CSS in deployment. Github Issue #1." />
@@ -436,6 +479,9 @@
     <MESSAGE value="Added cards to prayer:index" />
     <MESSAGE value="Layout changes to prayer:index." />
     <MESSAGE value="Added new packages to requirements.txt." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added new packages to requirements.txt." />
+    <MESSAGE value="Moved requirements.txt to project root." />
+    <MESSAGE value="Formatting" />
+    <MESSAGE value="Black formatted project." />
+    <option name="LAST_COMMIT_MESSAGE" value="Black formatted project." />
   </component>
 </project>
