@@ -1,0 +1,3 @@
+"""
+Send email message(s).
+"""

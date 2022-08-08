@@ -1,0 +1,8 @@
+{% extends 'fs2020/fs2020_base.html' %}
+
+{% block section1 %}
+  <h1>NOTAMS</h1>
+  {% for notam in notams %}
+    {{ notam }}
+  {% endfor %}
+{% endblock %}

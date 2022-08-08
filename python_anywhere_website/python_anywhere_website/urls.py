@@ -29,4 +29,6 @@ urlpatterns = [
     path("prayer/", include("prayer.urls", namespace="prayer")),
     path("core/", include("django.contrib.auth.urls")),
     path("core/", include("core.urls", namespace="core")),
+    path('media/', include('media.urls', namespace="media")),
+
 ]

@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Migration file.">
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/permissions.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/privacy.html" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Adding permissions, privacy policy.">
+      <change afterPath="$PROJECT_DIR$/credentials/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/credentials/faa.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/fs2020/faa/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/fs2020/faa/notams.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/media/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/fs2020/notams.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/media_base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/Messaging/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/Messaging/contacts.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/Messaging/email.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/Messaging/sms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/new_message.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/new_message.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/fs2020/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/fs2020/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/fs2020/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/fs2020/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +32,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -61,12 +72,14 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website" />
+      <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\templates\prayer\Messaging" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static\img" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Database Migrate">
+  <component name="RunManager" selected="Python.Run Server">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -506,7 +519,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659467172124</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Adding permissions, privacy policy.">
+      <created>1659472253960</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1659472253960</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -522,7 +542,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added logic.users_groups.py to flag whether a user is a member of a specific group." />
     <MESSAGE value="Added Contact-Me form; doesn't currently work." />
     <MESSAGE value="Got contact-me page working. Needs to be styled." />
     <MESSAGE value="Created prayer request app." />
@@ -547,6 +566,7 @@
     <MESSAGE value="Black formatted project." />
     <MESSAGE value="Added new message form, model, admin registration." />
     <MESSAGE value="Migration file." />
-    <option name="LAST_COMMIT_MESSAGE" value="Migration file." />
+    <MESSAGE value="Adding permissions, privacy policy." />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding permissions, privacy policy." />
   </component>
 </project>
