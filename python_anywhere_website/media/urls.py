@@ -1,6 +1,5 @@
 from django.urls import path
-from . import views
-
+from media import views
 app_name = "media"
 
 urlpatterns = [

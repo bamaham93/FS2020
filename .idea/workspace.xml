@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Built out media app.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Pip freeze new requirements to requirements.txt">
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/email.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/manager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/sms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/media_nav.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/media_nav.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/movies.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/movies.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +63,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Run Server">
+  <component name="RunManager" selected="Python.Run Tests">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -188,27 +187,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00001" summary="Added CSS style sheel type attribute to base.html">
-      <created>1657940067033</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1657940067033</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Fixed incorrect refactoring that directed all index pages to nis_index.">
-      <created>1658008927696</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1658008927696</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Fixed broken redirect to the home page.">
-      <created>1658010154774</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1658010154774</updated>
     </task>
     <task id="LOCAL-00004" summary="Added content to resume app.">
       <created>1658013432618</created>
@@ -532,7 +510,28 @@
       <option name="project" value="LOCAL" />
       <updated>1660013737037</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Layout and styling tweaks.">
+      <created>1660020785481</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1660020785481</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Fixed failing test.">
+      <created>1660020840517</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1660020840517</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Pip freeze new requirements to requirements.txt">
+      <created>1660022214682</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1660022214682</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -548,9 +547,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added favicon" />
-    <MESSAGE value="Added prayer_base.html as base html doc for prayer app." />
-    <MESSAGE value="Added link to prayer index to prayer navbar." />
     <MESSAGE value="Added pages to prayer app." />
     <MESSAGE value="Added models to Prayer module, added admin registrations for models." />
     <MESSAGE value="Added form and views to see, delete, add people." />
@@ -573,6 +569,9 @@
     <MESSAGE value="Added media app to track movies, dvds, etc." />
     <MESSAGE value="Added pages for each media type." />
     <MESSAGE value="Built out media app." />
-    <option name="LAST_COMMIT_MESSAGE" value="Built out media app." />
+    <MESSAGE value="Layout and styling tweaks." />
+    <MESSAGE value="Fixed failing test." />
+    <MESSAGE value="Pip freeze new requirements to requirements.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pip freeze new requirements to requirements.txt" />
   </component>
 </project>
