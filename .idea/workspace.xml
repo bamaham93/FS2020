@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added pages for each media type.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Built out media app.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/static/css/my_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/static/css/my_style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/amazon.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/amazon.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/books.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/books.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/cds.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/cds.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/digital_dl.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/digital_dl.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/dvds.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/dvds.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/media_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/media_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/media_nav.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/media_nav.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/movies.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/movies.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/vhs.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/vhs.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/media/youtube.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/media/youtube.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,8 +17,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -534,7 +525,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659996277110</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Built out media app.">
+      <created>1660013737037</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1660013737037</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -550,7 +548,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Created prayer request app." />
     <MESSAGE value="Added favicon" />
     <MESSAGE value="Added prayer_base.html as base html doc for prayer app." />
     <MESSAGE value="Added link to prayer index to prayer navbar." />
@@ -575,6 +572,7 @@
     <MESSAGE value="Adding permissions, privacy policy." />
     <MESSAGE value="Added media app to track movies, dvds, etc." />
     <MESSAGE value="Added pages for each media type." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added pages for each media type." />
+    <MESSAGE value="Built out media app." />
+    <option name="LAST_COMMIT_MESSAGE" value="Built out media app." />
   </component>
 </project>
