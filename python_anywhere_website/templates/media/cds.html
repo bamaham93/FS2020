@@ -2,4 +2,29 @@
 
 {% block section1 %}
     <h1>CDs</h1>
+    {% for cd in cds %}
+<div class="card" style="width: 16.5rem;">
+  <img class="card-img-top" src="https://images.unsplash.com/photo-1573054324954-8350cfc9cf90?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=873&q=80" alt="Card image cap">
+  <div class="card-body">
+    <h3 class="card-title">{{ cd.title }}</h3>
+      {% if cd.subtitle %}
+        <h5 class="card-title">{{ cd.subtitle }}</h5>
+      {% endif %}
+    <p class="card-text">{{ cd.description }}</p>
+  </div>
+  <ul class="list-group list-group-flush">
+      {% for genre in cd.genre.all %}
+    <li class="list-group-item">{{ genre }}</li>
+      {% endfor %}
+  </ul>
+  <div class="card-body">
+<!--    <a href="#" class="card-link">Card link</a>-->
+<!--    <a href="#" class="card-link">Another link</a>-->
+  </div>
+</div>
+    {% endfor %}
 {% endblock %}
+
+<!--
+https://images.unsplash.com/photo-1573054324954-8350cfc9cf90?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=873&q=80
+-->

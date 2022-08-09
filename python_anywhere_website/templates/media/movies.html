@@ -2,4 +2,31 @@
 
 {% block section1 %}
     <h1>Movies</h1>
+    <div class="row">
+        {% for movie in movies %}
+            <div class="card m-2" style="width: 16.5rem;">
+              <img class="card-img-top" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=859&q=80" alt="Card image cap">
+              <div class="card-body">
+                <h3 class="card-title">{{ movie.title }}</h3>
+                  {% if movie.subtitle %}
+                    <h5 class="card-title">{{ movie.subtitle }}</h5>
+                  {% endif %}
+                  {% if movie.description %}
+                    <p class="card-text">{{ movie.description }}</p>
+                  {% endif %}
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for genre in movie.genre.all %}
+                <li class="list-group-item">{{ genre }}</li>
+                {% endfor %}
+<!--                <li class="list-group-item">Dapibus ac facilisis in</li>-->
+<!--                <li class="list-group-item">Vestibulum at eros</li>-->
+            </ul>
+            <div class="card-body">
+<!--                <a href="#" class="card-link">Card link</a>-->
+<!--                <a href="#" class="card-link">Another link</a>-->
+            </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

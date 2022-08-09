@@ -9,6 +9,10 @@ img {
 
 }
 
+.media-page {
+    background-color: #220F04 ;
+}
+
 .card {
     display: flex
     /*flex: 1 1 18rem;*/
