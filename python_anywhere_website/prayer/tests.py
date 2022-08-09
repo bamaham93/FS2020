@@ -30,7 +30,7 @@ class TestPrayerModule(TestCase):
         Navbar checks. Can be repeated throughout the app.
         """
         self.assertContains(response, "Home")
-        self.assertContains(response, "New Message")
+        self.assertContains(response, "Messages")
         self.assertContains(response, "Groups")
         self.assertContains(response, "Prayer Requests")
         self.assertContains(response, "People")
