@@ -1,0 +1,273 @@
+ERROR:django.request:Internal Server Error: /prayer/message-detail/2
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 505, in parse
+    compile_func = self.tags[command]
+KeyError: 'message:'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 45, in message_detail
+    return render(request, 'prayer/message_detail.html', context)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\backends\django.py", line 34, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\engine.py", line 176, in get_template
+    template, origin = self.find_template(template_name)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\engine.py", line 158, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 200, in compile_nodelist
+    return parser.parse()
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\loader_tags.py", line 293, in do_extends
+    nodelist = parser.parse()
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 513, in parse
+    raise self.error(token, e)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 511, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\loader_tags.py", line 232, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 507, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\template\base.py", line 558, in invalid_block_tag
+    raise self.error(
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 7: 'message:', expected 'endblock'. Did you forget to register or load this tag?
+WARNING:django.request:Not Found: /favicon.ico
+WARNING:django.request:Not Found: /favicon.ico
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 46, in message_detail
+    prayer_groups = logic.queries.PrayerGroupQueries.get_all()
+TypeError: PrayerGroupQueries.get_all() missing 1 required positional argument: 'self'
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 46, in message_detail
+    prayer_groups = logic.queries.PrayerGroupQueries.get_all()
+TypeError: PrayerGroupQueries.get_all() missing 1 required positional argument: 'self'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 47, in message_detail
+    messages = logic.queries.PrayerMessageQueries.get_message_by_id(id=id)
+TypeError: PrayerMessageQueries.get_message_by_id() missing 1 required positional argument: 'self'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 49, in message_detail
+    pg_queries = logic.queires.PrayerGroupQueries()
+AttributeError: module 'logic' has no attribute 'queires'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 53, in message_detail
+    'message': message,
+NameError: name 'message' is not defined
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\queries.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/new-message
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 33, in new_message
+    'messages': reverse(PrayerMessage.objects.all())  # TODO move to logic/queries.py
+NameError: name 'reverse' is not defined
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/new-message
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 34, in new_message
+    'messages': reversed(msg_query.get_all_messages())  # TODO move to logic/queries.py
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\queries.py", line 153, in get_all_messages
+    return PrayerMessage.objects.all(order_by='id')
+TypeError: BaseManager.all() got an unexpected keyword argument 'order_by'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\queries.py changed, reloading.
+WARNING:django.security.csrf:Forbidden (CSRF token missing.): /prayer/message-detail/3
+WARNING:django.security.csrf:Forbidden (CSRF token missing.): /prayer/message-detail/3
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\utils\datastructures.py", line 84, in __getitem__
+    list_ = super().__getitem__(key)
+KeyError: 'Prayer Chain'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 59, in message_detail
+    print(request.POST['Prayer Chain'])
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\utils\datastructures.py", line 86, in __getitem__
+    raise MultiValueDictKeyError(key)
+django.utils.datastructures.MultiValueDictKeyError: 'Prayer Chain'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 59, in message_detail
+    print(request.POST.get())
+TypeError: MultiValueDict.get() missing 1 required positional argument: 'key'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 59, in message_detail
+    print(request.POST.data)
+AttributeError: 'QueryDict' object has no attribute 'data'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 59, in message_detail
+    checks = request.POST.getlist('groups').name
+AttributeError: 'list' object has no attribute 'name'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 63, in message_detail
+    for person in group.people:
+AttributeError: 'str' object has no attribute 'people'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 63, in message_detail
+    for person in group_.people:
+AttributeError: 'QuerySet' object has no attribute 'people'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 62, in message_detail
+    group_[0] = pg_queries.get_group_members(group)  # group_ is the object representing the group.
+NameError: name 'group_' is not defined
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 63, in message_detail
+    for person in group_.people:
+AttributeError: 'Person' object has no attribute 'people'
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+ERROR:django.request:Internal Server Error: /prayer/index
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 21, in index
+    'group_members': group_members.get_group_members(group='CBC Members'),
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\queries.py", line 140, in get_group_members
+    result = PrayerGroup.objects.get(name=group).people.all()
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\db\models\manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\db\models\query.py", line 496, in get
+    raise self.model.DoesNotExist(
+prayer.models.PrayerGroup.DoesNotExist: PrayerGroup matching query does not exist.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
