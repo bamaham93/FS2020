@@ -57,7 +57,9 @@ def message_detail(request, id):
 
     if request.method == 'POST':
         checks = request.POST.getlist('groups')
-        print(checks)
+
+        for group in checks:
+            print(pg_queries.get_group_members(group))
     return render(request, 'prayer/message_detail.html', context)
 
 

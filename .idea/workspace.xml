@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added form to send messages by group.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Form checkboxes are being processed properly.">
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/message_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/message_detail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -212,13 +210,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Major style changed. Added background images on several pages.">
-      <created>1658025997784</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1658025997784</updated>
     </task>
     <task id="LOCAL-00008" summary="Added STATIC_ROOT, troubleshooting Admin CSS in deployment. Github Issue #1.">
       <created>1658026487926</created>
@@ -556,7 +547,14 @@
       <option name="project" value="LOCAL" />
       <updated>1660673701735</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="Form checkboxes are being processed properly.">
+      <created>1660676158942</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1660676158942</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -572,7 +570,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added ability to add, delete, edit PrayerGroups." />
     <MESSAGE value="Added cards to prayer:index" />
     <MESSAGE value="Layout changes to prayer:index." />
     <MESSAGE value="Added new packages to requirements.txt." />
@@ -597,6 +594,7 @@
     <MESSAGE value="Trying to fix testing." />
     <MESSAGE value="SMS from previous attempts." />
     <MESSAGE value="Added form to send messages by group." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added form to send messages by group." />
+    <MESSAGE value="Form checkboxes are being processed properly." />
+    <option name="LAST_COMMIT_MESSAGE" value="Form checkboxes are being processed properly." />
   </component>
 </project>
