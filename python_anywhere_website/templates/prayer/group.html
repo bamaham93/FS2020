@@ -3,10 +3,39 @@
 {% load crispy_forms_tags %}
 
 {% block section1 %}
+<div class="p-2">
     {% include 'messages.html' %}
     <form action="{% url 'prayer:group' group_id=group.id %}" method="POST">
         {% csrf_token %}
         {{ form | crispy }}
         <input type="submit" value="Save Edit">
     </form>
+</div>
+<hr>
+<h2>{{ group }} Group Members</h2>
+<div class="p-2">
+    <table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+        </tr>
+    {% for person in group_membership %}
+        <tr>
+            <td>{{ person.first_name }} {{ person.last_name }}</td>
+            {% if person.phone_number %}
+            <td>{{ person.phone_number }}</td>
+            {% else %}
+            <td>None listed</td>
+            {% endif %}
+
+            {% if person.email %}
+            <td>{{ person.email }}</td>
+            {% else %}
+            <td>None listed</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+</div>
 {% endblock %}

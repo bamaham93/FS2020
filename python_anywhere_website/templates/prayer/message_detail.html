@@ -1,0 +1,24 @@
+{% extends 'prayer/prayer_base.html' %}
+
+{% block section1 %}
+    <h1>Messaging</h1>
+    <hr>
+    <h2>Title: {{ message }}</h2>
+    <h3>Subject: {{ message.subject }}</h3>
+    <p>{{ message.message }}</p>
+
+    <hr>
+    <h2>Send To:</h2>
+    <div class="col">
+    <form action="#" method="POST">
+        {% csrf_token %}
+            {% for group in prayer_groups %}
+                <div class="container">
+                    <input class="" id="send_to_{{ group.id }}" type="checkbox">
+                    <label class="" for="send_to_{{ group.id }}">{{ group.name }}</label>
+                </div>
+                {% endfor %}
+            <input type="submit" class="btn btn-success" value="Send Message">
+        </form>
+    </div>
+{% endblock %}

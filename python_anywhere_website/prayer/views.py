@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
 from prayer.models import Person, PrayerGroup, PrayerMessage
+
+import logic.queries
+from logic.queries import PersonQueries, PrayerGroupQueries,  PrayerMessageQueries
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from prayer.Messaging.sms import SMSMessage
 
 
 # from django.contrib.messages import get_messages
@@ -12,7 +16,10 @@ def index(request) -> render:
     """
     Home page for prayer app.
     """
-    context = {}
+    group_members = PrayerGroupQueries()
+    context = {
+        'group_members': group_members.get_group_members(group='CBC Members'),
+    }
     return render(request, "prayer/index.html", context)
 
 
@@ -21,15 +28,48 @@ def new_message(request) -> render:
     """
     Create a new message.
     """
+    msg_query = PrayerMessageQueries()
     context = {
         'form': NewMessageForm(),
-        'messages': PrayerMessage.objects.all()  # TODO move to logic/queries.py
+        'messages': reversed(msg_query.get_all_messages())  # TODO move to logic/queries.py
     }
     if request.method == "POST":
         form = NewMessageForm(request.POST)
         form.save()
         messages.success(request, "Your message was saved!")
     return render(request, "prayer/new_message.html", context)
+
+
+def message_detail(request, id):
+    """
+    """
+
+    # message = PrayerMessage.objects.get(id=id)
+    pm_queries = logic.queries.PrayerMessageQueries()
+    message = pm_queries.get_message_by_id(id=id)
+    pg_queries = logic.queries.PrayerGroupQueries()
+
+    prayer_groups = pg_queries.get_all()
+    context = {
+        'message': message,
+        'prayer_groups': prayer_groups,
+    }
+
+    if request.method == 'POST':
+        print(request)
+    return render(request, 'prayer/message_detail.html', context)
+
+
+def send_message(request, id):
+    """
+    """
+    message = PrayerMessageQueries.get_message_by_id(id=id)
+    body = message.message
+
+    # SMSMessage.contacts list of tuples
+    sms = SMSMessage(body=body)
+    sms.send()
+    return redirect()
 
 
 @login_required()
@@ -53,9 +93,11 @@ def group(request, group_id):
     Group detail page, user editable.
     """
     group_ = PrayerGroup.objects.get(id=group_id)
+    membership = PrayerGroupQueries()
     context = {
         "group": group_,
         "form": NewGroupForm(PrayerGroup.objects.get(id=group_id).__dict__),
+        "group_membership": membership.get_group_members(group=group_.name),
     }
     if request.method == "POST":
         # Takes new data from form, applies it to instance to overwrite prev data

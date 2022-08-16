@@ -6,3 +6,5 @@ twilio.py
 # Credential Files
 credentials/
 faa.py
+
+env.py

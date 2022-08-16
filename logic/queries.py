@@ -8,6 +8,7 @@ better quality testing.
 
 from douglas.models import Driver, Race, League
 from resume.models import Job
+from prayer.models import Person, PrayerGroup, PrayerMessage
 
 # from django.contrib.auth.models import User, Group
 
@@ -106,3 +107,53 @@ class JobQueries:
         """
         jobs = Job.objects.all().filter(aviation=False).order_by("-start_date")
         return jobs
+
+
+class PersonQueries:
+    """
+    Queries related to the Person model from the prayer app.
+    """
+
+    def get_all(self):
+        """
+        """
+        result = Person.objects.all()
+        return result
+
+
+class PrayerGroupQueries:
+    """
+    Database queries related to the Prayer Group model from the prayer app.
+    """
+
+    def get_all(self):
+        """
+        Get all Prayer Groups.
+        """
+        result = PrayerGroup.objects.all()
+        return result
+
+    def get_group_members(self, group: str):
+        """
+        Get all members of a group, specified by the group name.
+        """
+        result = PrayerGroup.objects.get(name=group).people.all()
+        return result
+
+
+class PrayerMessageQueries:
+    """
+    Queries related to the PrayerMessages model from the prayer app.
+    """
+
+    def get_all_messages(self):
+        """
+        Get all PrayerMessages, and returns them in a QuerySet.
+        """
+        return PrayerMessage.objects.all()
+
+    def get_message_by_id(self, id):
+        """
+        Gets single messages by ID.
+        """
+        return PrayerMessage.objects.get(id=id)
