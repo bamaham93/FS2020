@@ -37,7 +37,9 @@ class TestPrayerModule(TestCase):
         self.assertContains(response, "Navbar")
 
     def test_index_view(self):
-        """ """
+        """
+        Need to add item to DB to allow it to work?
+        """
         client = TestPrayerModule.client
         response = client.get("/prayer/index")
         self.assertEqual(response.status_code, HTTPStatus.OK)

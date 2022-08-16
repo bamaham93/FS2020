@@ -16,9 +16,7 @@ def index(request) -> render:
     """
     Home page for prayer app.
     """
-    group_members = PrayerGroupQueries()
     context = {
-        'group_members': group_members.get_group_members(group='CBC Members'),
     }
     return render(request, "prayer/index.html", context)
 
@@ -40,6 +38,7 @@ def new_message(request) -> render:
     return render(request, "prayer/new_message.html", context)
 
 
+
 def message_detail(request, id):
     """
     See message details, send to prayer groups.
@@ -55,15 +54,27 @@ def message_detail(request, id):
         'prayer_groups': prayer_groups,
     }
 
+    # Send messages
     if request.method == 'POST':
         checks = request.POST.getlist('groups')
 
-        for group in checks:
-            print(pg_queries.get_group_members(group))
+        people_set = set()
+
+        for group in checks:  # group is a string the name of the group.
+            group_ = pg_queries.get_group_members(group)  # group_ is a queryset of person objects.
+            people_set.update(group_)
+        print(people_set)
+
+        for person in people_set:  # Used a set so to eliminate duplicate messages.
+            print(f"First Name: {person.first_name}")
+            print(f"Last Name: {person.last_name}")
+            print(f"Ph: {person.phone_number}")
+            print("\n")
     return render(request, 'prayer/message_detail.html', context)
 
 
-def send_message(request, id):
+@login_required()
+def send_message(request, id: int):
     """
     """
     message = PrayerMessageQueries.get_message_by_id(id=id)
@@ -124,6 +135,7 @@ def delete_group(request, group_id):
     return redirect("prayer:groups")
 
 
+@login_required()
 def prayer_requests(request) -> render:
     """
     List of prayer requests.
@@ -153,6 +165,7 @@ def people(request) -> render:
     return render(request, "prayer/prayer-people.html", context)
 
 
+@login_required()
 def delete_person(request, person_id: int) -> redirect:
     """ """
     person = Person.objects.get(id=person_id)
@@ -163,6 +176,7 @@ def delete_person(request, person_id: int) -> redirect:
     return redirect("prayer:people")
 
 
+@login_required()
 def permissions(request, id):
     context = {'form': PermissionsForm()}
     return render(request, 'prayer/permissions.html', context)
