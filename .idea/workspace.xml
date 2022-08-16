@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added creds files to .gitignore.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added new creds.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logic/Messaging/sms.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/sms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/sms_logfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/sms_logfile.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,13 +214,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Created logic module and logic.queries file to centralize business logic.">
-      <created>1658178111561</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1658178111561</updated>
     </task>
     <task id="LOCAL-00014" summary="Added Type hinting to logic module.">
       <created>1658178905210</created>
@@ -555,7 +551,14 @@
       <option name="project" value="LOCAL" />
       <updated>1660680499691</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="Added new creds.">
+      <created>1660680710744</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1660680710744</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -571,7 +574,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added signup, login, logout urls, html pages." />
     <MESSAGE value="Added login input, handling." />
     <MESSAGE value="Added login, logout redirects." />
     <MESSAGE value="Changed to site index to inherit from core_base.html" />
@@ -596,6 +598,7 @@
     <MESSAGE value="Added untracked files." />
     <MESSAGE value="Successfully sending messages." />
     <MESSAGE value="Added creds files to .gitignore." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added creds files to .gitignore." />
+    <MESSAGE value="Added new creds." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added new creds." />
   </component>
 </project>
