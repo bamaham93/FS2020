@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect
 from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
 from prayer.models import Person, PrayerGroup, PrayerMessage
@@ -6,7 +8,8 @@ import logic.queries
 from logic.queries import PersonQueries, PrayerGroupQueries,  PrayerMessageQueries
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from prayer.Messaging.sms import SMSMessage
+
+from logic.Messaging.sms import SMSMessage
 
 
 # from django.contrib.messages import get_messages
@@ -63,13 +66,20 @@ def message_detail(request, id):
         for group in checks:  # group is a string the name of the group.
             group_ = pg_queries.get_group_members(group)  # group_ is a queryset of person objects.
             people_set.update(group_)
-        print(people_set)
+        # print(people_set)
 
-        for person in people_set:  # Used a set so to eliminate duplicate messages.
-            print(f"First Name: {person.first_name}")
-            print(f"Last Name: {person.last_name}")
-            print(f"Ph: {person.phone_number}")
-            print("\n")
+        sms_message = SMSMessage(body=message.message, contacts=people_set, testing=False)
+        try:
+            sms_message.send()
+        except Exception as e:
+            print(f"Failed to send messages! { e }")
+            pass
+
+        # for person in people_set:  # Used a set so to eliminate duplicate messages.
+        #     print(f"First Name: {person.first_name}")
+        #     print(f"Last Name: {person.last_name}")
+        #     print(f"Ph: {person.phone_number}")
+        #     print("\n")
     return render(request, 'prayer/message_detail.html', context)
 
 

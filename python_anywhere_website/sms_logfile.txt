@@ -271,3 +271,109 @@ INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Pr
 INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
 INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
 INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\Messaging\sms.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC34cfca8f7148eeb605137f776419d684/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:User-Agent : twilio-python/7.12.0 (Windows ) Python/3.10.5
+INFO:twilio.http_client:X-Twilio-Client : python-7.12.0
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Date': 'Tue, 16 Aug 2022 19:33:58 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '787', 'Connection': 'keep-alive', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQc63899f0d6befeb1a21f91df2c68c25b', 'Twilio-Request-Duration': '0.132', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag', 'Access-Control-Allow-Credentials': 'true', 'X-Powered-By': 'AT-5000', 'X-Shenanigans': 'none', 'X-Home-Region': 'us1', 'X-API-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000'}
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC34cfca8f7148eeb605137f776419d684/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:User-Agent : twilio-python/7.12.0 (Windows ) Python/3.10.5
+INFO:twilio.http_client:X-Twilio-Client : python-7.12.0
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Date': 'Tue, 16 Aug 2022 19:33:58 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '787', 'Connection': 'keep-alive', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQab3116bfe2bcd91f9494b608bb3ff323', 'Twilio-Request-Duration': '0.134', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag', 'Access-Control-Allow-Credentials': 'true', 'X-Powered-By': 'AT-5000', 'X-Shenanigans': 'none', 'X-Home-Region': 'us1', 'X-API-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000'}
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC34cfca8f7148eeb605137f776419d684/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:User-Agent : twilio-python/7.12.0 (Windows ) Python/3.10.5
+INFO:twilio.http_client:X-Twilio-Client : python-7.12.0
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 400
+INFO:twilio.http_client:Response Headers: {'Date': 'Tue, 16 Aug 2022 19:33:59 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '147', 'Connection': 'keep-alive', 'Twilio-Request-Id': 'RQ1c05ab4e1e4c4ce3db807b22afc2094a', 'Twilio-Request-Duration': '0.061', 'Twilio-Concurrent-Requests': '1', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag', 'Access-Control-Allow-Credentials': 'true', 'X-Powered-By': 'AT-5000', 'X-Shenanigans': 'none', 'X-Home-Region': 'us1', 'X-API-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000'}
+ERROR:django.request:Internal Server Error: /prayer/message-detail/3
+Traceback (most recent call last):
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py", line 70, in message_detail
+    sms_message.send()
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\Messaging\sms.py", line 59, in send
+    self._send(message_body=body, phone_number=phone_number)
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\Messaging\sms.py", line 65, in _send
+    message = self.client.messages.create(
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\twilio\rest\api\v2010\account\message\__init__.py", line 95, in create
+    payload = self._version.create(method='POST', uri=self._uri, data=data, )
+  File "C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\venv\lib\site-packages\twilio\base\version.py", line 205, in create
+    raise self.exception(method, uri, response, 'Unable to create record')
+twilio.base.exceptions.TwilioRestException: HTTP 400 error: Unable to create record: The 'To' number  is not a valid phone number.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\Messaging\sms.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\Messaging\sms.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\Messaging\sms.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic\Messaging\sms.py changed, reloading.
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC34cfca8f7148eeb605137f776419d684/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:User-Agent : twilio-python/7.12.0 (Windows ) Python/3.10.5
+INFO:twilio.http_client:X-Twilio-Client : python-7.12.0
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Date': 'Tue, 16 Aug 2022 19:43:59 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '778', 'Connection': 'keep-alive', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQe8f6b841c9bf23428f6804df12664542', 'Twilio-Request-Duration': '0.137', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag', 'Access-Control-Allow-Credentials': 'true', 'X-Powered-By': 'AT-5000', 'X-Shenanigans': 'none', 'X-Home-Region': 'us1', 'X-API-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000'}
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC34cfca8f7148eeb605137f776419d684/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:User-Agent : twilio-python/7.12.0 (Windows ) Python/3.10.5
+INFO:twilio.http_client:X-Twilio-Client : python-7.12.0
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Date': 'Tue, 16 Aug 2022 19:43:59 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '778', 'Connection': 'keep-alive', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQ10c0b094d1c751e0d7cf7dfdb5bad3ac', 'Twilio-Request-Duration': '0.151', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag', 'Access-Control-Allow-Credentials': 'true', 'X-Powered-By': 'AT-5000', 'X-Shenanigans': 'none', 'X-Home-Region': 'us1', 'X-API-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000'}
+INFO:django.utils.autoreload:C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\prayer\views.py changed, reloading.
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC34cfca8f7148eeb605137f776419d684/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:User-Agent : twilio-python/7.12.0 (Windows ) Python/3.10.5
+INFO:twilio.http_client:X-Twilio-Client : python-7.12.0
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Date': 'Tue, 16 Aug 2022 19:44:38 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '852', 'Connection': 'keep-alive', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQfd2017502edd546ff78ef0eb4d35ee2a', 'Twilio-Request-Duration': '0.133', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag', 'Access-Control-Allow-Credentials': 'true', 'X-Powered-By': 'AT-5000', 'X-Shenanigans': 'none', 'X-Home-Region': 'us1', 'X-API-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000'}
+INFO:twilio.http_client:-- BEGIN Twilio API Request --
+INFO:twilio.http_client:POST Request: https://api.twilio.com/2010-04-01/Accounts/AC34cfca8f7148eeb605137f776419d684/Messages.json
+INFO:twilio.http_client:Headers:
+INFO:twilio.http_client:User-Agent : twilio-python/7.12.0 (Windows ) Python/3.10.5
+INFO:twilio.http_client:X-Twilio-Client : python-7.12.0
+INFO:twilio.http_client:Accept-Charset : utf-8
+INFO:twilio.http_client:Content-Type : application/x-www-form-urlencoded
+INFO:twilio.http_client:Accept : application/json
+INFO:twilio.http_client:-- END Twilio API Request --
+INFO:twilio.http_client:Response Status Code: 201
+INFO:twilio.http_client:Response Headers: {'Date': 'Tue, 16 Aug 2022 19:44:38 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '852', 'Connection': 'keep-alive', 'Twilio-Concurrent-Requests': '1', 'Twilio-Request-Id': 'RQdc7c2f45047862760063826abcb09fac', 'Twilio-Request-Duration': '0.169', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Accept, Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Expose-Headers': 'ETag', 'Access-Control-Allow-Credentials': 'true', 'X-Powered-By': 'AT-5000', 'X-Shenanigans': 'none', 'X-Home-Region': 'us1', 'X-API-Domain': 'api.twilio.com', 'Strict-Transport-Security': 'max-age=31536000'}

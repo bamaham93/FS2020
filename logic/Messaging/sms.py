@@ -6,7 +6,8 @@ from twilio.rest import Client
 import logging
 import os
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Set
+from prayer.models import Person
 
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
 
@@ -22,7 +23,7 @@ class SMSMessage:
     email, then an email will be sent.
     """
 
-    def __init__(self, body: str, contacts: List[Tuple], testing=False) -> None:
+    def __init__(self, body: str, contacts: Set[Person], testing=False) -> None:
         """
         """
         self.body = body
@@ -38,16 +39,20 @@ class SMSMessage:
         Send message to list of contacts.
         """
         for contact in self.contacts:
-            first_name = contact[0]
-            last_name = contact[1]
-            phone_number = contact[2]
+            first_name = contact.first_name
+            last_name = contact.last_name
+            try:
+                phone_number = contact.phone_number
+            except Exception as e:
+                print(e)
 
             # Formats the message body; uses the f-string syntax to lazily
             # replace those tags with the personal information for that specific
             # person.
-            body = self.body.format(
-                first_name=first_name,
-                last_name=last_name)
+            # body = self.body.format(
+            #     first_name=first_name,
+            #     last_name=last_name)
+            body = self.body
 
             if self.testing:
                 print(body)
@@ -58,11 +63,15 @@ class SMSMessage:
         """
         Sends each individual message.
         """
-        message = self.client.messages.create(
+        try:
+            message = self.client.messages.create(
             body=f"{message_body}",
             from_="+16412126207",
             to=f"{phone_number}",
-        )
+            )
+        except Exception as e:
+            print(f"Message sent to { phone_number } failed to send!")
+            print(e)
 
 
 peoples = [
