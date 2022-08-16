@@ -1,10 +1,12 @@
 venv
 /venv
 
-twilio.py
 
 # Credential Files
 credentials/
-faa.py
+credentials
+/credentials
 
+faa.py
 env.py
+twilio.py

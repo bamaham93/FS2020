@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added untracked files.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Successfully sending messages.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/send_email.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/send_email.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/sms.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/sms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/sms_logfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/sms_logfile.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/sms_logfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/sms_logfile.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -218,13 +211,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Added __str__ to Technology model.">
-      <created>1658110304519</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1658110304519</updated>
     </task>
     <task id="LOCAL-00012" summary="README update.">
       <created>1658157130226</created>
@@ -562,7 +548,14 @@
       <option name="project" value="LOCAL" />
       <updated>1660677914556</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="Successfully sending messages.">
+      <created>1660679147513</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1660679147514</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -578,7 +571,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Moved requirements.txt to project root." />
     <MESSAGE value="Formatting" />
     <MESSAGE value="Added signup, login, logout urls, html pages." />
     <MESSAGE value="Added login input, handling." />
@@ -603,6 +595,7 @@
     <MESSAGE value="Properly retreiving group members." />
     <MESSAGE value="Removed unused DB query that caused tests to fail.&#10;&#10;Added login_required to all pages except index in this app." />
     <MESSAGE value="Added untracked files." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added untracked files." />
+    <MESSAGE value="Successfully sending messages." />
+    <option name="LAST_COMMIT_MESSAGE" value="Successfully sending messages." />
   </component>
 </project>
