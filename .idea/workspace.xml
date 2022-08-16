@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="SMS from previous attempts.">
-      <change afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/message_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added form to send messages by group.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logic/queries.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/queries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/media/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/media/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/email.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/send_email.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/sms.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/Messaging/sms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/group.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/group.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/new_message.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/new_message.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/message_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/message_detail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,13 +212,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Fixed layout issues in CSS">
-      <created>1658017208534</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1658017208534</updated>
     </task>
     <task id="LOCAL-00007" summary="Major style changed. Added background images on several pages.">
       <created>1658025997784</created>
@@ -565,7 +549,14 @@
       <option name="project" value="LOCAL" />
       <updated>1660067082821</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Added form to send messages by group.">
+      <created>1660673701735</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1660673701735</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,7 +572,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added form and views to see, delete, add people." />
     <MESSAGE value="Added ability to add, delete, edit PrayerGroups." />
     <MESSAGE value="Added cards to prayer:index" />
     <MESSAGE value="Layout changes to prayer:index." />
@@ -606,6 +596,7 @@
     <MESSAGE value="Pip freeze new requirements to requirements.txt" />
     <MESSAGE value="Trying to fix testing." />
     <MESSAGE value="SMS from previous attempts." />
-    <option name="LAST_COMMIT_MESSAGE" value="SMS from previous attempts." />
+    <MESSAGE value="Added form to send messages by group." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added form to send messages by group." />
   </component>
 </project>

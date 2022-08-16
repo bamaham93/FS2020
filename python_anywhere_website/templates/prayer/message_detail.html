@@ -14,7 +14,7 @@
         {% csrf_token %}
             {% for group in prayer_groups %}
                 <div class="container">
-                    <input class="" id="send_to_{{ group.id }}" type="checkbox">
+                    <input class="" id="send_to_{{ group.id }}" type="checkbox" name="groups" value="{{ group.name }}">
                     <label class="" for="send_to_{{ group.id }}">{{ group.name }}</label>
                 </div>
                 {% endfor %}

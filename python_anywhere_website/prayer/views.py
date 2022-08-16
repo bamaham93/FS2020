@@ -31,7 +31,7 @@ def new_message(request) -> render:
     msg_query = PrayerMessageQueries()
     context = {
         'form': NewMessageForm(),
-        'messages': reversed(msg_query.get_all_messages())  # TODO move to logic/queries.py
+        'messages': reversed(msg_query.get_all_messages())
     }
     if request.method == "POST":
         form = NewMessageForm(request.POST)
@@ -42,9 +42,9 @@ def new_message(request) -> render:
 
 def message_detail(request, id):
     """
+    See message details, send to prayer groups.
     """
 
-    # message = PrayerMessage.objects.get(id=id)
     pm_queries = logic.queries.PrayerMessageQueries()
     message = pm_queries.get_message_by_id(id=id)
     pg_queries = logic.queries.PrayerGroupQueries()
@@ -56,7 +56,8 @@ def message_detail(request, id):
     }
 
     if request.method == 'POST':
-        print(request)
+        checks = request.POST.getlist('groups')
+        print(checks)
     return render(request, 'prayer/message_detail.html', context)
 
 
