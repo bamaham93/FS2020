@@ -8,13 +8,10 @@ import os
 from datetime import datetime
 from typing import List, Tuple, Set
 from prayer.models import Person
+from credentials.twilio import TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN
 
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
 
-os.environ = {
-    "TWILIO_ACCOUNT_SID": "AC34cfca8f7148eeb605137f776419d684",
-    "TWILIO_AUTH_TOKEN": "36dd32d67536d0084b21f3512dd0bc2e",
-}
 
 
 class SMSMessage:
@@ -30,8 +27,10 @@ class SMSMessage:
         self.contacts = contacts
         self.testing = testing
 
-        account_sid = os.environ["TWILIO_ACCOUNT_SID"]
-        auth_token = os.environ["TWILIO_AUTH_TOKEN"]
+        # account_sid = os.environ["TWILIO_ACCOUNT_SID"]
+        # auth_token = os.environ["TWILIO_AUTH_TOKEN"]
+        account_sid = TWILIO_ACCOUNT_SID
+        auth_token = TWILIO_AUTH_TOKEN
         self.client = Client(account_sid, auth_token)
 
     def send(self) -> None:
