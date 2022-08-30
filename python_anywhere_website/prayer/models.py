@@ -20,7 +20,7 @@ class Person(models.Model):
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(
         max_length=50, null=True, blank=True
-    )  # TODO check if better way to validate.
+    )
     email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
