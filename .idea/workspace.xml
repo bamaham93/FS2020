@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added new creds.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Changed creds around.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logic/Messaging/sms.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/sms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/sms_logfile.txt" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/sms_logfile.txt" afterDir="false" />
@@ -22,6 +23,7 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitRewordedCommitMessages">
@@ -41,6 +43,13 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="master" />
+      </list>
+    </option>
   </component>
   <component name="ProjectId" id="2BufQuhBvgIklGcKLHmJ0eBXovo" />
   <component name="ProjectViewState">
@@ -214,13 +223,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Added Type hinting to logic module.">
-      <created>1658178905210</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1658178905210</updated>
     </task>
     <task id="LOCAL-00015" summary="Added logic.users_groups.py to flag whether a user is a member of a specific group.">
       <created>1658182234238</created>
@@ -558,8 +560,26 @@
       <option name="project" value="LOCAL" />
       <updated>1660680710744</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="Changed creds around.">
+      <created>1660682539644</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1660682539644</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -574,7 +594,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added login input, handling." />
     <MESSAGE value="Added login, logout redirects." />
     <MESSAGE value="Changed to site index to inherit from core_base.html" />
     <MESSAGE value="Style changes to navbar." />
@@ -599,6 +618,23 @@
     <MESSAGE value="Successfully sending messages." />
     <MESSAGE value="Added creds files to .gitignore." />
     <MESSAGE value="Added new creds." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added new creds." />
+    <MESSAGE value="Changed creds around." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed creds around." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
+          <line>34</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
+          <line>61</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

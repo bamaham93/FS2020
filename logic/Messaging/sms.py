@@ -8,7 +8,7 @@ import os
 from datetime import datetime
 from typing import List, Tuple, Set
 from prayer.models import Person
-from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
 
@@ -63,15 +63,16 @@ class SMSMessage:
         """
         Sends each individual message.
         """
-        try:
-            message = self.client.messages.create(
+        # try:
+        message = self.client.messages.create(
             body=f"{message_body}",
-            from_="+16412126207",
+            from_=TWILIO_PHONE_NUMBER,
             to=f"{phone_number}",
-            )
-        except Exception as e:
-            print(f"Message sent to { phone_number } failed to send!")
-            print(e)
+        )
+        # except Exception as e:
+        #     print(f"Message sent to { phone_number } failed to send!")
+        #     print(e)
+        #     print('How about this one?')
 
 
 peoples = [

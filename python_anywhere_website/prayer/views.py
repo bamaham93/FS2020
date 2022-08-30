@@ -62,11 +62,11 @@ def message_detail(request, id):
         checks = request.POST.getlist('groups')
 
         people_set = set()
+        # print(people_set)
 
         for group in checks:  # group is a string the name of the group.
             group_ = pg_queries.get_group_members(group)  # group_ is a queryset of person objects.
             people_set.update(group_)
-        print(people_set)
 
         sms_message = SMSMessage(body=message.message, contacts=people_set, testing=False)
         sms_message.send()
