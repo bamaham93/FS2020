@@ -13,7 +13,6 @@ from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHO
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
 
 
-
 class SMSMessage:
     """
     For sending emails and texts to recipients. If text messaging fails, or if the contact prefers
