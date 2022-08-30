@@ -8,7 +8,7 @@ from typing import Set
 from prayer.models import Person
 from twilio.rest import Client
 
-from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
 
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
 
@@ -65,7 +65,7 @@ class SMSMessage:
         # try:
         message = self.client.messages.create(
             body=f"{message_body}",
-            from_=TWILIO_PHONE_NUMBER,
+            from_="+16412126207",
             to=f"{phone_number}",
         )
         # except Exception as e:
