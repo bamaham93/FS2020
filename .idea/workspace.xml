@@ -71,7 +71,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static\img" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Run Tests">
+  <component name="RunManager" selected="Python.Runserver - Shared Local Network">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -222,13 +222,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00038" summary="Added login input, handling.">
-      <created>1659463406803</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1659463406803</updated>
     </task>
     <task id="LOCAL-00039" summary="Added login, logout redirects.">
       <created>1659464026739</created>
@@ -566,7 +559,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661852008880</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="Added tests.">
+      <created>1661854033305</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1661854033313</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -625,12 +625,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
-          <line>40</line>
+          <line>42</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
-          <line>67</line>
+          <line>75</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
