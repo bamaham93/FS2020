@@ -8,8 +8,6 @@ from typing import Set
 from prayer.models import Person
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
-from twilio.http.http_client import TwilioHttpClient
-import os
 
 try:
     from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
@@ -40,12 +38,7 @@ class SMSMessage:
 
         account_sid = TWILIO_ACCOUNT_SID
         auth_token = TWILIO_AUTH_TOKEN
-        # self.client = Client(account_sid, auth_token)
-
-        proxy_client = TwilioHttpClient(proxy={'http': os.environ['http_proxy'], 'https': os.environ[
-            'https_proxy']})
-        self.client = Client(account_sid, auth_token, http_client=proxy_client)
-
+        self.client = Client(account_sid, auth_token)
 
 
     def send(self) -> None:
