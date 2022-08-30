@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Renamed app &quot;core&quot; to &quot;core_app&quot; to avoid collisions with the default &quot;django.core&quot; module.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +69,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static\img" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Run Server">
+  <component name="RunManager" selected="Python.Runserver - Shared Local Network">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -218,13 +220,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00032" summary="Added new packages to requirements.txt.">
-      <created>1659412716693</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1659412716693</updated>
     </task>
     <task id="LOCAL-00033" summary="Moved requirements.txt to project root.">
       <created>1659412860655</created>
@@ -562,7 +557,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661842922402</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="Renamed app &quot;core&quot; to &quot;core_app&quot; to avoid collisions with the default &quot;django.core&quot; module.">
+      <created>1661843215387</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1661843215387</updated>
+    </task>
+    <option name="localTasksCounter" value="82" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">

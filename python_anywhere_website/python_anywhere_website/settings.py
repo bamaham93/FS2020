@@ -142,5 +142,5 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Login, Signup redirects
-LOGIN_URL = "login"
-LOGOUT_REDIRECT_URL = "core_app/index"
+LOGIN_URL = "core_app:login"
+LOGOUT_REDIRECT_URL = "core_app:index"
