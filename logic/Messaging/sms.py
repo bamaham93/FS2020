@@ -7,6 +7,7 @@ from typing import Set
 
 from prayer.models import Person
 from twilio.rest import Client
+from twilio.base.exceptions import TwilioRestException
 
 try:
     from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
@@ -68,16 +69,14 @@ class SMSMessage:
         """
         Sends each individual message.
         """
-        # try:
-        message = self.client.messages.create(
-            body=f"{message_body}",
-            from_="+16412126207",
-            to=f"{phone_number}",
-        )
-        # except Exception as e:
-        #     print(f"Message sent to { phone_number } failed to send!")
-        #     print(e)
-        #     print('How about this one?')
+        try:
+            message = self.client.messages.create(
+                body=f"{message_body}",
+                from_="+16412126207",
+                to=f"{phone_number}",
+            )
+        except TwilioRestException as e:
+            logging.WARNING(f"Message to {phone_number} failed to send.\n{e}")
 
 
 peoples = [

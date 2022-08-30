@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added tests.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logic/Messaging/sms.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/sms.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +46,9 @@
         <option value="master" />
       </list>
     </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/python_anywhere_website/prayer/tests.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="2BufQuhBvgIklGcKLHmJ0eBXovo" />
   <component name="ProjectViewState">
@@ -219,13 +222,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00037" summary="Added signup, login, logout urls, html pages.">
-      <created>1659462344833</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1659462344833</updated>
     </task>
     <task id="LOCAL-00038" summary="Added login input, handling.">
       <created>1659463406803</created>
@@ -563,7 +559,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661851900235</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="Added tests.">
+      <created>1661852008880</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1661852008880</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -622,12 +625,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
-          <line>39</line>
+          <line>40</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
-          <line>66</line>
+          <line>67</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
