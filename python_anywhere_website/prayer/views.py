@@ -1,15 +1,12 @@
-import logging
-
-from django.shortcuts import render, redirect
-from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
-from prayer.models import Person, PrayerGroup, PrayerMessage
-
-import logic.queries
-from logic.queries import PersonQueries, PrayerGroupQueries,  PrayerMessageQueries
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
+from prayer.models import Person, PrayerGroup
 
+import logic.queries
 from logic.Messaging.sms import SMSMessage
+from logic.queries import PrayerGroupQueries, PrayerMessageQueries
 
 
 # from django.contrib.messages import get_messages
