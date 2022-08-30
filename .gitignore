@@ -13,3 +13,6 @@ twilio.py
 
 #
 sms_logfile.txt
+
+# Workspace Files for pycharm, vscode
+workspace.xml
