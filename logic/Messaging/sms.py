@@ -10,7 +10,7 @@ from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 
 try:
-    from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+    from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 except ModuleNotFoundError:
     from credentials.mock_faa_twilio import (
         TWILIO_ACCOUNT_SID,
@@ -72,8 +72,8 @@ class SMSMessage:
         """
         try:
             message = self.client.messages.create(
-                body=f"{message_body}",
-                from_="+16412126207",
+                body=f"{str(message_body)}",
+                from_=TWILIO_PHONE_NUMBER,
                 to=f"{str(phone_number)}",
             )
         except TwilioRestException as e:

@@ -223,13 +223,6 @@
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
     </task>
-    <task id="LOCAL-00041" summary="Style changes to navbar.">
-      <created>1659464600471</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1659464600471</updated>
-    </task>
     <task id="LOCAL-00042" summary="Fixed broken DB queries.">
       <created>1659464615812</created>
       <option name="number" value="00042" />
@@ -566,7 +559,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661854758896</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="Removing changes for HTTP Proxy.">
+      <created>1661855183175</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1661855183175</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
