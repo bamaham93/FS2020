@@ -10,12 +10,16 @@ from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 
 try:
-    from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+    from credentials.twilio import (
+        TWILIO_ACCOUNT_SID,
+        TWILIO_AUTH_TOKEN,
+        TWILIO_PHONE_NUMBER,
+    )
 except ModuleNotFoundError:
     from credentials.mock_faa_twilio import (
         TWILIO_ACCOUNT_SID,
         TWILIO_AUTH_TOKEN,
-         )
+    )
 
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
 
@@ -27,8 +31,7 @@ class SMSMessage:
     """
 
     def __init__(self, body: str, contacts: Set[Person], testing=False) -> None:
-        """
-        """
+        """ """
         self.body = body
         self.contacts = contacts
         self.testing = testing
@@ -39,7 +42,6 @@ class SMSMessage:
         account_sid = TWILIO_ACCOUNT_SID
         auth_token = TWILIO_AUTH_TOKEN
         self.client = Client(account_sid, auth_token)
-
 
     def send(self) -> None:
         """

@@ -9,5 +9,5 @@ urlpatterns = [
     path("index", views.index, name="index"),
     path("flights", views.flights, name="flights"),
     path("flights/<str:n_number>", views.flights, name="flights"),
-    path('notams', views.notams, name='notams'),
+    path("notams", views.notams, name="notams"),
 ]

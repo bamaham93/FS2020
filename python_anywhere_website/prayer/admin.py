@@ -23,6 +23,6 @@ class PersonAdmin(admin.ModelAdmin):
 
 @admin.register(PrayerMessage)
 class PrayerMessageAdmin(admin.ModelAdmin):
-    """
-    """
-    list_display = ('name', 'subject')
+    """ """
+
+    list_display = ("name", "subject")

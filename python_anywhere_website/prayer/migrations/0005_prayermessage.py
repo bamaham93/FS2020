@@ -6,17 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('prayer', '0004_alter_person_options_alter_person_email_and_more'),
+        ("prayer", "0004_alter_person_options_alter_person_email_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PrayerMessage',
+            name="PrayerMessage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('subject', models.CharField(max_length=100)),
-                ('message', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("subject", models.CharField(max_length=100)),
+                ("message", models.TextField()),
             ],
         ),
     ]

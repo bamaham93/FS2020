@@ -16,5 +16,5 @@ urlpatterns = [
     path("prayer-requests", views.prayer_requests, name="prayer_requests"),
     path("people", views.people, name="people"),
     path("delete-person/<person_id>", views.delete_person, name="delete_person"),
-    path('permissions/<int:id>', views.permissions, name="permissions"),
+    path("permissions/<int:id>", views.permissions, name="permissions"),
 ]

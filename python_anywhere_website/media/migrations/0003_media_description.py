@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('media', '0002_alter_media_options_alter_mediagenre_description'),
+        ("media", "0002_alter_media_options_alter_mediagenre_description"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='media',
-            name='description',
+            model_name="media",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
     ]

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Removing changes for HTTP Proxy.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Fixed Twilio SMS in production.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logic/Messaging/sms.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/sms.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -222,13 +221,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00042" summary="Fixed broken DB queries.">
-      <created>1659464615812</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1659464615812</updated>
     </task>
     <task id="LOCAL-00043" summary="Black formatted project.">
       <created>1659465683668</created>
@@ -566,7 +558,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661855183175</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <task id="LOCAL-00091" summary="Fixed Twilio SMS in production.">
+      <created>1661855572467</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1661855572467</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -593,7 +592,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Pip freeze new requirements to requirements.txt" />
     <MESSAGE value="Trying to fix testing." />
     <MESSAGE value="SMS from previous attempts." />
     <MESSAGE value="Added form to send messages by group." />
@@ -618,22 +616,7 @@
     <MESSAGE value="Added tests." />
     <MESSAGE value="Testing for HTTP Proxy on PythonAnywhere.com" />
     <MESSAGE value="Removing changes for HTTP Proxy." />
-    <option name="LAST_COMMIT_MESSAGE" value="Removing changes for HTTP Proxy." />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
-          <line>40</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/logic/Messaging/sms.py</url>
-          <line>68</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Fixed Twilio SMS in production." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed Twilio SMS in production." />
   </component>
 </project>

@@ -6,18 +6,18 @@ as
 import logging
 import datetime
 
-logging.basicConfig(filename='message_log.txt', level=logging.INFO)
+logging.basicConfig(filename="message_log.txt", level=logging.INFO)
+
 
 class Contact:
-
     def __init__(
-            self,
-            first_name: str,
-            last_name: str,
-            title: str,
-            email_address: str,
-            phone_number: str,
-            prefer_text: bool
+        self,
+        first_name: str,
+        last_name: str,
+        title: str,
+        email_address: str,
+        phone_number: str,
+        prefer_text: bool,
     ):
         """
         first_name:str;
@@ -64,6 +64,10 @@ class Contact:
         now = datetime.datetime.now()
 
         if success:
-            logging.INFO(f"{now} message sent via {method} to {self.first_name} {self.last_name}.")
+            logging.INFO(
+                f"{now} message sent via {method} to {self.first_name} {self.last_name}."
+            )
         else:
-            logging.WARNING(f"{now} messages sent via {method} to {self.first_name} {self.last_name} failed.")
+            logging.WARNING(
+                f"{now} messages sent via {method} to {self.first_name} {self.last_name} failed."
+            )

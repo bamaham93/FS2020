@@ -119,8 +119,7 @@ class TestPrayerForms(TestCase):
         )
 
     def test_new_message_form(self):
-        """
-        """
+        """ """
         user = User.objects.get(id=1)
         client = TestPrayerForms.client
         client.force_login(user)
@@ -166,8 +165,7 @@ class TestPrayerForms(TestCase):
             )
 
     def test_new_person_form(self):
-        """
-        """
+        """ """
         user = User.objects.get(id=1)
         client = TestPrayerForms.client
         client.force_login(user)
@@ -216,8 +214,7 @@ class TestPrayerForms(TestCase):
         # )
 
     def test_new_group_form(self):
-        """
-        """
+        """ """
         user = User.objects.get(id=1)
         client = TestPrayerForms.client
         client.force_login(user)
@@ -263,8 +260,7 @@ class TestPrayerForms(TestCase):
             )
 
     def test_permissions_form(self):
-        """
-        """
+        """ """
         user = User.objects.get(id=1)
         client = TestPrayerForms.client
         client.force_login(user)

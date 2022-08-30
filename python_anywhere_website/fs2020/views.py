@@ -18,10 +18,11 @@ def flights(request, n_number):
     context["flights"] = Flight.objects.filter(n_num__exact=n_number)
     return render(request, "fs2020/flights.html", context)
 
+
 def notams(request):
     """
     Search NOTAMS by airport.
     """
     notams_ = NOTAMS()
-    context = {'notams': notams_.get_airport_notams()}
+    context = {"notams": notams_.get_airport_notams()}
     return render(request, "fs2020/notams.html", context)

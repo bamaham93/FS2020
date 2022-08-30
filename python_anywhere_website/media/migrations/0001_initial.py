@@ -8,53 +8,114 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='MediaFormat',
+            name="MediaFormat",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='MediaGenre',
+            name="MediaGenre",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("description", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='MediaLocation',
+            name="MediaLocation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.TextField()),
-                ('shelf_unit', models.CharField(max_length=100)),
-                ('shelf', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.TextField()),
+                ("shelf_unit", models.CharField(max_length=100)),
+                ("shelf", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='MediaType',
+            name="MediaType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='Media',
+            name="Media",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
-                ('subtitle', models.CharField(max_length=100)),
-                ('upc_code', models.CharField(blank=True, max_length=100, null=True)),
-                ('isbn_code', models.CharField(blank=True, max_length=100, null=True)),
-                ('format', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='media.mediaformat')),
-                ('genre', models.ManyToManyField(to='media.mediagenre')),
-                ('storage_location', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='media.medialocation')),
-                ('type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='media.mediatype')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=100)),
+                ("subtitle", models.CharField(max_length=100)),
+                ("upc_code", models.CharField(blank=True, max_length=100, null=True)),
+                ("isbn_code", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "format",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="media.mediaformat",
+                    ),
+                ),
+                ("genre", models.ManyToManyField(to="media.mediagenre")),
+                (
+                    "storage_location",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="media.medialocation",
+                    ),
+                ),
+                (
+                    "type",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="media.mediatype",
+                    ),
+                ),
             ],
         ),
     ]

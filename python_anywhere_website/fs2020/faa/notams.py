@@ -4,10 +4,7 @@ import requests
 try:
     from credentials.faa import client_id, client_secret
 except ModuleNotFoundError:
-    from credentials.mock_faa_twilio import (
-        client_id,
-        client_secret
-     )
+    from credentials.mock_faa_twilio import client_id, client_secret
 
 example_request_mock = f"""
 https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/0a116119-6959-40fa-99a9-3fb00de324a5/notam-api/1.0.4/m/notams?responseFormat=geoJson&icaoLocation=KCNI&pageNum=1%client_id={client_id}%client_secret={client_secret}
@@ -19,23 +16,20 @@ icaoLocation=KCNI
 &pageNum=1
 """
 
+
 class NOTAMS:
     """
     FAA Notices To Airmen.
     """
 
     def __init__(self):
-        """
-        """
+        """ """
         self.client_id = client_id
         self.client_secret = client_secret
 
     def _get(self, url: str):
-        """
-        """
+        """ """
         return requests.get(url)
-
-
 
     def get_airport_notams(self):
         """

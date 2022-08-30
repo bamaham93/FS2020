@@ -16,8 +16,7 @@ def index(request) -> render:
     """
     Home page for prayer app.
     """
-    context = {
-    }
+    context = {}
     return render(request, "prayer/index.html", context)
 
 
@@ -28,15 +27,14 @@ def new_message(request) -> render:
     """
     msg_query = PrayerMessageQueries()
     context = {
-        'form': NewMessageForm(),
-        'messages': reversed(msg_query.get_all_messages())
+        "form": NewMessageForm(),
+        "messages": reversed(msg_query.get_all_messages()),
     }
     if request.method == "POST":
         form = NewMessageForm(request.POST)
         form.save()
         messages.success(request, "Your message was saved!")
     return render(request, "prayer/new_message.html", context)
-
 
 
 def message_detail(request, id):
@@ -50,22 +48,26 @@ def message_detail(request, id):
 
     prayer_groups = pg_queries.get_all()
     context = {
-        'message': message,
-        'prayer_groups': prayer_groups,
+        "message": message,
+        "prayer_groups": prayer_groups,
     }
 
     # Send messages
-    if request.method == 'POST':
-        checks = request.POST.getlist('groups')
+    if request.method == "POST":
+        checks = request.POST.getlist("groups")
 
         people_set = set()
         # print(people_set)
 
         for group in checks:  # group is a string the name of the group.
-            group_ = pg_queries.get_group_members(group)  # group_ is a queryset of person objects.
+            group_ = pg_queries.get_group_members(
+                group
+            )  # group_ is a queryset of person objects.
             people_set.update(group_)
 
-        sms_message = SMSMessage(body=message.message, contacts=people_set, testing=False)
+        sms_message = SMSMessage(
+            body=message.message, contacts=people_set, testing=False
+        )
         sms_message.send()
 
         # for person in people_set:  # Used a set so to eliminate duplicate messages.
@@ -73,13 +75,12 @@ def message_detail(request, id):
         #     print(f"Last Name: {person.last_name}")
         #     print(f"Ph: {person.phone_number}")
         #     print("\n")
-    return render(request, 'prayer/message_detail.html', context)
+    return render(request, "prayer/message_detail.html", context)
 
 
 @login_required()
 def send_message(request, id: int):
-    """
-    """
+    """ """
     message = PrayerMessageQueries.get_message_by_id(id=id)
     body = message.message
 
@@ -181,5 +182,5 @@ def delete_person(request, person_id: int) -> redirect:
 
 @login_required()
 def permissions(request, id):
-    context = {'form': PermissionsForm()}
-    return render(request, 'prayer/permissions.html', context)
+    context = {"form": PermissionsForm()}
+    return render(request, "prayer/permissions.html", context)

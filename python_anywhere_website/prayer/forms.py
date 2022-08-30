@@ -28,8 +28,7 @@ class NewPersonForm(forms.ModelForm):
 
 
 class NewMessageForm(forms.ModelForm):
-    """
-    """
+    """ """
 
     class Meta:
         model = PrayerMessage
@@ -41,12 +40,11 @@ class NewMessageForm(forms.ModelForm):
 
 
 class PermissionsForm(forms.ModelForm):
-    """
-    """
+    """ """
 
     class Meta:
         model = Permissions
         fields = [
-            'may_send_emails',
-            'may_send_sms',
+            "may_send_emails",
+            "may_send_sms",
         ]

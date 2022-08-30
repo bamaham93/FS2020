@@ -29,6 +29,5 @@ urlpatterns = [
     path("prayer/", include("prayer.urls", namespace="prayer")),
     path("core_app/", include("django.contrib.auth.urls")),
     path("core_app/", include("core_app.urls", namespace="core_app")),
-    path('media/', include('media.urls', namespace="media")),
-
+    path("media/", include("media.urls", namespace="media")),
 ]
