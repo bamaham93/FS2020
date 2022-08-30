@@ -1,4 +1,4 @@
-from credentials.faa import client_id, client_secret
+# from credentials.faa import client_id, client_secret
 import requests
 
 try:
