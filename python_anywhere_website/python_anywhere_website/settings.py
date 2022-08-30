@@ -62,7 +62,7 @@ ROOT_URLCONF = "python_anywhere_website.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["./templates"],
+        "DIRS": ["./templates", "./python_anywhere_website/templates",],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
