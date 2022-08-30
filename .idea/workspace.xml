@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Renamed app &quot;core&quot; to &quot;core_app&quot; to avoid collisions with the default &quot;django.core&quot; module.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Changed the login redirect URL onoce the user has logged in.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
@@ -69,7 +69,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static\img" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver - Shared Local Network">
+  <component name="RunManager" selected="Python.Run Tests">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -220,13 +220,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00033" summary="Moved requirements.txt to project root.">
-      <created>1659412860655</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1659412860655</updated>
     </task>
     <task id="LOCAL-00034" summary="Formatting">
       <created>1659413563167</created>
@@ -564,7 +557,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661843215387</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="Changed the login redirect URL onoce the user has logged in.">
+      <created>1661843790981</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1661843790982</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -591,7 +591,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Adding permissions, privacy policy." />
     <MESSAGE value="Added media app to track movies, dvds, etc." />
     <MESSAGE value="Added pages for each media type." />
     <MESSAGE value="Built out media app." />
@@ -616,7 +615,8 @@
     <MESSAGE value="Added mock_faa_twilio.py to allow for GitHub actions testing." />
     <MESSAGE value="Changes to worspace.xml." />
     <MESSAGE value="Renamed app &quot;core&quot; to &quot;core_app&quot; to avoid collisions with the default &quot;django.core&quot; module." />
-    <option name="LAST_COMMIT_MESSAGE" value="Renamed app &quot;core&quot; to &quot;core_app&quot; to avoid collisions with the default &quot;django.core&quot; module." />
+    <MESSAGE value="Changed the login redirect URL onoce the user has logged in." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed the login redirect URL onoce the user has logged in." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
