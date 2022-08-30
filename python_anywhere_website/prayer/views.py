@@ -21,7 +21,7 @@ def index(request) -> render:
     return render(request, "prayer/index.html", context)
 
 
-@login_required
+@login_required()
 def new_message(request) -> render:
     """
     Create a new message.

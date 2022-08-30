@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "fs2020",
-    "core",
+    "core_app",
     "douglas",
     "resume",
     "prayer",
@@ -142,5 +142,5 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Login, Signup redirects
-LOGIN_REDIRECT_URL = "core:index"
-LOGOUT_REDIRECT_URL = "core:index"
+LOGIN_URL = "login"
+LOGOUT_REDIRECT_URL = "core_app/index"

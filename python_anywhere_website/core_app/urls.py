@@ -2,7 +2,7 @@ from django.urls import path
 from .views import SignUpView
 from . import views
 
-app_name = "core"
+app_name = "core_app"
 
 urlpatterns = [
     path("", views.index, name="index"),

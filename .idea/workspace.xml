@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added mock_faa_twilio.py to allow for GitHub actions testing.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Changes to worspace.xml.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/fs2020/faa/notams.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/fs2020/faa/notams.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/apps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/migrations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/migrations/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/core_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core_app/core_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core_app/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/core/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/core_app/signup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/registration/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/registration/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +84,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\static\img" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Run Tests">
+  <component name="RunManager" selected="Python.Run Server">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -219,20 +235,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00029" summary="Layout changes to prayer:index.">
-      <created>1659409919726</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1659409919726</updated>
-    </task>
-    <task id="LOCAL-00030" summary="Layout changes to prayer:index.">
-      <created>1659409992527</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1659409992527</updated>
     </task>
     <task id="LOCAL-00031" summary="Layout changes to prayer:index.">
       <created>1659412315411</created>
@@ -563,7 +565,21 @@
       <option name="project" value="LOCAL" />
       <updated>1661840652334</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <task id="LOCAL-00078" summary="Added mock_faa_twilio.py to allow for GitHub actions testing.">
+      <created>1661840679202</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1661840679202</updated>
+    </task>
+    <task id="LOCAL-00079" summary="Changes to worspace.xml.">
+      <created>1661840750869</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1661840750869</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -590,7 +606,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added new message form, model, admin registration." />
     <MESSAGE value="Migration file." />
     <MESSAGE value="Adding permissions, privacy policy." />
     <MESSAGE value="Added media app to track movies, dvds, etc." />
@@ -615,7 +630,8 @@
     <MESSAGE value="Trying to fix deployment." />
     <MESSAGE value="Deleted sms_logfile.txt" />
     <MESSAGE value="Added mock_faa_twilio.py to allow for GitHub actions testing." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added mock_faa_twilio.py to allow for GitHub actions testing." />
+    <MESSAGE value="Changes to worspace.xml." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changes to worspace.xml." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

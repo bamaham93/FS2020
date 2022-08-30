@@ -22,13 +22,13 @@ from .views import redirect_home
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", redirect_home),
-    path("home/", include("core.urls", namespace="core")),
+    path("home/", include("core_app.urls", namespace="core_app")),
     path("fs2020/", include("fs2020.urls", namespace="fs2020")),
     path("racing/", include("douglas.urls", namespace="racing")),
     path("resume/", include("resume.urls", namespace="resume")),
     path("prayer/", include("prayer.urls", namespace="prayer")),
-    path("core/", include("django.contrib.auth.urls")),
-    path("core/", include("core.urls", namespace="core")),
+    path("core_app/", include("django.contrib.auth.urls")),
+    path("core_app/", include("core_app.urls", namespace="core_app")),
     path('media/', include('media.urls', namespace="media")),
 
 ]
