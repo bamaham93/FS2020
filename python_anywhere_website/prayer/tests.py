@@ -98,7 +98,6 @@ class TestPrayerModule(TestCase):
         # self.assertContains(response, 'Delete')
 
 
-@tag('forms')
 class TestPrayerForms(TestCase):
     """
     View tests for the prayer module.
@@ -107,7 +106,6 @@ class TestPrayerForms(TestCase):
     client = Client()
 
     @classmethod
-    @tag('forms')
     def setUpClass(cls):
         """
         Inserts at least one item into each of the database tables for testing.
