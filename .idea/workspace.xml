@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Testing for HTTP Proxy on PythonAnywhere.com">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Removing changes for HTTP Proxy.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logic/Messaging/sms.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/sms.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -221,13 +222,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00040" summary="Changed to site index to inherit from core_base.html">
-      <created>1659464241616</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1659464241616</updated>
     </task>
     <task id="LOCAL-00041" summary="Style changes to navbar.">
       <created>1659464600471</created>
@@ -565,7 +559,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661854695208</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="Removing changes for HTTP Proxy.">
+      <created>1661854758896</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1661854758896</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -592,7 +593,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed failing test." />
     <MESSAGE value="Pip freeze new requirements to requirements.txt" />
     <MESSAGE value="Trying to fix testing." />
     <MESSAGE value="SMS from previous attempts." />
@@ -617,7 +617,8 @@
     <MESSAGE value="Added tests, formatted." />
     <MESSAGE value="Added tests." />
     <MESSAGE value="Testing for HTTP Proxy on PythonAnywhere.com" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testing for HTTP Proxy on PythonAnywhere.com" />
+    <MESSAGE value="Removing changes for HTTP Proxy." />
+    <option name="LAST_COMMIT_MESSAGE" value="Removing changes for HTTP Proxy." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

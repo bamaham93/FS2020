@@ -74,7 +74,7 @@ class SMSMessage:
             message = self.client.messages.create(
                 body=f"{message_body}",
                 from_="+16412126207",
-                to=f"{phone_number}",
+                to=f"{str(phone_number)}",
             )
         except TwilioRestException as e:
             logging.WARNING(f"Message to {phone_number} failed to send.{e}")
