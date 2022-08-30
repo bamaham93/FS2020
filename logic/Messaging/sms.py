@@ -2,12 +2,12 @@
 Functions related to sending text messages.
 """
 
-from twilio.rest import Client
 import logging
-import os
-from datetime import datetime
-from typing import List, Tuple, Set
+from typing import Set
+
 from prayer.models import Person
+from twilio.rest import Client
+
 from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
@@ -123,6 +123,6 @@ if __name__ == "__main__":
     # message = SMSMessage(body=text, contacts=peoples, testing=False)
     # message.send()
 
-    from logic.queries import PrayerGroupQueries, PersonQueries
+    pass
     # result = PrayerGroupQueries.get_group_members(name='CBC Members')
     # print(result)
