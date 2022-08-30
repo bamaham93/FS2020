@@ -8,7 +8,13 @@ from typing import Set
 from prayer.models import Person
 from twilio.rest import Client
 
-from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+try:
+    from credentials.twilio import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+except ModuleNotFoundError:
+    from credentials.mock_faa_twilio import (
+        TWILIO_ACCOUNT_SID,
+        TWILIO_AUTH_TOKEN,
+         )
 
 logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
 
