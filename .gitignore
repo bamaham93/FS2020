@@ -10,3 +10,6 @@ credentials
 faa.py
 env.py
 twilio.py
+
+#
+sms_logfile.txt
