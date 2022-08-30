@@ -3,13 +3,10 @@ venv
 
 
 # Credential Files
-credentials/
-credentials
-/credentials
-
-faa.py
-env.py
+credentials/faa.py
+credentials/twilio.py
 twilio.py
+env.py
 
 #
 sms_logfile.txt
