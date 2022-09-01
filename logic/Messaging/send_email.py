@@ -7,11 +7,11 @@ import logging
 import os
 
 from datetime.datetime import now
-from dotenv import load_env
+from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-load_env()
+load_dotenv()
 
 
 def _send_email(to_address: str, subject: str, body: str):
