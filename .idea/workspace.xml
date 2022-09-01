@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Black formatted project.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Adding .env to project for secrets and configuration.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logic/Messaging/send_email.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/send_email.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -227,13 +225,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00044" summary="Added new message form, model, admin registration.">
-      <created>1659467147688</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1659467147688</updated>
     </task>
     <task id="LOCAL-00045" summary="Migration file.">
       <created>1659467172124</created>
@@ -571,7 +562,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661873497452</updated>
     </task>
-    <option name="localTasksCounter" value="93" />
+    <task id="LOCAL-00093" summary="Adding .env to project for secrets and configuration.">
+      <created>1662013575163</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1662013575163</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -598,7 +596,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="SMS from previous attempts." />
     <MESSAGE value="Added form to send messages by group." />
     <MESSAGE value="Form checkboxes are being processed properly." />
     <MESSAGE value="Properly retreiving group members." />
@@ -623,6 +620,7 @@
     <MESSAGE value="Removing changes for HTTP Proxy." />
     <MESSAGE value="Fixed Twilio SMS in production." />
     <MESSAGE value="Black formatted project." />
-    <option name="LAST_COMMIT_MESSAGE" value="Black formatted project." />
+    <MESSAGE value="Adding .env to project for secrets and configuration." />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding .env to project for secrets and configuration." />
   </component>
 </project>
