@@ -4,13 +4,12 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added send_email.py contents, configured to use API call.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Adding messaging messenger.">
+      <change afterPath="$PROJECT_DIR$/logic/Messaging/api_status_check.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logic/Messaging/tests.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logic/Messaging/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/Messaging/manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/permissions.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/permissions.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logic/queries.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/queries.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/templates/prayer/prayer_base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -234,13 +233,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00047" summary="Added media app to track movies, dvds, etc.">
-      <created>1659992407921</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1659992407921</updated>
     </task>
     <task id="LOCAL-00048" summary="Added pages for each media type.">
       <created>1659996277110</created>
@@ -578,7 +570,14 @@
       <option name="project" value="LOCAL" />
       <updated>1662014195936</updated>
     </task>
-    <option name="localTasksCounter" value="96" />
+    <task id="LOCAL-00096" summary="Adding messaging messenger.">
+      <created>1662136895041</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1662136895041</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -605,7 +604,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Form checkboxes are being processed properly." />
     <MESSAGE value="Properly retreiving group members." />
     <MESSAGE value="Removed unused DB query that caused tests to fail.&#10;&#10;Added login_required to all pages except index in this app." />
     <MESSAGE value="Added untracked files." />
@@ -630,6 +628,7 @@
     <MESSAGE value="Black formatted project." />
     <MESSAGE value="Adding .env to project for secrets and configuration." />
     <MESSAGE value="Added send_email.py contents, configured to use API call." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added send_email.py contents, configured to use API call." />
+    <MESSAGE value="Adding messaging messenger." />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding messaging messenger." />
   </component>
 </project>

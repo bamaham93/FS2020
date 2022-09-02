@@ -115,7 +115,8 @@ class PersonQueries:
     """
 
     def get_all(self):
-        """ """
+        """
+        """
         result = Person.objects.all()
         return result
 
