@@ -181,6 +181,6 @@ def delete_person(request, person_id: int) -> redirect:
 
 
 @login_required()
-def permissions(request, id):
+def permissions(request, id: int):
     context = {"form": PermissionsForm()}
     return render(request, "prayer/permissions.html", context)

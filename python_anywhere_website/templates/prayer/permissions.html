@@ -5,18 +5,15 @@
 {% block section1 %}
     <h1>Permissions</h1>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <button type="button" class="btn btn-outline-primary m-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
       Our Privacy Policy
     </button>
 
-    <form action="#" method="POST">
+    <form class="m-3 border p-2 rounded" action="#" method="POST">
         {% csrf_token %}
         {{ form | crispy }}
         <input type="submit" value="Submit">
     </form>
-
-
-
 
 
 <!-- Modal -->
