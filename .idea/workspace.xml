@@ -6,9 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Created Finance app.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logic/queries.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic/queries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/templates/finance/finance_nav.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/templates/finance/finance_nav.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/templates/finance/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/templates/finance/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/templates/finance_base.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/templates/finance/finance_base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,11 +80,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\finance\templates\finance" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\finance\templates" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\logic" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website" />
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website\templates\prayer\Messaging" />
-      <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020" />
     </key>
   </component>
   <component name="RunManager" selected="Python.Runserver - Shared Local Network">
@@ -231,13 +238,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00050" summary="Layout and styling tweaks.">
-      <created>1660020785481</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1660020785481</updated>
     </task>
     <task id="LOCAL-00051" summary="Fixed failing test.">
       <created>1660020840517</created>
@@ -575,7 +575,14 @@
       <option name="project" value="LOCAL" />
       <updated>1663439283324</updated>
     </task>
-    <option name="localTasksCounter" value="99" />
+    <task id="LOCAL-00099" summary="Created Finance app.">
+      <created>1663441259100</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1663441259100</updated>
+    </task>
+    <option name="localTasksCounter" value="100" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -628,5 +635,16 @@
     <MESSAGE value="Added flags for messaging." />
     <MESSAGE value="Created Finance app." />
     <option name="LAST_COMMIT_MESSAGE" value="Created Finance app." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/python_anywhere_website/douglas/views.py</url>
+          <line>4</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

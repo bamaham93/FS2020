@@ -6,6 +6,12 @@ class Category(models.Model):
     """
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
 class Transaction(models.Model):
     """
     """
@@ -15,3 +21,6 @@ class Transaction(models.Model):
     is_income = models.BooleanField()
     is_reimbursement = models.BooleanField()
     notes = models.TextField()
+
+    def __str__(self):
+        return f"{self.amount}"

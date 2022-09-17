@@ -5,10 +5,13 @@ The purpose of centralizing the queries like this is to allow a query to be writ
 once, rather than reimplementing it in each view that requires it. This speeds development, as well as allowing for
 better quality testing.
 """
+import datetime
 
 from douglas.models import Driver, Race, League
 from resume.models import Job
 from prayer.models import Person, PrayerGroup, PrayerMessage
+from finance.models import Transaction, Category
+from django.shortcuts import get_object_or_404
 
 # from django.contrib.auth.models import User, Group
 
@@ -157,3 +160,25 @@ class PrayerMessageQueries:
         Gets single messages by ID.
         """
         return PrayerMessage.objects.get(id=id)
+
+
+class TransactionQueries:
+    """
+    """
+
+    def get_all(self):
+        return Transaction.objects.all()
+
+    def get_by_month(self, month: int, year: int):
+        """
+        """
+        if month and year:
+            return Transaction.objects.filter(
+                date__year=year, date__month=month
+            )
+            pass
+        else:  # If a date is not specified, use current month & year
+            return Transaction.objects.filter(
+                date__year=datetime.date.today().year).filter(
+                date__month=datetime.date.today().month
+            )
