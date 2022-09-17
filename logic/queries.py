@@ -118,8 +118,7 @@ class PersonQueries:
     """
 
     def get_all(self):
-        """
-        """
+        """ """
         result = Person.objects.all()
         return result
 
@@ -163,22 +162,17 @@ class PrayerMessageQueries:
 
 
 class TransactionQueries:
-    """
-    """
+    """ """
 
     def get_all(self):
         return Transaction.objects.all()
 
     def get_by_month(self, month: int, year: int):
-        """
-        """
+        """ """
         if month and year:
-            return Transaction.objects.filter(
-                date__year=year, date__month=month
-            )
+            return Transaction.objects.filter(date__year=year, date__month=month)
             pass
         else:  # If a date is not specified, use current month & year
             return Transaction.objects.filter(
-                date__year=datetime.date.today().year).filter(
-                date__month=datetime.date.today().month
-            )
+                date__year=datetime.date.today().year
+            ).filter(date__month=datetime.date.today().month)

@@ -6,16 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('media', '0004_alter_media_subtitle'),
+        ("media", "0004_alter_media_subtitle"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='mediaformat',
-            options={'ordering': ['name']},
+            name="mediaformat",
+            options={"ordering": ["name"]},
         ),
         migrations.AlterModelOptions(
-            name='mediagenre',
-            options={'ordering': ['name']},
+            name="mediagenre",
+            options={"ordering": ["name"]},
         ),
     ]

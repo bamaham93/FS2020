@@ -8,12 +8,10 @@ from typing import Set
 
 
 class MessageManager:
-    """
-    """
+    """ """
 
     def __init__(self, people_set: Set):
-        """
-        """
+        """ """
         self.people_set = people_set
 
         self.people_set.map(self._set_flags())
@@ -32,18 +30,15 @@ class MessageManager:
         self.status_list = status_list
 
     def _send_sms(self, contact_set: Set[People]):
-        """
-        """
+        """ """
 
     def _send_email(self, contact_set: Set[People]):
-        """
-        """
+        """ """
         for person in self.people_set:
             person
 
     @staticmethod
     def _set_flags(person):
-        """
-        """
+        """ """
         person.sent_email = False
         person.sent_sms = False

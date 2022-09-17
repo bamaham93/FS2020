@@ -19,12 +19,13 @@ def _send_email(to_address: str, subject: str, body: str):
     Note that body can be HTML stlyed.
     """
     message = Mail(
-        from_email='info@jacob-mcgowin.us',
-        to_emails=f'{to_address}',
-        subject=f'{subject}',
-        html_content=f'{body}')
+        from_email="info@jacob-mcgowin.us",
+        to_emails=f"{to_address}",
+        subject=f"{subject}",
+        html_content=f"{body}",
+    )
     try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
