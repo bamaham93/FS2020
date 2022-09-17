@@ -69,6 +69,7 @@ TEMPLATES = [
         "DIRS": [
             "./templates",
             "./python_anywhere_website/templates",
+            "./finance/templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
