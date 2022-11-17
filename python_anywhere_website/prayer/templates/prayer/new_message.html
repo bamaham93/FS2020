@@ -2,6 +2,8 @@
 
 {% load crispy_forms_tags %}
 
+{% include 'messages.html' %}
+
 {% block section1 %}
     <h1>Messages</h1>
     <div class="container">
@@ -38,7 +40,7 @@
         <hr>
         <h2>Send this message to:</h2>
         <div class="col">
-        <form action="#" method="POST">
+        <form action="{% url 'prayer:message-detail' message.id%}" method="POST">
             {% csrf_token %}
                 {% for group in prayer_groups %}
                     <div class="container">

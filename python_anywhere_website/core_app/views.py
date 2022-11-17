@@ -11,6 +11,11 @@ def index(request):
     context = {}
     return render(request, "core_app/index.html", context)
 
+def profile(request):
+    """
+    """
+    return render(request, "Hello.")
+
 
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm

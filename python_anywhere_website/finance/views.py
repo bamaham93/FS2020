@@ -20,9 +20,7 @@ def transactions_by_month(request, month: int, year: int):
     this_year = date.today().year
 
     context = {
-        "transactions": transaction_query.get_by_month(
-            month=month, year=year
-        ),
+        "transactions": transaction_query.get_by_month(month=month, year=year),
         "year": this_year,
         "month": month,
     }
