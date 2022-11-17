@@ -26,9 +26,14 @@ def new_message(request) -> render:
     Create a new message.
     """
     msg_query = PrayerMessageQueries()
+    pg_queries = logic.queries.PrayerGroupQueries()
+
+    prayer_groups = pg_queries.get_all()
+
     context = {
         "form": NewMessageForm(),
         "messages": reversed(msg_query.get_all_messages()),
+        "prayer_groups": prayer_groups,
     }
     if request.method == "POST":
         form = NewMessageForm(request.POST)
@@ -47,6 +52,7 @@ def message_detail(request, id):
     pg_queries = logic.queries.PrayerGroupQueries()
 
     prayer_groups = pg_queries.get_all()
+
     context = {
         "message": message,
         "prayer_groups": prayer_groups,
