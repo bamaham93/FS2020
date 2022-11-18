@@ -4,24 +4,8 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added static config lines to main settings.py.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core_app/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/douglas/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/fs2020/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/manage.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/manage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/media/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/asgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/main_app/asgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/example_env" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/main_app/example_env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/main_app/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/main_app/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/main_app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/wsgi.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/main_app/wsgi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/resume/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/templates/__init__.py" beforeDir="false" />
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Changed config to allow tests to run.">
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/main_app/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/main_app/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,13 +228,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00058" summary="Removed unused DB query that caused tests to fail.&#10;&#10;Added login_required to all pages except index in this app.">
-      <created>1660677883465</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1660677883465</updated>
     </task>
     <task id="LOCAL-00059" summary="Added untracked files.">
       <created>1660677914556</created>
@@ -588,7 +565,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668800147594</updated>
     </task>
-    <option name="localTasksCounter" value="107" />
+    <task id="LOCAL-00107" summary="Changed config to allow tests to run.">
+      <created>1668801680862</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
+      <option name="project" value="LOCAL" />
+      <updated>1668801680862</updated>
+    </task>
+    <option name="localTasksCounter" value="108" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -615,7 +599,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added new creds." />
     <MESSAGE value="Changed creds around." />
     <MESSAGE value="Optimized imports." />
     <MESSAGE value="formatting" />
@@ -640,7 +623,8 @@
     <MESSAGE value="Updates to Finance app." />
     <MESSAGE value="Added Send buttons to the primary Messages page." />
     <MESSAGE value="Added static config lines to main settings.py." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added static config lines to main settings.py." />
+    <MESSAGE value="Changed config to allow tests to run." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed config to allow tests to run." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
