@@ -8,10 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/core_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/finance/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/finance/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/templates/prayer/new_message.html" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/templates/prayer/new_message.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -235,13 +232,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00055" summary="Added form to send messages by group.">
-      <created>1660673701735</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1660673701735</updated>
     </task>
     <task id="LOCAL-00056" summary="Form checkboxes are being processed properly.">
       <created>1660676158942</created>
@@ -579,7 +569,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668725088115</updated>
     </task>
-    <option name="localTasksCounter" value="104" />
+    <task id="LOCAL-00104" summary="Added Send buttons to the primary Messages page.">
+      <created>1668727269521</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1668727269521</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">

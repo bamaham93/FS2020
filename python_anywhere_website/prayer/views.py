@@ -39,12 +39,14 @@ def new_message(request) -> render:
         form = NewMessageForm(request.POST)
         form.save()
         messages.success(request, "Your message was saved!")
+        redirect("prayer:new_message")
     return render(request, "prayer/new_message.html", context)
 
 
 def message_detail(request, id):
     """
     See message details, send to prayer groups.
+    Todo: Move code pertaining to sending sms messages to the function below.
     """
 
     pm_queries = logic.queries.PrayerMessageQueries()
@@ -86,7 +88,10 @@ def message_detail(request, id):
 
 @login_required()
 def send_message(request, id: int):
-    """ """
+    """
+    Todo: Move code related to sending text messages into this function
+    instead of handling it in the views.
+    """
     message = PrayerMessageQueries.get_message_by_id(id=id)
     body = message.message
 
