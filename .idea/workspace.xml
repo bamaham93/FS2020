@@ -4,12 +4,9 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added Send buttons to the primary Messages page.">
+    <list default="true" id="9fc0936a-5071-4e9b-a119-7a41976e33ab" name="Changes" comment="Added static config lines to main settings.py.">
+      <change beforePath="$PROJECT_DIR$/.git/hooks/pre-push" beforeDir="false" afterPath="$PROJECT_DIR$/.git/hooks/pre-push" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/core_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/core_app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/prayer/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/python_anywhere_website/python_anywhere_website/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +78,7 @@
       <recent name="C:\Users\bamah\Documents\VS Code Projects\Python Projects\FS2020\python_anywhere_website" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Runserver - Shared Local Network">
+  <component name="RunManager" selected="Python.Run Tests">
     <configuration name="Database Migrate" type="PythonConfigurationType" factoryName="Python">
       <module name="FS2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -232,13 +229,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1657760878048</updated>
-    </task>
-    <task id="LOCAL-00056" summary="Form checkboxes are being processed properly.">
-      <created>1660676158942</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1660676158942</updated>
     </task>
     <task id="LOCAL-00057" summary="Properly retreiving group members.">
       <created>1660676307490</created>
@@ -576,7 +566,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668727269521</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="Added static config lines to main settings.py.">
+      <created>1668799475122</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1668799475122</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -603,7 +600,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added creds files to .gitignore." />
     <MESSAGE value="Added new creds." />
     <MESSAGE value="Changed creds around." />
     <MESSAGE value="Optimized imports." />
@@ -628,7 +624,8 @@
     <MESSAGE value="Created Finance app." />
     <MESSAGE value="Updates to Finance app." />
     <MESSAGE value="Added Send buttons to the primary Messages page." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Send buttons to the primary Messages page." />
+    <MESSAGE value="Added static config lines to main settings.py." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added static config lines to main settings.py." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
