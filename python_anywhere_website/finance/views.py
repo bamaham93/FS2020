@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from datetime import date
-from logic.queries import TransactionQueries
+
+try:
+    from logic.queries import TransactionQueries
+except ModuleNotFoundError:
+    pass
 
 
 # Create your views here.

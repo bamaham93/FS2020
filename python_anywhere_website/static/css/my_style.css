@@ -52,7 +52,8 @@ img {
 }
 
 #fs2020-index-header {
-    color: lightgrey;
+    color: charcoalgrey;
+    background-color: lightgrey, .5;
 }
 
 #flights-page-header {
@@ -79,4 +80,8 @@ img {
 #contact-form-container {
     background-color: lightgrey;
     border-radius: 20px;
+}
+
+#flight-card {
+    background-color: lightgrey;
 }

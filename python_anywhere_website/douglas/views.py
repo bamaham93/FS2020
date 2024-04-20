@@ -4,8 +4,12 @@
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from logic.queries import DriverQueries, RaceQueries, LeagueQueries
-from logic.users_groups import is_group
+try:
+    from logic.queries import DriverQueries, RaceQueries, LeagueQueries
+    from logic.users_groups import is_group
+except ModuleNotFoundError:
+    pass
+
 
 
 # Create your views here.

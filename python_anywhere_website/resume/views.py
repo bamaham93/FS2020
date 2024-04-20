@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from .models import Job, Technology
 from .forms import ContactMeForm
-from logic.queries import JobQueries
-
+try:
+    from logic.queries import JobQueries
+except ModuleNotFoundError:
+    pass
 
 # Create your views here.
 def index(request):
