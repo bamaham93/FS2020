@@ -52,8 +52,9 @@ img {
 }
 
 #fs2020-index-header {
+    
     color: charcoalgrey;
-    background-color: lightgrey, .5;
+    background-color: rgb(113, 113, 113, .50);
 }
 
 #flights-page-header {
