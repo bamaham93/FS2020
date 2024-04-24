@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from media.models import Media, MediaFormat, MediaType
+from media.models import Media, MediaFormat, MediaType, AddMediaForm
 
 
 # Create your views here.
@@ -17,6 +17,15 @@ def movies(request):
         # 'genres': movies.genres,
     }
     return render(request, "media/movies.html", context)
+
+def add_media(request):
+    """
+    """
+    add_media_form = AddMediaForm()
+    context = {
+        'add_media_form': add_media_form
+    }
+    return render(request, "media/add_media.html", context)
 
 
 def books(request):

@@ -14,4 +14,5 @@ urlpatterns = [
     path("youtube", views.youtube, name="youtube"),
     path("digital-dl", views.digital_dl, name="digital_dl"),
     path("vhs", views.vhs, name="vhs"),
+    path("add_media", views.add_media, name="add_media"),
 ]

@@ -5,6 +5,9 @@ https://www.studiobinder.com/blog/movie-genres-list
 """
 
 from django.db import models
+from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Field, Fieldset
 
 
 # Create your models here.
@@ -71,6 +74,7 @@ class MediaLocation(models.Model):
 class Media(models.Model):
     title = models.CharField(max_length=100)
     subtitle = models.CharField(max_length=100, blank=True, null=True)
+    image = models.ImageField(upload_to='images', blank=True)
     description = models.TextField(blank=True, null=True)
     format = models.ForeignKey(MediaFormat, on_delete=models.CASCADE)
     type = models.ForeignKey(MediaType, on_delete=models.CASCADE, blank=True, null=True)
@@ -90,3 +94,21 @@ class Media(models.Model):
 
     class Meta:
         verbose_name_plural = "media"
+
+
+class AddMediaForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        """
+        """
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-mediaForm'
+        self.helper.form_class = 'blueforms'
+        self.helper.form_method = 'POST'
+        self.helper.form_action = 'submit'
+
+        self.helper.add_input(Fieldset('Hello, {{ username }}'))
+        self.helper.add_input(Field('name', 'name'))
+        self.helper.add_input(Field('isbn', 'isbn'))
+        self.helper.add_input(Submit('submit', 'Submit'))
