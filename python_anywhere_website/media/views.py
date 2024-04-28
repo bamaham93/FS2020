@@ -2,6 +2,7 @@ from django.shortcuts import render
 from media.models import Media, MediaFormat, MediaType
 from media.forms import AddMediaForm
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 def index(request):
@@ -28,6 +29,15 @@ def add_media(request):
     context = {
         'add_media_form': add_media_form
     }
+
+    if request.method == "POST":
+        print("Posted!")
+        form = AddMediaForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect("/media/add_media")
+    elif request.method == "GET":
+        print("Got!")
+
     return render(request, "media/add_media.html", context)
 
 
