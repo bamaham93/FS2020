@@ -14,6 +14,11 @@ class TestMediaViews(TestCase):
         # To check pages with forms
         self.c = Client()
 
+
+    def setup_login(self):
+        """
+        Sets up login only when required. Makes the tests much more performant.
+        """
         # To login_required pages; this user not logged in.
         test_user1 = User.objects.create_user(username='testuser1', password='1X<ISRUkw+tuK')
         self.jim = Client(test_user1)
@@ -22,6 +27,7 @@ class TestMediaViews(TestCase):
         test_user2 = User.objects.create_user(username='testuser2', password='2HJ1vRV0Z&3iD')
         self.bob = Client()
         self.bob.force_login(test_user2)
+
 
     def test_media_index(self):
         """
@@ -49,6 +55,7 @@ class TestMediaViews(TestCase):
         """
         Tests with and without login.
         """
+        self.setup_login()
         # Check page returns 302 if not logged in.
         response = self.c.get('/media/add_media')
         self.assertEqual(response.status_code, 302)
@@ -63,6 +70,7 @@ class TestMediaViews(TestCase):
     def test_add_media_form(self):
         """
         """
+        self.setup_login()
         add_media_form = AddMediaForm()
         response = self.bob.post("/media/add_media")
 
