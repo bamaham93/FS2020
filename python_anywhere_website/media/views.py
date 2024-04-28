@@ -105,3 +105,4 @@ def sorted_by(request):
         "media_query": Media.objects.all()
     }
     return render(request, 'media/sorted_by.html', context)
+
