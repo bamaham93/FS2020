@@ -4,6 +4,7 @@ from media.forms import AddMediaForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 
+
 # Create your views here.
 def index(request):
     """ """
@@ -48,14 +49,16 @@ def books(request):
 
 
 def cds(request):
-    """ """
+    """
+    """
     cds = Media.objects.filter(format__name="CD")
     context = {"cds": cds}
     return render(request, "media/cds.html", context)
 
 
 def dvds(request):
-    """ """
+    """
+    """
     dvds = Media.objects.filter(format__name="DVD")
     context = {
         "dvds": dvds,
@@ -64,7 +67,8 @@ def dvds(request):
 
 
 def amazon(request):
-    """ """
+    """
+    """
     videos = Media.objects.filter(format__name="Amazon")
     context = {"videos": videos}
     return render(request, "media/amazon.html", context)
@@ -79,17 +83,20 @@ def youtube(request):
 
 
 def digital_dl(request):
-    """ """
+    """
+    """
     videos = Media.objects.filter(format__name="Digital Download")
     context = {"videos": videos}
     return render(request, "media/digital_dl.html", context)
 
 
 def vhs(request):
-    """ """
+    """
+    """
     vhs_s = Media.objects.filter(format__name="VHS")
     context = {"videos": vhs_s}
     return render(request, "media/vhs.html", context)
+
 
 def sorted_by(request):
     """
