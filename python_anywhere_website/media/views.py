@@ -7,13 +7,15 @@ from django.http import HttpResponseRedirect
 
 # Create your views here.
 def index(request):
-    """ """
+    """
+    """
     context = {}
     return render(request, "media/index.html", context)
 
 
 def movies(request):
-    """ """
+    """
+    """
     movies = Media.objects.filter(type__name="Movie")
     context = {
         "movies": movies,
