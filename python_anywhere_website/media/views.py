@@ -4,6 +4,7 @@ from media.forms import AddMediaForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 
+
 # Create your views here.
 def index(request):
     """
@@ -97,6 +98,7 @@ def vhs(request):
     vhs_s = Media.objects.filter(format__name="VHS")
     context = {"videos": vhs_s}
     return render(request, "media/vhs.html", context)
+
 
 def sorted_by(request):
     """
