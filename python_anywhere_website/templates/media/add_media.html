@@ -13,90 +13,11 @@
         <h5 class="card-title">Movies</h5>
         <h6 class="card-subtitle mb-2 text-muted">Add a movie to the database.</h6>
         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <form>
-            {% crispy add_media_form %}
+        <form action="#" class="media-form" method="POST">
+            {% csrf_token %}
+            {% crispy add_media_form add_media_form.helper %}
         </form>
         <a href="#" class="card-link">Card link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">Books</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add a book to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">Movies</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add a movie to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">CDs</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add a CD to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">DVDs</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add a DVD to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">Amazon</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add ? to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">YouTube</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add a video to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">Digital Download</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add a media download to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
-    </div>
-</div>
-
-<div class="card m-2">
-    <div class="card-body">
-        <h5 class="card-title">VHS</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Add a VHS tape to the database.</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
     </div>
 </div>
 

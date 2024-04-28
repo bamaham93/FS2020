@@ -1,0 +1,10 @@
+{% extends 'media/media_base.html' %}
+
+{% block section1 %}
+<h1>Sorted</h1>
+
+{% for i in media %}
+    <h2>{{ i }}</h2>
+{% endfor %}
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from media.models import Media, MediaFormat, MediaType, AddMediaForm
-
+from media.models import Media, MediaFormat, MediaType
+from media.forms import AddMediaForm
 
 # Create your views here.
 def index(request):
@@ -17,6 +17,7 @@ def movies(request):
         # 'genres': movies.genres,
     }
     return render(request, "media/movies.html", context)
+
 
 def add_media(request):
     """
@@ -77,3 +78,11 @@ def vhs(request):
     vhs_s = Media.objects.filter(format__name="VHS")
     context = {"videos": vhs_s}
     return render(request, "media/vhs.html", context)
+
+def sorted_by(request):
+    """
+    """
+    context = {
+        "media_query": Media.objects.all()
+    }
+    return render(request, 'media/sorted_by.html', context)

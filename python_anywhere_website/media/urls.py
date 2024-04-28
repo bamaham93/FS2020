@@ -15,4 +15,5 @@ urlpatterns = [
     path("digital-dl", views.digital_dl, name="digital_dl"),
     path("vhs", views.vhs, name="vhs"),
     path("add_media", views.add_media, name="add_media"),
+    path('sorted_by', views.sorted_by, name="sorted_by"),
 ]
