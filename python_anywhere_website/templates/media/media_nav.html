@@ -1,6 +1,9 @@
 <ul class="nav nav-pills nav-fill bg-dark">
-    <li class="nav-item btn-light btn-light">
-        <a class="nav-link" href="{% url 'media:index' %}">Media Home</a>
+    <li class="nav-item btn-light">
+        <a href="{% url 'core_app:index' %}" class="nav-link">Home</a>
+    </li>
+    <li class="nav-item btn-light">
+        <a class="nav-link" href="{% url 'media:index' %}">Media</a>
     </li>
     <li class="nav-item btn-light">
         <a class="nav-link" href="{% url 'media:movies' %}">Movies</a>
