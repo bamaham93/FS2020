@@ -13,9 +13,16 @@
         <h5 class="card-title">Add Media</h5>
         <h6 class="card-subtitle mb-2 text-muted">Add a movie to the database.</h6>
         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <form action="#" class="form media-form" method="POST">
+        <form action="{% url 'media:add_media' %}" class="form media-form" method="POST">
             {% csrf_token %}
-            {{ add_media_form.as_p }}
+            <div class="form-control m-2">
+            {% for field in add_media_form %}
+                <div class="">{{ field.errors }}</div>
+                <div class="">{{ field.label_tag }}  {{ field }}</div>
+                <br>
+            {% endfor %}
+                <input type="submit" value="Add">
+            </div>
         </form>
         <a href="#" class="card-link">Card link</a>
     </div>
