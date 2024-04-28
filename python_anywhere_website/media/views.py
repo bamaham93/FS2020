@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from media.models import Media, MediaFormat, MediaType
 from media.forms import AddMediaForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -19,6 +20,7 @@ def movies(request):
     return render(request, "media/movies.html", context)
 
 
+@login_required
 def add_media(request):
     """
     """

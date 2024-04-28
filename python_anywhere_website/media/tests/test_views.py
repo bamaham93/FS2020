@@ -1,4 +1,7 @@
 from django.test import TestCase, Client
+from media.forms import AddMediaForm
+from django.contrib.auth.models import User
+
 
 # Create your tests here.
 class TestMediaViews(TestCase):
@@ -8,7 +11,17 @@ class TestMediaViews(TestCase):
     def setUp(self):
         """
         """
-        self.c = Client(enforce_csrf_checks=True)
+        # To check pages with forms
+        self.c = Client()
+
+        # To login_required pages; this user not logged in.
+        test_user1 = User.objects.create_user(username='testuser1', password='1X<ISRUkw+tuK')
+        self.jim = Client(test_user1)
+
+        # To check login_required_pages; this user logged in.
+        test_user2 = User.objects.create_user(username='testuser2', password='2HJ1vRV0Z&3iD')
+        self.bob = Client()
+        self.bob.force_login(test_user2)
 
     def test_media_index(self):
         """
@@ -34,14 +47,33 @@ class TestMediaViews(TestCase):
 
     def test_add_media(self):
         """
+        Tests with and without login.
         """
-        # Check page returns OK.
+        # Check page returns 302 if not logged in.
         response = self.c.get('/media/add_media')
+        self.assertEqual(response.status_code, 302)
+
+        # Check login_required
+        response1 = self.bob.get('/media/add_media')
+        self.assertEqual(response1.status_code, 200)
+
+        self.assertTemplateUsed(response1, 'media/media_base.html')
+        self.assertTemplateUsed(response1, 'media/add_media.html')
+
+    def test_add_media_form(self):
+        """
+        """
+        add_media_form = AddMediaForm()
+        response = self.bob.post("/media/add_media")
+
         self.assertEqual(response.status_code, 200)
 
-        # Test Templates used
-        self.assertTemplateUsed(response, "media/media_base.html")
-        self.assertTemplateUsed(response, "media/add_media.html")
+    def test_add_media_templates(self):
+        """
+        """
+        response = self.c.get("/media/add-media")
+        # self.assertTemplateUsed(response, "media/media_base.html")
+        # self.assertTemplateUsed(response, "media/add_media.html")
 
     def test_books(self):
         """
