@@ -36,8 +36,8 @@ def add_media(request):
         if form.is_valid():
             return HttpResponseRedirect("/media/add_media")
     elif request.method == "GET":
-        # print("Got!")
-
+        # print('Got')
+        pass
     return render(request, "media/add_media.html", context)
 
 
