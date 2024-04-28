@@ -31,12 +31,12 @@ def add_media(request):
     }
 
     if request.method == "POST":
-        print("Posted!")
+        # print("Posted!")
         form = AddMediaForm(request.POST)
         if form.is_valid():
             return HttpResponseRedirect("/media/add_media")
     elif request.method == "GET":
-        print("Got!")
+        # print("Got!")
 
     return render(request, "media/add_media.html", context)
 
