@@ -2,6 +2,35 @@
 
 This guide explains how to import KJV Bible text into the application.
 
+## Quick Start (Easiest Way)
+
+We've provided helper scripts to download and import the complete KJV Bible in one command:
+
+### Option 1: Bash Script
+```bash
+cd python_anywhere_website
+./download_and_import_kjv.sh
+```
+
+### Option 2: Python Script
+```bash
+cd python_anywhere_website
+python download_and_import_kjv.py
+```
+
+Both scripts will:
+1. Download the KJV text from Project Gutenberg
+2. Prompt you to clear existing data (optional)
+3. Import all 66 books and ~31,000 verses (takes 2-5 minutes)
+
+That's it! The Bible is now ready to browse at `/bible/`
+
+---
+
+## Manual Import (Advanced Users)
+
+If you prefer to do it manually or customize the process:
+
 ## Import Command
 
 ```bash
