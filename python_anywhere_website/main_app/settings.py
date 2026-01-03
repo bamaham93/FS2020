@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "prayer",
     "crispy_forms",
     "crispy_bootstrap5",
-    "media",
+    "media_app",
     "finance",
 ]
 
