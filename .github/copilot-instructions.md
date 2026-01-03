@@ -63,7 +63,7 @@ A PR is merge-ready when ALL of the following criteria are met:
 
 ## Project-Specific Notes
 - This is a Django 5.0.4 project
-- The project includes multiple apps: resume, media, fs2020, finance, prayer, douglas, main_app, core_app
+- The project includes multiple apps: resume, media, media_app, fs2020, finance, prayer, douglas, main_app, core_app
 - SQLite is used for the database
 - The project is deployed to PythonAnywhere
 - CI/CD runs on GitHub Actions (see `.github/workflows/django.yml`)
