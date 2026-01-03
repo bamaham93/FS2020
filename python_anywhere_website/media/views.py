@@ -12,7 +12,17 @@ import os
 def index(request):
     """
     """
-    context = {}
+    # Counts by type/format and latest items for a richer index page
+    types = MediaType.objects.all()
+    formats = MediaFormat.objects.all()
+    latest = Media.objects.order_by('-id')[:6]
+    total = Media.objects.count()
+    context = {
+        "types": types,
+        "formats": formats,
+        "latest": latest,
+        "total": total,
+    }
     return render(request, "media/index.html", context)
 
 
@@ -300,8 +310,42 @@ def vhs(request):
 def sorted_by(request):
     """
     """
+    media_qs = Media.objects.all()
+    fmt = request.GET.get('format')
+    typ = request.GET.get('type')
+    if fmt:
+        media_qs = media_qs.filter(format__name=fmt)
+    if typ:
+        media_qs = media_qs.filter(type__name=typ)
+    # support genre filter by name
+    genre_name = request.GET.get('genre')
+    if genre_name:
+        media_qs = media_qs.filter(genre__name=genre_name)
     context = {
-        "media_query": Media.objects.all()
+        "media_query": media_qs,
+        "filter_format": fmt,
+        "filter_type": typ,
     }
     return render(request, 'media/sorted_by.html', context)
+
+
+def formats_list(request):
+    """List all formats with counts and links to filtered pages."""
+    formats = MediaFormat.objects.all()
+    context = {"formats": formats}
+    return render(request, 'media/formats.html', context)
+
+
+def types_list(request):
+    """List all media types with counts and links to filtered pages."""
+    types = MediaType.objects.all()
+    context = {"types": types}
+    return render(request, 'media/types.html', context)
+
+
+def genres_list(request):
+    """List all genres with counts and links to filtered pages."""
+    genres = MediaGenre.objects.all()
+    context = {"genres": genres}
+    return render(request, 'media/genres.html', context)
 

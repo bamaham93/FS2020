@@ -18,5 +18,8 @@ urlpatterns = [
     path("add-by-barcode", views.add_by_barcode, name="add_by_barcode"),
     path("remove-by-barcode", views.remove_by_barcode, name="remove_by_barcode"),
     path("save-lookup", views.save_lookup, name="save_lookup"),
+    path("formats", views.formats_list, name="formats"),
+    path("types", views.types_list, name="types"),
+    path("genres", views.genres_list, name="genres"),
     path('sorted_by', views.sorted_by, name="sorted_by"),
 ]

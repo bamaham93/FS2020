@@ -1,10 +1,35 @@
 {% extends 'media/media_base.html' %}
 
 {% block section1 %}
-<h1>Sorted</h1>
+    <h1>Browse</h1>
 
-{% for i in media %}
-    <h2>{{ i }}</h2>
-{% endfor %}
+    {% if filter_format %}
+        <h4>Format: {{ filter_format }}</h4>
+    {% endif %}
+    {% if filter_type %}
+        <h4>Type: {{ filter_type }}</h4>
+    {% endif %}
+
+    <div class="row">
+        {% for item in media_query %}
+            <div class="col-sm-6 col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1528928441742-b4ccac1bb04c?auto=format&fit=crop&w=800&q=60" class="card-img-top" alt="{{ item.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.title }}</h5>
+                        {% if item.subtitle %}<h6 class="card-subtitle mb-2 text-muted">{{ item.subtitle }}</h6>{% endif %}
+                        {% if item.description %}<p class="card-text text-truncate">{{ item.description }}</p>{% endif %}
+                        <p class="mb-0"><small class="text-muted">{{ item.type }}</small></p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No items found.</p>
+        {% endfor %}
+    </div>
 
 {% endblock %}

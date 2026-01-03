@@ -1,55 +1,82 @@
 {% extends 'media/media_base.html' %}
 
 {% block section1 %}
+
 <div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="">Explore</h1>
-    <div class="row col-sm">
-
-        <div class="card m-2 text-white bg-dark shadow" style="width: 16.5rem;">
-          <img class="card-img-top"
-               src="https://images.unsplash.com/photo-1502078534399-8190479363f5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=873&q=80s" alt="Card image cap">
-          <div class="card-body">
-            <h3 class="card-title">Title</h3>
-            <p class="card-text">See Media listed by title. You know what you want, you just have to find it!</p>
-            <a href="{% url 'media:sorted_by' %}" class="btn btn-light disabled">Sorted</a>
-          </div>
-        </div>
-
-
-        <div class="card m-2 text-white bg-dark shadow" style="width: 16.5rem;">
-          <img class="card-img-top" src="https://images.unsplash.com/photo-1622867247887-bb8603f030f2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" alt="Card image cap">
-          <div class="card-body">
-            <h3 class="card-title">Format</h3>
-            <p class="card-text">See Media listed by format. Have a DVD-only player? Looking for some great CDs to
-                listen to? Want a paperback that can ride in a backpack?</p>
-            <a href="#" class="btn btn-light disabled">Go somewhere</a>
-          </div>
-        </div>
-
-        <div class="card m-2 text-white bg-dark shadow" style="width: 16.5rem;">
-          <img class="card-img-top" src="https://images.unsplash.com/photo-1528928441742-b4ccac1bb04c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80" alt="Card image cap">
-          <div class="card-body">
-            <h3 class="card-title">Type</h3>
-            <p class="card-text">See media listed by type. Looking for a new TV series? Movie more up your alley?
-                Looking to unwind with a good book?</p>
-            <a href="#" class="btn btn-light disabled">Go somewhere</a>
-          </div>
-        </div>
-
-        <div class="card m-2 text-white bg-dark shadow" style="width: 16.5rem;">
-          <img class="card-img-top" src="https://images.unsplash.com/photo-1623018035231-ebe361a64c76?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" alt="Card image cap">
-          <div class="card-body">
-            <h3 class="card-title">Genre</h3>
-            <p class="card-text">See media listed by genre. You've got a pretty good idea what you're in the mood
-                for, but what exactly?</p>
-            <a href="#" class="btn btn-light disabled">Go somewhere</a>
-          </div>
-        </div>
-
+    <div>
+      <a href="{% url 'media:add_by_barcode' %}" class="btn btn-outline-light open-in-modal" data-title="Add by Barcode">Add by Barcode</a>
+      <a href="{% url 'media:add_media' %}" class="btn btn-dark ms-2">Add Media</a>
     </div>
-</div>
+  </div>
 
-<a href={% url "media:add_media" %}><button type="button" class="btn btn-dark m-2">Add Media</button></a>
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card h-100 text-white bg-dark shadow">
+        <img class="card-img-top" src="https://images.unsplash.com/photo-1502078534399-8190479363f5?auto=format&fit=crop&w=800&q=60" alt="Title">
+        <div class="card-body">
+          <h3 class="card-title">All Media</h3>
+          <p class="card-text">Total items: <strong>{{ total }}</strong></p>
+          <a href="{% url 'media:sorted_by' %}" class="btn btn-light">Browse</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 text-white bg-dark shadow">
+        <img class="card-img-top" src="https://images.unsplash.com/photo-1622867247887-bb8603f030f2?auto=format&fit=crop&w=800&q=60" alt="Format">
+        <div class="card-body">
+          <h3 class="card-title">By Format</h3>
+          <ul class="list-unstyled mb-2">
+            {% for fmt in formats %}
+              <li><a href="{% url 'media:sorted_by' %}?format={{ fmt.name }}">{{ fmt.name }}</a> — {{ fmt.media_set.count }}</li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'media:formats' %}" class="btn btn-light">View</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 text-white bg-dark shadow">
+        <img class="card-img-top" src="https://images.unsplash.com/photo-1528928441742-b4ccac1bb04c?auto=format&fit=crop&w=800&q=60" alt="Type">
+        <div class="card-body">
+          <h3 class="card-title">By Type</h3>
+          <ul class="list-unstyled mb-2">
+            {% for t in types %}
+              <li><a href="{% url 'media:sorted_by' %}?type={{ t.name }}">{{ t.name }}</a> — {{ t.media_set.count }}</li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'media:types' %}" class="btn btn-light">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="mb-3">Latest Additions</h3>
+  <div class="row">
+    {% for item in latest %}
+      <div class="col-sm-6 col-md-4 mb-3">
+        <div class="card h-100">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1528928441742-b4ccac1bb04c?auto=format&fit=crop&w=800&q=60" class="card-img-top" alt="{{ item.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ item.title }}</h5>
+            {% if item.subtitle %}<h6 class="card-subtitle mb-2 text-muted">{{ item.subtitle }}</h6>{% endif %}
+            {% if item.description %}<p class="card-text text-truncate">{{ item.description }}</p>{% endif %}
+            <p class="mb-0"><small class="text-muted">{{ item.type }}</small></p>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No recent items yet.</p>
+    {% endfor %}
+  </div>
+</div>
 
 {% endblock %}
 

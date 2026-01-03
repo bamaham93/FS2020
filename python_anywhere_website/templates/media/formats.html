@@ -1,0 +1,13 @@
+{% extends 'media/media_base.html' %}
+
+{% block section1 %}
+  <h1>Formats</h1>
+  <div class="list-group">
+    {% for fmt in formats %}
+      <a href="{% url 'media:sorted_by' %}?format={{ fmt.name }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        {{ fmt.name }}
+        <span class="badge bg-secondary rounded-pill">{{ fmt.media_set.count }}</span>
+      </a>
+    {% endfor %}
+  </div>
+{% endblock %}
