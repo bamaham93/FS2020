@@ -1,55 +1,259 @@
 from django.core.management.base import BaseCommand
 from bible.models import BibleBook, BibleVerse
+from bible.gutenberg_parser import parse_gutenberg_kjv
+import json
+import csv
+import re
+from pathlib import Path
 
 
 class Command(BaseCommand):
     help = 'Import KJV Bible data into the database'
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--file',
+            type=str,
+            help='Path to the data file (JSON, CSV, or TXT)',
+        )
+        parser.add_argument(
+            '--format',
+            type=str,
+            choices=['json', 'csv', 'txt', 'gutenberg', 'auto'],
+            default='auto',
+            help='Format of the input file (auto-detect if not specified)',
+        )
+        parser.add_argument(
+            '--clear',
+            action='store_true',
+            help='Clear existing Bible data before importing',
+        )
+
     def handle(self, *args, **options):
         self.stdout.write('Importing KJV Bible data...')
         
-        # Clear existing data
-        self.stdout.write('Clearing existing data...')
-        BibleVerse.objects.all().delete()
-        BibleBook.objects.all().delete()
+        # Clear existing data if requested
+        if options['clear']:
+            self.stdout.write('Clearing existing data...')
+            BibleVerse.objects.all().delete()
+            BibleBook.objects.all().delete()
         
-        # Sample data structure - In production, this would load from a file
-        # For now, I'll create a minimal dataset for testing
-        bible_data = self.get_sample_data()
+        # Load data from file or use sample data
+        if options['file']:
+            file_path = Path(options['file'])
+            if not file_path.exists():
+                self.stderr.write(self.style.ERROR(f"File not found: {file_path}"))
+                return
+            
+            # Auto-detect format if needed
+            file_format = options['format']
+            if file_format == 'auto':
+                file_format = self.detect_format(file_path)
+            
+            self.stdout.write(f'Reading {file_format.upper()} file: {file_path}')
+            
+            if file_format == 'json':
+                bible_data = self.load_json(file_path)
+            elif file_format == 'csv':
+                bible_data = self.load_csv(file_path)
+            elif file_format == 'gutenberg':
+                bible_data = parse_gutenberg_kjv(file_path)
+            elif file_format == 'txt':
+                bible_data = self.load_txt(file_path)
+            else:
+                self.stderr.write(self.style.ERROR(f"Unsupported format: {file_format}"))
+                return
+        else:
+            self.stdout.write('No file specified, using sample data...')
+            bible_data = self.get_sample_data()
         
         # Import books
         self.stdout.write('Creating books...')
+        books_created = 0
+        verses_created = 0
+        
         for book_data in bible_data:
-            book = BibleBook.objects.create(
+            book, created = BibleBook.objects.get_or_create(
                 name=book_data['name'],
-                slug=book_data['slug'],
-                order=book_data['order'],
-                testament=book_data['testament'],
-                chapters=book_data['chapters']
+                defaults={
+                    'slug': book_data['slug'],
+                    'order': book_data['order'],
+                    'testament': book_data['testament'],
+                    'chapters': book_data['chapters']
+                }
             )
+            
+            if created:
+                books_created += 1
             
             # Import verses for this book
             self.stdout.write(f'  Importing verses for {book.name}...')
             verses_to_create = []
             for verse_data in book_data['verses']:
-                verses_to_create.append(
-                    BibleVerse(
-                        book=book,
-                        chapter=verse_data['chapter'],
-                        verse=verse_data['verse'],
-                        text=verse_data['text']
+                # Check if verse already exists
+                if not BibleVerse.objects.filter(
+                    book=book,
+                    chapter=verse_data['chapter'],
+                    verse=verse_data['verse']
+                ).exists():
+                    verses_to_create.append(
+                        BibleVerse(
+                            book=book,
+                            chapter=verse_data['chapter'],
+                            verse=verse_data['verse'],
+                            text=verse_data['text']
+                        )
                     )
-                )
             
-            BibleVerse.objects.bulk_create(verses_to_create)
-            self.stdout.write(f'    Imported {len(verses_to_create)} verses')
+            if verses_to_create:
+                BibleVerse.objects.bulk_create(verses_to_create)
+                verses_created += len(verses_to_create)
+                self.stdout.write(f'    Imported {len(verses_to_create)} verses')
         
         total_books = BibleBook.objects.count()
         total_verses = BibleVerse.objects.count()
         
         self.stdout.write(self.style.SUCCESS(
-            f'\nSuccessfully imported {total_books} books and {total_verses} verses'
+            f'\nSuccessfully imported {books_created} new books and {verses_created} new verses'
         ))
+        self.stdout.write(self.style.SUCCESS(
+            f'Total in database: {total_books} books and {total_verses} verses'
+        ))
+
+    def detect_format(self, file_path):
+        """Auto-detect file format based on extension and content."""
+        suffix = file_path.suffix.lower()
+        if suffix == '.json':
+            return 'json'
+        elif suffix == '.csv':
+            return 'csv'
+        elif suffix in ['.txt', '.text']:
+            # Try to detect if it's a Gutenberg file
+            with open(file_path, 'r', encoding='utf-8') as f:
+                first_kb = f.read(1024)
+                if 'Project Gutenberg' in first_kb or 'The First Book of Moses' in first_kb:
+                    return 'gutenberg'
+            return 'txt'
+        return 'txt'  # Default to txt
+
+    def load_json(self, file_path):
+        """
+        Load Bible data from JSON file.
+        
+        Expected format:
+        [
+            {
+                "name": "Genesis",
+                "slug": "genesis",
+                "order": 1,
+                "testament": "OT",
+                "chapters": 50,
+                "verses": [
+                    {"chapter": 1, "verse": 1, "text": "..."},
+                    ...
+                ]
+            },
+            ...
+        ]
+        """
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
+    def load_csv(self, file_path):
+        """
+        Load Bible data from CSV file.
+        
+        Expected CSV format:
+        book_name,book_slug,book_order,testament,chapter,verse,text
+        Genesis,genesis,1,OT,1,1,"In the beginning..."
+        """
+        books_dict = {}
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                book_name = row['book_name']
+                
+                if book_name not in books_dict:
+                    books_dict[book_name] = {
+                        'name': book_name,
+                        'slug': row['book_slug'],
+                        'order': int(row['book_order']),
+                        'testament': row['testament'],
+                        'chapters': 0,
+                        'verses': []
+                    }
+                
+                chapter_num = int(row['chapter'])
+                verse_num = int(row['verse'])
+                
+                # Update max chapters
+                if chapter_num > books_dict[book_name]['chapters']:
+                    books_dict[book_name]['chapters'] = chapter_num
+                
+                books_dict[book_name]['verses'].append({
+                    'chapter': chapter_num,
+                    'verse': verse_num,
+                    'text': row['text']
+                })
+        
+        return list(books_dict.values())
+
+    def load_txt(self, file_path):
+        """
+        Load Bible data from plain text file.
+        
+        Supports multiple formats:
+        1. Simple format: "Book Chapter:Verse Text"
+           Example: Genesis 1:1 In the beginning...
+        
+        2. Block format with headers:
+           Genesis 1
+           1 In the beginning...
+           2 And the earth was...
+        """
+        books_dict = {}
+        current_book = None
+        current_chapter = None
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                
+                # Try format: "Book Chapter:Verse Text"
+                match = re.match(r'^([1-3]?\s*[A-Za-z\s]+?)\s+(\d+):(\d+)\s+(.+)$', line)
+                if match:
+                    book_name = match.group(1).strip()
+                    chapter = int(match.group(2))
+                    verse = int(match.group(3))
+                    text = match.group(4)
+                    
+                    if book_name not in books_dict:
+                        books_dict[book_name] = {
+                            'name': book_name,
+                            'slug': book_name.lower().replace(' ', '-'),
+                            'order': len(books_dict) + 1,
+                            'testament': 'OT' if len(books_dict) < 39 else 'NT',
+                            'chapters': 0,
+                            'verses': []
+                        }
+                    
+                    if chapter > books_dict[book_name]['chapters']:
+                        books_dict[book_name]['chapters'] = chapter
+                    
+                    books_dict[book_name]['verses'].append({
+                        'chapter': chapter,
+                        'verse': verse,
+                        'text': text
+                    })
+                    continue
+                
+                # Try format: Book header or verse without book prefix
+                # This is more complex and would need more context
+        
+        return list(books_dict.values())
 
     def get_sample_data(self):
         """
