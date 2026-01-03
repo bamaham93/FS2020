@@ -88,19 +88,26 @@ class Command(BaseCommand):
             
             # Import verses for this book
             self.stdout.write(f'  Importing verses for {book.name}...')
-            verses_to_create = []
+            
+            # Deduplicate verses within this book (keep last occurrence)
+            seen_verses = {}
             for verse_data in book_data['verses']:
-                # Check if verse already exists
+                key = (verse_data['chapter'], verse_data['verse'])
+                seen_verses[key] = verse_data
+            
+            verses_to_create = []
+            for (chapter, verse_num), verse_data in seen_verses.items():
+                # Check if verse already exists in database
                 if not BibleVerse.objects.filter(
                     book=book,
-                    chapter=verse_data['chapter'],
-                    verse=verse_data['verse']
+                    chapter=chapter,
+                    verse=verse_num
                 ).exists():
                     verses_to_create.append(
                         BibleVerse(
                             book=book,
-                            chapter=verse_data['chapter'],
-                            verse=verse_data['verse'],
+                            chapter=chapter,
+                            verse=verse_num,
                             text=verse_data['text']
                         )
                     )
