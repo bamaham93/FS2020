@@ -29,4 +29,10 @@
     <li class="nav-item btn btn-light btn-lg">
         <a class="nav-link" href="{% url 'media:vhs' %}">VHS</a>
     </li>
+    <li class="nav-item btn btn-light btn-lg">
+        <a class="nav-link open-in-modal" data-title="Add by Barcode" href="{% url 'media:add_by_barcode' %}">Add by Barcode</a>
+    </li>
+    <li class="nav-item btn btn-light btn-lg">
+        <a class="nav-link open-in-modal" data-title="Remove by Barcode" href="{% url 'media:remove_by_barcode' %}">Remove by Barcode</a>
+    </li>
 </ul>

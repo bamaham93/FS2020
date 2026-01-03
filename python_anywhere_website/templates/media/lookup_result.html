@@ -1,0 +1,38 @@
+{% comment %}Modal-friendly lookup result and save form.{% endcomment %}
+
+<div class="container">
+  <h4>Lookup result</h4>
+
+  <div class="row">
+    <div class="col-md-4">
+      {% if meta.image_url %}
+        <img src="{{ meta.image_url }}" class="img-fluid" alt="cover" />
+      {% endif %}
+    </div>
+    <div class="col-md-8">
+      <h5>{{ meta.title }}</h5>
+      {% if meta.queried_isbn %}
+        <p><strong>ISBN:</strong> {{ meta.queried_isbn }}</p>
+      {% endif %}
+      {% if meta.description %}
+        <p>{{ meta.description|safe }}</p>
+      {% endif %}
+      {% if meta.categories %}
+        <p><strong>Categories:</strong> {{ meta.categories|join:", " }}</p>
+      {% endif %}
+
+      <form method="post" action="{% url 'media:save_lookup' %}">
+        {% csrf_token %}
+        <input type="hidden" name="title" value="{{ meta.title }}" />
+        <input type="hidden" name="description" value="{{ meta.description }}" />
+        <input type="hidden" name="image_url" value="{{ meta.image_url }}" />
+        <input type="hidden" name="categories" value="{% if meta.categories %}{{ meta.categories|join:"," }}{% endif %}" />
+        <input type="hidden" name="barcode" value="{{ meta.barcode }}" />
+        <input type="hidden" name="code_type" value="{{ meta.code_type }}" />
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'media:add_media' %}?barcode={{ meta.barcode }}&code_type={{ meta.code_type }}" class="btn btn-secondary">Edit before save</a>
+      </form>
+
+    </div>
+  </div>
+</div>

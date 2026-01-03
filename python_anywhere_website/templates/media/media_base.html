@@ -8,3 +8,50 @@
     {% block section1 %}
     {% endblock %}
 </div>
+
+<!-- Modal container for barcode add/remove -->
+<div class="modal fade" id="mediaModal" tabindex="-1" role="dialog" aria-labelledby="mediaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediaModalLabel">Media</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    function loadIntoModal(url, title){
+        fetch(url, {credentials: 'same-origin'})
+            .then(function(resp){ return resp.text(); })
+            .then(function(html){
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var body = doc.querySelector('body') || doc;
+                var modal = document.getElementById('mediaModal');
+                modal.querySelector('.modal-body').innerHTML = html;
+                if(title) modal.querySelector('.modal-title').textContent = title;
+                // Use Bootstrap's modal show
+                $('#mediaModal').modal('show');
+            }).catch(function(err){
+                console.error('Error loading modal content', err);
+            });
+    }
+
+    document.querySelectorAll('a.open-in-modal').forEach(function(el){
+        el.addEventListener('click', function(e){
+            e.preventDefault();
+            var url = el.getAttribute('href');
+            var title = el.dataset.title || el.textContent.trim();
+            loadIntoModal(url, title);
+        });
+    });
+});
+</script>

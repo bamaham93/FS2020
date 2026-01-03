@@ -15,5 +15,8 @@ urlpatterns = [
     path("digital-dl", views.digital_dl, name="digital_dl"),
     path("vhs", views.vhs, name="vhs"),
     path("add_media", views.add_media, name="add_media"),
+    path("add-by-barcode", views.add_by_barcode, name="add_by_barcode"),
+    path("remove-by-barcode", views.remove_by_barcode, name="remove_by_barcode"),
+    path("save-lookup", views.save_lookup, name="save_lookup"),
     path('sorted_by', views.sorted_by, name="sorted_by"),
 ]
