@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+# Optionally load a .env file in development if you use python-dotenv
 # from dotenv import load_dotenv
-
 # load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -89,10 +90,20 @@ WSGI_APPLICATION = "main_app.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# Database
+# Allow overriding the SQLite file path via the DJANGO_DB_PATH environment
+# variable so production (e.g. PythonAnywhere) can point at a different
+# file than local development.
+db_path_env = os.environ.get("DJANGO_DB_PATH")
+if db_path_env:
+    db_name = db_path_env
+else:
+    db_name = BASE_DIR / "db.sqlite3"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": db_name,
     }
 }
 
@@ -155,3 +166,23 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_URL = "login"
 LOGOUT_REDIRECT_URL = "core_app:index"
 LOGIN_REDIRECT_URL = "core_app:index"
+
+
+# Optional: allow a server-only `local_settings.py` to override any settings
+# (including `DATABASES`) without using environment variables. Create
+# `main_app/local_settings.py` on the server (do NOT commit it) with e.g.: 
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': '/home/yourusername/path/to/prod.sqlite3',
+#     }
+# }
+#
+# This is useful on hosts like PythonAnywhere where environment variables
+# may be unreliable; keep the file out of version control so credentials
+# and paths remain local to the server.
+try:
+    from .local_settings import *  # type: ignore
+except ImportError:
+    pass

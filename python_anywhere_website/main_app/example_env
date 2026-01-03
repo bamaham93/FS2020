@@ -1,1 +1,18 @@
 this_is_my_api_key = api_key
+
+# Example: set the path to the production SQLite file on your host.
+# On PythonAnywhere set an environment variable named DJANGO_DB_PATH to
+# the absolute path of your production DB, for example:
+# DJANGO_DB_PATH=/home/yourusername/python_anywhere_website/db.sqlite3
+
+# Alternative (recommended if environment variables are unreliable):
+# Create a server-only file `main_app/local_settings.py` containing only
+# the overrides you need (for example, `DATABASES` pointing at your
+# deployed sqlite file). Do NOT add `local_settings.py` to version control.
+# Example `main_app/local_settings.py` content:
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': '/home/yourusername/python_anywhere_website/db.sqlite3',
+#     }
+# }

@@ -1,0 +1,14 @@
+# Copy this file to `local_settings.py` on the server and edit values there.
+# Do NOT commit the copied `local_settings.py` file.
+
+# Example: override DATABASES to point to the production sqlite file on the host.
+# Replace '/home/yourusername/...' with the real absolute path on the server.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/home/yourusername/python_anywhere_website/db.sqlite3',
+    }
+}
+
+# You may also override SECRET_KEY, DEBUG, ALLOWED_HOSTS, or other settings
+# that must be different in production. Keep sensitive values out of version control.

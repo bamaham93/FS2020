@@ -11,3 +11,5 @@ env.py
 
 #
 sms_logfile.txt
+# Ignore server-only local overrides
+main_app/local_settings.py
