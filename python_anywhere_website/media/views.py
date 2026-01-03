@@ -6,6 +6,9 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 import requests
 import os
+from django.core.files.base import ContentFile
+from django.utils.text import slugify
+import logging
 
 
 # Create your views here.
@@ -329,28 +332,129 @@ def media_lookup(request, pk):
     if code_type == 'isbn' and barcode:
         meta = fetch_google_books_metadata(barcode)
 
-    # If no metadata found, try a title-based hint via Google Books simple query
+    # If no metadata found, try a title-based hint via Google Books and iTunes (for music/movies)
+    candidates = []
     if not meta and media.title:
+        title_q = media.title
+        # Google Books candidates (books)
         try:
-            q = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{media.title}", timeout=5)
+            q = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title_q}", timeout=5)
             if q.status_code == 200:
-                items = q.json().get('items')
-                if items:
-                    vol = items[0].get('volumeInfo', {})
-                    meta = {
+                items = q.json().get('items') or []
+                for it in items[:4]:
+                    vol = it.get('volumeInfo', {})
+                    candidates.append({
                         'title': vol.get('title'),
                         'description': vol.get('description'),
                         'image_url': vol.get('imageLinks', {}).get('thumbnail'),
                         'categories': vol.get('categories') or [],
-                        'source': 'google_books_title'
-                    }
+                        'source': 'google_books',
+                        'type': 'Book',
+                    })
         except Exception:
-            meta = None
+            pass
+
+        # iTunes search: try movie and music (albums)
+        try:
+            import urllib.parse
+
+            qstr = urllib.parse.quote(title_q)
+            # movies
+            it_movie = requests.get(f"https://itunes.apple.com/search?term={qstr}&media=movie&limit=4", timeout=5)
+            if it_movie.status_code == 200:
+                res = it_movie.json().get('results') or []
+                for r in res[:3]:
+                    candidates.append({
+                        'title': r.get('trackName') or r.get('collectionName'),
+                        'description': r.get('longDescription') or r.get('shortDescription') or r.get('collectionName'),
+                        'image_url': r.get('artworkUrl100'),
+                        'categories': [r.get('primaryGenreName')] if r.get('primaryGenreName') else [],
+                        'source': 'itunes_movie',
+                        'type': 'Movie',
+                    })
+            # music albums (CD-like)
+            it_music = requests.get(f"https://itunes.apple.com/search?term={qstr}&media=music&entity=album&limit=4", timeout=5)
+            if it_music.status_code == 200:
+                res2 = it_music.json().get('results') or []
+                for r in res2[:3]:
+                    candidates.append({
+                        'title': r.get('collectionName'),
+                        'description': r.get('artistName'),
+                        'image_url': r.get('artworkUrl100'),
+                        'categories': [r.get('primaryGenreName')] if r.get('primaryGenreName') else [],
+                        'source': 'itunes_album',
+                        'type': 'Album',
+                    })
+        except Exception:
+            pass
+
+        # If candidates found, prefer the earlier Google Books meta if present
+        if candidates:
+            meta = candidates[0]
+    # if we had an ISBN-based meta earlier, keep it as the single candidate
+    if meta and not isinstance(meta, list):
+        candidates = [meta]
 
     if not meta:
         return render(request, 'media/lookup_compare.html', {'media': media, 'meta': None})
 
-    return render(request, 'media/lookup_compare.html', {'media': media, 'meta': meta})
+    # Compute smart defaults for which radio should be pre-selected.
+    def choose_default(current, suggested, prefer_length_delta=10, prefer_descr_len=120):
+        if not current and suggested:
+            return 'suggested'
+        if not suggested:
+            return 'current'
+        # Prefer suggested if it's substantially longer (likely more complete)
+        try:
+            if len(suggested) > len(current or '') + prefer_length_delta:
+                return 'suggested'
+        except Exception:
+            pass
+        # otherwise keep current
+        return 'current'
+
+    # If multiple candidates, try to pick a default candidate index that best matches current type
+    default_candidate = 0
+    if len(candidates) > 1 and media.type:
+        for i, c in enumerate(candidates):
+            if c.get('type') and c.get('type').lower() == media.type.name.lower():
+                default_candidate = i
+                break
+
+    # For the UI we default suggested values to the chosen candidate
+    chosen = candidates[default_candidate] if candidates else meta
+
+    default_title = choose_default(media.title, chosen.get('title') if chosen else None)
+    default_subtitle = choose_default(getattr(media, 'subtitle', None), chosen.get('subtitle') if chosen else None)
+    # for description, prefer suggested when our description is very short
+    def descr_default(cur, sug):
+        if not cur and sug:
+            return 'suggested'
+        if not sug:
+            return 'current'
+        try:
+            if len(cur or '') < 80 and len(sug) > len(cur or '') + 30:
+                return 'suggested'
+        except Exception:
+            pass
+        return 'current'
+
+    default_description = descr_default(media.description, meta.get('description'))
+    default_image = 'suggested' if (not getattr(media, 'image') and meta.get('image_url')) else 'current'
+    default_categories = 'suggested' if (media.genre.count() == 0 and meta.get('categories')) else 'current'
+
+    ctx = {
+        'media': media,
+        'meta': meta,
+        'candidates': candidates,
+        'default_candidate': default_candidate,
+        'default_title': default_title,
+        'default_subtitle': default_subtitle,
+        'default_description': default_description,
+        'default_image': default_image,
+        'default_categories': default_categories,
+    }
+    return render(request, 'media/lookup_compare.html', ctx)
 
 
 @login_required
@@ -363,7 +467,19 @@ def apply_lookup(request, pk):
     if request.method != 'POST':
         return redirect('media:detail', pk=pk)
 
+    # Log incoming POST for debugging selection issues
+    try:
+        logging.getLogger(__name__).info('apply_lookup POST payload: %s', {k: request.POST.getlist(k) for k in request.POST.keys()})
+    except Exception:
+        pass
+
     media = get_object_or_404(Media, pk=pk)
+
+    # remember original values for diagnostics
+    orig_title = media.title
+    orig_subtitle = media.subtitle
+    orig_description = media.description
+    had_image = bool(media.image)
 
     # Determine title
     if request.POST.get('choice_title') == 'suggested':
@@ -383,15 +499,44 @@ def apply_lookup(request, pk):
     else:
         new_description = media.description or ''
 
-    # image handling: store URL string in image_url field if model has field `image` requires download;
+    # image handling: if user chose suggested image, download and save it into the ImageField
     suggested_image = request.POST.get('suggested_image_url')
+    image_saved = False
     if request.POST.get('choice_image') == 'suggested' and suggested_image:
-        # We currently store remote image URL in a helper field if present, but the Media model's `image`
-        # is a FileField/ImageField; downloading is left for future work. For now, set nothing and
-        # save suggested URL to a `description` note or skip. We'll attach as an external_url attribute in session.
-        # (Better: enqueue a background job to download.)
-        # For now, just leave media.image unchanged.
-        pass
+        try:
+            resp = requests.get(suggested_image, timeout=10)
+            if resp.status_code == 200:
+                content = resp.content
+                # try to detect image type
+                try:
+                    import imghdr
+
+                    ext = imghdr.what(None, h=content)
+                    if ext == 'jpeg':
+                        ext = 'jpg'
+                except Exception:
+                    ext = None
+
+                if not ext:
+                    # fallback to extension from URL
+                    from urllib.parse import urlparse
+
+                    path = urlparse(suggested_image).path
+                    ext = os.path.splitext(path)[1].lstrip('.') or 'jpg'
+
+                filename = f"{slugify(media.title)[:50]}-{media.pk}.{ext}"
+                # remove existing image file if present
+                if media.image:
+                    try:
+                        media.image.delete(save=False)
+                    except Exception:
+                        pass
+                media.image.save(filename, ContentFile(content), save=False)
+                image_saved = True
+        except Exception as e:
+            image_saved = False
+            logging.getLogger(__name__).exception('Image download/save failed')
+            messages.warning(request, f'Image download/save failed: {e}')
 
     # Categories: replace genres if suggested chosen
     if request.POST.get('choice_categories') == 'suggested':
@@ -413,7 +558,35 @@ def apply_lookup(request, pk):
     media.description = new_description
     media.save()
 
-    messages.success(request, f'Updated media: {media.title}')
+    # diagnostics: which fields changed
+    applied = []
+    if orig_title != media.title:
+        applied.append('title')
+    if (orig_subtitle or '') != (media.subtitle or ''):
+        applied.append('subtitle')
+    if (orig_description or '') != (media.description or ''):
+        applied.append('description')
+    if image_saved:
+        applied.append('image')
+
+    if applied:
+        messages.success(request, f"Updated media: {media.title} ({', '.join(applied)})")
+    else:
+        # nothing changed
+        messages.info(request, f"No changes applied to: {media.title}")
+
+    if image_saved:
+        try:
+            exists = bool(media.image and os.path.exists(media.image.path))
+            if exists:
+                messages.success(request, f'Image saved to {media.image.url}')
+            else:
+                messages.warning(request, 'Image save reported success but file not found on disk.')
+        except Exception:
+            messages.info(request, 'Image saved but could not verify file path.')
+    elif not image_saved and request.POST.get('choice_image') == 'suggested' and suggested_image:
+        messages.warning(request, 'Suggested image could not be downloaded or saved.')
+
     return redirect('media:detail', pk=media.pk)
 
 

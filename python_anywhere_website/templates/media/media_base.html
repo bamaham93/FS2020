@@ -37,6 +37,60 @@ document.addEventListener('DOMContentLoaded', function(){
                 var body = doc.querySelector('body') || doc;
                 var modal = document.getElementById('mediaModal');
                 modal.querySelector('.modal-body').innerHTML = html;
+                // Initialize candidate selection handlers if the loaded content contains suggestions
+                (function initModalCandidates(){
+                    try{
+                        var mb = modal.querySelector('.modal-body');
+                        var radios = mb.querySelectorAll('input[name="selected_candidate"]');
+                        if(!radios || radios.length === 0) return;
+
+                        function applyCandidate(idx){
+                            var get = function(name){ return mb.querySelector('input[name="' + name + '_' + idx + '"]'); };
+                            var title = (get('cand_title_' + idx) && get('cand_title_' + idx).value) || '';
+                            var subtitle = (get('cand_subtitle_' + idx) && get('cand_subtitle_' + idx).value) || '';
+                            var desc = (get('cand_description_' + idx) && get('cand_description_' + idx).value) || '';
+                            var img = (get('cand_image_url_' + idx) && get('cand_image_url_' + idx).value) || '';
+                            var cats = (get('cand_categories_' + idx) && get('cand_categories_' + idx).value) || '';
+                            var setVal = function(id, v){ var el = mb.querySelector('#'+id); if(el) el.value = v; };
+                            setVal('suggested_title', title);
+                            setVal('suggested_subtitle', subtitle);
+                            setVal('suggested_description', desc);
+                            setVal('suggested_image_url', img);
+                            setVal('suggested_categories', cats);
+                            // highlight selection
+                            mb.querySelectorAll('.suggestion-item').forEach(function(el){ el.classList.remove('active'); });
+                            var sel = mb.querySelector('.suggestion-item[data-idx="' + idx + '"]');
+                            if(sel) sel.classList.add('active');
+                            // also mark the "choice_*" radios to use suggested for convenience
+                            try{
+                                ['title','subtitle','description','image','categories'].forEach(function(field){
+                                    var radio = mb.querySelector('input[name="choice_' + field + '"][value="suggested"]');
+                                    if(radio){ radio.checked = true; radio.dispatchEvent(new Event('change', {bubbles:true})); }
+                                });
+                            }catch(e){/* ignore */}
+                        }
+
+                        // find checked radio or default to first
+                        var checked = mb.querySelector('input[name="selected_candidate"]:checked');
+                        var startIdx = checked ? checked.value : (radios[0] && radios[0].value);
+                        if(startIdx !== undefined) applyCandidate(startIdx);
+
+                        radios.forEach(function(r){ r.addEventListener('change', function(){ if(this.checked) applyCandidate(this.value); }); });
+                        // allow clicking the whole suggestion item to select its radio
+                        mb.querySelectorAll('.suggestion-item').forEach(function(item){
+                            item.addEventListener('click', function(e){
+                                // avoid toggling when clicking on form inputs directly
+                                if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'A' || e.target.tagName === 'BUTTON')) return;
+                                var idx = item.getAttribute('data-idx');
+                                var radio = item.querySelector('input[name="selected_candidate"][value="' + idx + '"]');
+                                if(radio){
+                                    radio.checked = true;
+                                    radio.dispatchEvent(new Event('change', {bubbles: true}));
+                                }
+                            });
+                        });
+                    }catch(e){ console.error('initModalCandidates', e); }
+                })();
                 if(title) modal.querySelector('.modal-title').textContent = title;
                 // Use Bootstrap's modal show
                 $('#mediaModal').modal('show');
