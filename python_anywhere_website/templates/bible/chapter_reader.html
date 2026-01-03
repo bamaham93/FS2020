@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block section1 %}
+<div class="bible-reader">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'bible:index' %}">Bible</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'bible:chapter_list' book.slug %}">{{ book.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chapter {{ chapter }}</li>
+        </ol>
+    </nav>
+
+    <header class="mb-4 text-center">
+        <h1>{{ book.name }} {{ chapter }}</h1>
+        <p class="text-muted small">King James Version (Public Domain)</p>
+    </header>
+
+    <div class="chapter-navigation mb-4">
+        {% if prev_book and prev_chapter %}
+        <a href="{% url 'bible:chapter_reader' prev_book.slug prev_chapter %}" class="btn btn-outline-secondary">
+            ← Previous
+        </a>
+        {% else %}
+        <span class="btn btn-outline-secondary disabled">← Previous</span>
+        {% endif %}
+
+        <a href="{% url 'bible:chapter_list' book.slug %}" class="btn btn-outline-primary">
+            Chapters
+        </a>
+
+        {% if next_book and next_chapter %}
+        <a href="{% url 'bible:chapter_reader' next_book.slug next_chapter %}" class="btn btn-outline-secondary">
+            Next →
+        </a>
+        {% else %}
+        <span class="btn btn-outline-secondary disabled">Next →</span>
+        {% endif %}
+    </div>
+
+    <div class="verses">
+        {% for verse in verses %}
+        <p class="verse" id="v{{ verse.verse }}">
+            <sup class="verse-number">
+                <a href="#v{{ verse.verse }}" class="verse-link">{{ verse.verse }}</a>
+            </sup>
+            <span class="verse-text">{{ verse.text }}</span>
+        </p>
+        {% empty %}
+        <p class="text-muted">No verses found.</p>
+        {% endfor %}
+    </div>
+
+    <div class="chapter-navigation mt-4">
+        {% if prev_book and prev_chapter %}
+        <a href="{% url 'bible:chapter_reader' prev_book.slug prev_chapter %}" class="btn btn-outline-secondary">
+            ← Previous
+        </a>
+        {% else %}
+        <span class="btn btn-outline-secondary disabled">← Previous</span>
+        {% endif %}
+
+        <a href="{% url 'bible:chapter_list' book.slug %}" class="btn btn-outline-primary">
+            Chapters
+        </a>
+
+        {% if next_book and next_chapter %}
+        <a href="{% url 'bible:chapter_reader' next_book.slug next_chapter %}" class="btn btn-outline-secondary">
+            Next →
+        </a>
+        {% else %}
+        <span class="btn btn-outline-secondary disabled">Next →</span>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .bible-reader {
+        max-width: 800px;
+        margin: 0 auto;
+        font-family: Georgia, serif;
+        line-height: 1.8;
+    }
+    
+    .chapter-navigation {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    
+    .verses {
+        margin: 2rem 0;
+        font-size: 1.1rem;
+    }
+    
+    .verse {
+        margin-bottom: 0.5rem;
+    }
+    
+    .verse-number {
+        font-size: 0.75em;
+        color: #666;
+        margin-right: 0.25em;
+        font-weight: normal;
+    }
+    
+    .verse-link {
+        text-decoration: none;
+        color: #666;
+    }
+    
+    .verse-link:hover {
+        color: #333;
+    }
+    
+    .verse:target {
+        background-color: #fffbcc;
+        padding: 0.25rem 0;
+        margin: 0.5rem -0.5rem;
+        padding-left: 0.5rem;
+        transition: background-color 2s ease-out;
+    }
+    
+    .verse-text {
+        color: #000;
+    }
+</style>
+
+<script>
+// Optional: keyboard navigation
+document.addEventListener('keydown', function(e) {
+    {% if prev_book and prev_chapter %}
+    if (e.key === 'ArrowLeft') {
+        window.location.href = '{% url "bible:chapter_reader" prev_book.slug prev_chapter %}';
+    }
+    {% endif %}
+    {% if next_book and next_chapter %}
+    if (e.key === 'ArrowRight') {
+        window.location.href = '{% url "bible:chapter_reader" next_book.slug next_chapter %}';
+    }
+    {% endif %}
+});
+
+// Smooth scroll to verse on page load if hash present
+if (window.location.hash) {
+    setTimeout(function() {
+        const element = document.querySelector(window.location.hash);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, 100);
+}
+</script>
+{% endblock %}

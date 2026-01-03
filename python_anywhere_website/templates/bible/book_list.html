@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block section1 %}
+<div class="bible-reader">
+    <header class="mb-4">
+        <h1 class="text-center">King James Bible</h1>
+        <p class="text-center text-muted small">King James Version (Public Domain)</p>
+    </header>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <h2 class="h4 mb-3">Old Testament</h2>
+            <ul class="list-unstyled">
+                {% for book in ot_books %}
+                <li class="mb-2">
+                    <a href="{% url 'bible:chapter_list' book.slug %}" class="text-decoration-none">
+                        {{ book.name }}
+                    </a>
+                    <span class="text-muted small">({{ book.chapters }} chapter{{ book.chapters|pluralize }})</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <h2 class="h4 mb-3">New Testament</h2>
+            <ul class="list-unstyled">
+                {% for book in nt_books %}
+                <li class="mb-2">
+                    <a href="{% url 'bible:chapter_list' book.slug %}" class="text-decoration-none">
+                        {{ book.name }}
+                    </a>
+                    <span class="text-muted small">({{ book.chapters }} chapter{{ book.chapters|pluralize }})</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bible-reader {
+        max-width: 900px;
+        margin: 0 auto;
+        font-family: Georgia, serif;
+    }
+    .bible-reader a {
+        color: #333;
+    }
+    .bible-reader a:hover {
+        color: #000;
+        text-decoration: underline !important;
+    }
+</style>
+{% endblock %}

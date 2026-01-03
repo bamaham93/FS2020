@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 
 # from django.shortcuts import redirect
 from .views import redirect_home
+from bible.urls import api_urlpatterns as bible_api_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,11 +30,15 @@ urlpatterns = [
     path("racing/", include("douglas.urls", namespace="racing")),
     path("resume/", include("resume.urls", namespace="resume")),
     path("prayer/", include("prayer.urls", namespace="prayer")),
+    path("bible/", include("bible.urls", namespace="bible")),
     path("core_app/", include("django.contrib.auth.urls")),
     path("core_app/", include("core_app.urls", namespace="core_app")),
     path("media/", include("media_app.urls", namespace="media")),
     path("finance/", include("finance.urls", namespace="finance")),
 ]
+
+# Add Bible API URLs (not under /bible/ prefix)
+urlpatterns += bible_api_urls
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

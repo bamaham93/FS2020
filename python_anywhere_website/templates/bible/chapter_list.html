@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block section1 %}
+<div class="bible-reader">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'bible:index' %}">Bible</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ book.name }}</li>
+        </ol>
+    </nav>
+
+    <header class="mb-4">
+        <h1>{{ book.name }}</h1>
+        <p class="text-muted">{{ book.get_testament_display }}</p>
+    </header>
+
+    <div class="chapters-grid">
+        {% for chapter_num in chapters %}
+        <a href="{% url 'bible:chapter_reader' book.slug chapter_num %}" class="chapter-link">
+            {{ chapter_num }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .bible-reader {
+        max-width: 900px;
+        margin: 0 auto;
+        font-family: Georgia, serif;
+    }
+    .chapters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 10px;
+        margin-top: 2rem;
+    }
+    .chapter-link {
+        display: block;
+        padding: 15px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.2s;
+    }
+    .chapter-link:hover {
+        background-color: #f5f5f5;
+        border-color: #999;
+        color: #000;
+    }
+</style>
+{% endblock %}
