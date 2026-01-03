@@ -10,4 +10,6 @@ urlpatterns = [
     path("flights", views.flights, name="flights"),
     path("flights/<str:n_number>", views.flights, name="flights"),
     path("notams", views.notams, name="notams"),
+    path("aircraft/add/", views.aircraft_add, name="aircraft_add"),
+    path("aircraft/<int:pk>/edit/", views.aircraft_edit, name="aircraft_edit"),
 ]

@@ -1,0 +1,32 @@
+{% extends 'fs2020/fs2020_base.html' %}
+
+{% block section1 %}
+<div class="container mt-4">
+  <h2>{{ title }}</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+      {{ form.n_num.label_tag }}
+      {{ form.n_num }}
+      {% if form.n_num.errors %}<div class="text-danger">{{ form.n_num.errors }}</div>{% endif %}
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">{{ form.make.label_tag }}{{ form.make }}</div>
+      <div class="col-md-6 mb-3">{{ form.model.label_tag }}{{ form.model }}</div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">{{ form.icao_location.label_tag }}{{ form.icao_location }}</div>
+      <div class="col-md-6 mb-3">{{ form.status.label_tag }}{{ form.status }}</div>
+    </div>
+
+    <div class="mb-3">{{ form.notes.label_tag }}{{ form.notes }}</div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" type="submit">Save</button>
+      <a class="btn btn-secondary" href="{% url 'fs2020:index' %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

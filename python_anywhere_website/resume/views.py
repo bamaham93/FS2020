@@ -4,7 +4,17 @@ from .forms import ContactMeForm
 try:
     from logic.queries import JobQueries
 except ModuleNotFoundError:
-    pass
+    # Provide a safe fallback implementation using the local ORM so the
+    # resume views continue to work when `logic.queries` isn't available
+    # (e.g., in minimal dev setups).
+    class JobQueries:
+        @staticmethod
+        def get_aviation_jobs():
+            return Job.objects.filter(aviation=True).order_by("-start_date")
+
+        @staticmethod
+        def get_tech_jobs():
+            return Job.objects.filter(aviation=False).order_by("-start_date")
 
 # Create your views here.
 def index(request):
