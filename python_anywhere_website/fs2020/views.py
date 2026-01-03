@@ -1,3 +1,13 @@
+from django.http import JsonResponse
+# API endpoint: Return METAR as JSON for a given ICAO code
+def metar_api(request):
+    icao = request.GET.get('icao', '').strip().upper()
+    if not icao:
+        return JsonResponse({'error': 'Missing ICAO code'}, status=400)
+    data = fetch_metar(icao)
+    if not data:
+        return JsonResponse({'error': f'No METAR found for {icao}'}, status=404)
+    return JsonResponse(data)
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -5,6 +15,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Aircraft, Flight
 from .faa.notams import NOTAMS
 from .forms import AircraftForm
+from .metar import fetch_metar
+from django.conf import settings
 
 # Create your views here.
 def index(request):
@@ -12,7 +24,11 @@ def index(request):
     FS2020 app home page.
     """
     context = {"title": "FS2020 Home"}
-    context["aircraft"] = Aircraft.objects.all()
+    aircraft_qs = Aircraft.objects.all()
+
+    # No server-side METAR fetching; handled client-side for speed.
+
+    context["aircraft"] = aircraft_qs
     return render(request, "fs2020/index.html", context)
 
 

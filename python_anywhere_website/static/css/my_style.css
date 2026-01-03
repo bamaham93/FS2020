@@ -1,3 +1,89 @@
+/* Slider toggle (iPhone style) */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 22px;
+}
+.switch input {display:none;}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 22px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #2196F3;
+}
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+/* FS2020 aircraft card grid improvements */
+.fs2020-aircraft-card {
+  min-height: 340px;
+  margin-bottom: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+  transition: box-shadow 0.2s;
+  background: #181f2a !important;
+  color: #e6eef6;
+}
+.fs2020-aircraft-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+  border-color: var(--accent);
+}
+.fs2020-aircraft-card .card-body {
+  padding: 1.2rem 1.2rem 1rem 1.2rem;
+}
+.fs2020-aircraft-card .alert {
+  margin-bottom: 0.7rem;
+  border-radius: 8px;
+  background: #232c3a !important;
+  color: #e6eef6 !important;
+  border: 1px solid #2dd4bf33;
+}
+.fs2020-aircraft-card .btn {
+  min-width: 0;
+  font-size: 0.98rem;
+  padding: 0.35rem 0.7rem;
+}
+.fs2020-aircraft-card .btn + .btn {
+  margin-left: 0.3rem;
+}
+.fs2020-aircraft-card .switch {
+  margin-top: 0.1rem;
+}
+.fs2020-aircraft-card .small, .fs2020-aircraft-card .text-muted {
+  font-size: 0.93em;
+  color: #b5c2d6 !important;
+}
+.fs2020-aircraft-card .text-success {
+  color: #2dd4bf !important;
+}
+.fs2020-aircraft-card .card-title {
+  font-size: 1.25rem;
+  margin-bottom: 0.2rem;
+}
+.fs2020-aircraft-card .card-subtitle {
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+.fs2020-aircraft-card .card-text {
+  margin-bottom: 0.5rem;
+}
 /* Clean, functional site stylesheet - minimal, neutral, readable */
 
 :root{
