@@ -146,6 +146,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = "/home/Bamaham93/FS2020/python_anywhere_website/static"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
+    # Do NOT include STATIC_ROOT here!
     # "/var/www/static/",
 ]
 
