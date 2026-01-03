@@ -143,7 +143,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = "/home/Bamaham93/FS2020/python_anywhere_website/static"
+STATIC_ROOT = "/home/Bamaham93/FS2020/python_anywhere_website/staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
     # Do NOT include STATIC_ROOT here!
