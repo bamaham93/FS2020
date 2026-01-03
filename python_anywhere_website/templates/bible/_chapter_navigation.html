@@ -1,0 +1,21 @@
+<div class="chapter-navigation {% if extra_class %}{{ extra_class }}{% endif %}">
+    {% if prev_book and prev_chapter %}
+    <a href="{% url 'bible:chapter_reader' prev_book.slug prev_chapter %}" class="btn btn-outline-secondary">
+        ← Previous
+    </a>
+    {% else %}
+    <span class="btn btn-outline-secondary disabled">← Previous</span>
+    {% endif %}
+
+    <a href="{% url 'bible:chapter_list' book.slug %}" class="btn btn-outline-primary">
+        Chapters
+    </a>
+
+    {% if next_book and next_chapter %}
+    <a href="{% url 'bible:chapter_reader' next_book.slug next_chapter %}" class="btn btn-outline-secondary">
+        Next →
+    </a>
+    {% else %}
+    <span class="btn btn-outline-secondary disabled">Next →</span>
+    {% endif %}
+</div>
