@@ -258,4 +258,27 @@ img{ width:100%; height:auto; }
   padding: 1rem 0;
 }
 
+/* Global card entrance + hover animation
+   - Entrance: subtle fade + upward motion on page load
+   - Hover: gentle lift and stronger shadow
+*/
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(10px) scale(0.995); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.card {
+  /* prefer existing transitions; add entrance animation */
+  animation: cardEntrance 420ms cubic-bezier(.2,.8,.2,1) both;
+  will-change: transform, opacity;
+}
+
+.card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 18px 48px rgba(2,6,23,0.65) !important;
+}
+
+/* Optional: allow disabling animations by adding .no-card-animate to body */
+body.no-card-animate .card { animation: none !important; }
+
 
