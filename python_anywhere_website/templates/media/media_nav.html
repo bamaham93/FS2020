@@ -1,38 +1,22 @@
-<ul class="nav nav-pills nav-fill">
-    <li class="nav-item btn btn-light btn-lg">
-        <a href="{% url 'core_app:index' %}" class="nav-link">Home</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:index' %}">Media</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:movies' %}">Movies</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:books' %}">Books</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:cds' %}">CDs</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:dvds' %}">DVDs</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:amazon' %}">Amazon</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:youtube' %}">YouTube</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:digital_dl' %}">Digital Download</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link" href="{% url 'media:vhs' %}">VHS</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link open-in-modal" data-title="Add by Barcode" href="{% url 'media:add_by_barcode' %}">Add by Barcode</a>
-    </li>
-    <li class="nav-item btn btn-light btn-lg">
-        <a class="nav-link open-in-modal" data-title="Remove by Barcode" href="{% url 'media:remove_by_barcode' %}">Remove by Barcode</a>
-    </li>
-</ul>
+<nav class="d-flex flex-wrap align-items-center gap-2">
+  <a class="btn btn-outline-light" href="{% url 'core_app:index' %}">Home</a>
+  <a class="btn btn-light text-dark" href="{% url 'media:index' %}">Media</a>
+
+  <div class="btn-group">
+    <a class="btn btn-outline-light" href="{% url 'media:movies' %}">Movies</a>
+    <a class="btn btn-outline-light" href="{% url 'media:books' %}">Books</a>
+    <a class="btn btn-outline-light" href="{% url 'media:cds' %}">CDs</a>
+    <a class="btn btn-outline-light" href="{% url 'media:dvds' %}">DVDs</a>
+  </div>
+
+  <div class="btn-group">
+    <a class="btn btn-outline-light" href="{% url 'media:formats' %}">Formats</a>
+    <a class="btn btn-outline-light" href="{% url 'media:types' %}">Types</a>
+    <a class="btn btn-outline-light" href="{% url 'media:genres' %}">Genres</a>
+  </div>
+
+  <div class="ms-auto d-flex gap-2">
+    <a class="btn btn-outline-light open-in-modal" data-title="Add by Barcode" href="{% url 'media:add_by_barcode' %}">Add by Barcode</a>
+    <a class="btn btn-dark" href="{% url 'media:add_media' %}">Add Media</a>
+  </div>
+</nav>

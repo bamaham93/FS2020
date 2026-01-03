@@ -5,10 +5,14 @@
   <ul class="row">
   {% for dvd in dvds %}
 
-    <div class="card m-2" style="width: 16.5rem;">
-      <img class="card-img-top" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=859&q=80" alt="Card image cap">
-      <div class="card-body">
-        <h3 class="card-title">{{ dvd.title }}</h3>
+        <div class="card m-2" style="width: 16.5rem;">
+          {% if dvd.image %}
+            <img class="card-img-top" src="{{ dvd.image.url }}" alt="{{ dvd.title }}">
+          {% else %}
+            <img class="card-img-top" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=859&q=80" alt="Card image cap">
+          {% endif %}
+          <div class="card-body">
+            <h3 class="card-title"><a href="{% url 'media:detail' dvd.id %}">{{ dvd.title }}</a></h3>
         <h5>{{ dvd.subtitle }}</h5>
         <p class="card-text">{{ dvd.description }}</p>
       </div>

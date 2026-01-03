@@ -1,88 +1,74 @@
-img {
-    width: 100%;
-    height: auto;
+/* Clean, functional site stylesheet - minimal, neutral, readable */
+
+:root{
+  --bg: #0f1720; /* deep neutral */
+  --panel: #0f1720; /* keep dark panels consistent */
+  --muted: #94a3b8; /* muted text */
+  --text: #e6eef6; /* primary text color */
+  --accent: #2dd4bf; /* subtle accent */
+  --card-bg: #0b1220; /* card background */
+  --card-border: rgba(255,255,255,0.04);
+  --radius: 8px;
 }
 
-.bg-img {
-    /*filter: blur(8px);*/
-    background-size: cover;
-
+html,body{
+  height:100%;
+  background: linear-gradient(180deg, #07101a 0%, #08131a 100%);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
-.media-page {
-    background-color: #220F04 ;
+.container{
+  max-width:1200px;
 }
 
-.card {
-    display: flex
-    /*flex: 1 1 18rem;*/
-    /*max-width: 18rem;*/
+/* Cards */
+.card{
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.5);
+  overflow: hidden;
 }
 
-.card-body {
-    display: flex;
-    flex-direction: column;
+.card .card-body{ padding: 1rem; }
+.card-title{ margin-bottom:0.5rem; color:var(--text); font-weight:600; }
+.card-subtitle{ color:var(--muted); }
+.card-text{ color:var(--muted); }
+
+.card-img-top{ object-fit:cover; height:220px; width:100%; }
+
+/* Buttons */
+.btn-dark{ background:#0b1220; border:1px solid rgba(255,255,255,0.06); color:var(--text); }
+.btn-outline-light{ color:var(--text); border-color:rgba(255,255,255,0.06); }
+.btn-light{ background:#f8fafc; color:#0b1220; }
+
+/* Lists */
+.list-group-item{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,0.03); }
+.list-group-item a{ color:var(--text); text-decoration:none; }
+
+/* Header */
+h1, h2, h3, h4, h5{ color:var(--text); }
+
+/* Index latest items */
+.text-truncate{ color:var(--muted); }
+
+/* Modal tweaks */
+.modal-content{ background: linear-gradient(180deg, rgba(10,14,20,0.9), rgba(12,16,22,0.95)); border-radius:10px; border:1px solid rgba(255,255,255,0.04); }
+
+/* Toasts: small adjustments to match theme */
+.toast{ border-radius:8px; opacity:0.98; }
+.toast .toast-body{ color:inherit; }
+
+/* Responsive tweaks */
+@media (max-width:768px){
+  .card-img-top{ height:160px; }
 }
 
-.card-text {
-    flex-grow: 1;
-}
+/* Utility */
+.muted{ color:var(--muted); }
 
-.card-link {
-    width: 100%;
-    color: lightgrey;
-}
-
-.home-card {
-    background-color: lightgrey;
-}
-
-.resume-carousel-img {
-    max-width: auto;
-    max-height: 40rem;
-}
-
-#index-page-card-container {
-    /*background-color: pink;*/
-    display: flex;
-}
-
-#index-header {
-    color: lightgrey;
-}
-
-#fs2020-index-header {
-    
-    color: charcoalgrey;
-    background-color: rgb(113, 113, 113, .50);
-}
-
-#flights-page-header {
-    color: lightgrey;
-}
-
-#contact-me-carousel-header {
-    color: black;
-}
-
-#contact-me-carousel-text {
-    color: black;
-}
-
-#contact-me-form-submit-button {
-    border-radius: 10px;
-    border-color: 5px purple;
-}
-
-#contact-me-form-submit-button:hover {
-    background-color: grey;
-}
-
-#contact-form-container {
-    background-color: lightgrey;
-    border-radius: 20px;
-}
-
-#flight-card {
-    background-color: lightgrey;
-}
+/* Keep legacy selectors working */
+img{ width:100%; height:auto; }

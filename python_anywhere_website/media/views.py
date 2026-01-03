@@ -307,6 +307,116 @@ def vhs(request):
     return render(request, "media/vhs.html", context)
 
 
+def media_detail(request, pk):
+    """Show details for a single Media item."""
+    media = get_object_or_404(Media, pk=pk)
+    context = {"media": media}
+    return render(request, "media/detail.html", context)
+
+
+def media_lookup(request, pk):
+    """Fetch metadata for an existing Media and show side-by-side comparison.
+
+    This view renders a modal-friendly compare template where the user can choose
+    current vs suggested values and either apply them or open the admin edit.
+    """
+    media = get_object_or_404(Media, pk=pk)
+
+    # Prefer ISBN lookup, fall back to UPC, else None
+    barcode = media.isbn_code or media.upc_code
+    code_type = 'isbn' if media.isbn_code else ('upc' if media.upc_code else None)
+    meta = None
+    if code_type == 'isbn' and barcode:
+        meta = fetch_google_books_metadata(barcode)
+
+    # If no metadata found, try a title-based hint via Google Books simple query
+    if not meta and media.title:
+        try:
+            q = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{media.title}", timeout=5)
+            if q.status_code == 200:
+                items = q.json().get('items')
+                if items:
+                    vol = items[0].get('volumeInfo', {})
+                    meta = {
+                        'title': vol.get('title'),
+                        'description': vol.get('description'),
+                        'image_url': vol.get('imageLinks', {}).get('thumbnail'),
+                        'categories': vol.get('categories') or [],
+                        'source': 'google_books_title'
+                    }
+        except Exception:
+            meta = None
+
+    if not meta:
+        return render(request, 'media/lookup_compare.html', {'media': media, 'meta': None})
+
+    return render(request, 'media/lookup_compare.html', {'media': media, 'meta': meta})
+
+
+@login_required
+def apply_lookup(request, pk):
+    """Apply selected fields from compare UI to the existing Media.
+
+    Expects POST with choices like `choice_title=current|suggested` and
+    hidden fields for suggested values.
+    """
+    if request.method != 'POST':
+        return redirect('media:detail', pk=pk)
+
+    media = get_object_or_404(Media, pk=pk)
+
+    # Determine title
+    if request.POST.get('choice_title') == 'suggested':
+        new_title = request.POST.get('suggested_title') or media.title
+    else:
+        new_title = media.title
+
+    # subtitle not always present
+    if request.POST.get('choice_subtitle') == 'suggested':
+        new_subtitle = request.POST.get('suggested_subtitle') or media.subtitle
+    else:
+        new_subtitle = media.subtitle
+
+    # description
+    if request.POST.get('choice_description') == 'suggested':
+        new_description = request.POST.get('suggested_description') or ''
+    else:
+        new_description = media.description or ''
+
+    # image handling: store URL string in image_url field if model has field `image` requires download;
+    suggested_image = request.POST.get('suggested_image_url')
+    if request.POST.get('choice_image') == 'suggested' and suggested_image:
+        # We currently store remote image URL in a helper field if present, but the Media model's `image`
+        # is a FileField/ImageField; downloading is left for future work. For now, set nothing and
+        # save suggested URL to a `description` note or skip. We'll attach as an external_url attribute in session.
+        # (Better: enqueue a background job to download.)
+        # For now, just leave media.image unchanged.
+        pass
+
+    # Categories: replace genres if suggested chosen
+    if request.POST.get('choice_categories') == 'suggested':
+        cats = request.POST.get('suggested_categories', '')
+        # clear current genres and replace
+        media.genre.clear()
+        parts = []
+        for seg in [s.strip() for s in cats.split(',') if s.strip()]:
+            for sub in [p.strip() for p in seg.replace('\u2013', '/').split('/') if p.strip()]:
+                parts.append(sub)
+        for part in parts:
+            name = part.title()
+            g, _ = MediaGenre.objects.get_or_create(name=name)
+            media.genre.add(g)
+
+    # apply scalar fields
+    media.title = new_title
+    media.subtitle = new_subtitle
+    media.description = new_description
+    media.save()
+
+    messages.success(request, f'Updated media: {media.title}')
+    return redirect('media:detail', pk=media.pk)
+
+
 def sorted_by(request):
     """
     """

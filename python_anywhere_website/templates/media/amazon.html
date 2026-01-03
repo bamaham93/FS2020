@@ -4,9 +4,13 @@
     <h1>Amazon</h1>
     {% for video in videos %}
         <div class="card" style="width: 16.5rem;">
-          <img class="card-img-top" src="https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" alt="Card image cap">
+          {% if video.image %}
+            <img class="card-img-top" src="{{ video.image.url }}" alt="{{ video.title }}">
+          {% else %}
+            <img class="card-img-top" src="https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" alt="Card image cap">
+          {% endif %}
           <div class="card-body">
-            <h3 class="card-title">{{ video.title }}</h3>
+            <h3 class="card-title"><a href="{% url 'media:detail' video.id %}">{{ video.title }}</a></h3>
               {% if video.subtitle %}
                 <h5 class="card-title">{{ video.subtitle }}</h5>
               {% endif %}

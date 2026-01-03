@@ -1,0 +1,47 @@
+{% extends 'media/media_base.html' %}
+
+{% block section1 %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>{{ media.title }}</h1>
+    <div>
+      <a href="{% url 'media:lookup' media.id %}" class="btn btn-outline-primary open-in-modal">Lookup</a>
+      <a href="{% url 'media:add_media' %}?barcode={{ media.isbn_code|default_if_none:'' }}&code_type=isbn" class="btn btn-outline-secondary ms-2">Edit</a>
+      <a href="{% url 'media:remove_by_barcode' %}" class="btn btn-outline-danger ms-2">Remove</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      {% if media.image %}
+        <img src="{{ media.image.url }}" class="img-fluid rounded shadow" alt="{{ media.title }}">
+      {% else %}
+        <img src="https://images.unsplash.com/photo-1528928441742-b4ccac1bb04c?auto=format&fit=crop&w=800&q=60" class="img-fluid rounded shadow" alt="{{ media.title }}">
+      {% endif %}
+
+      <p class="mt-2"><strong>Format:</strong> {{ media.format }}</p>
+      <p><strong>Type:</strong> {{ media.type }}</p>
+      {% if media.isbn_code %}<p><strong>ISBN:</strong> {{ media.isbn_code }}</p>{% endif %}
+      {% if media.upc_code %}<p><strong>UPC:</strong> {{ media.upc_code }}</p>{% endif %}
+      <p><strong>Genres:</strong>
+        {% for g in media.genre.all %}
+          {{ g.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+          —
+        {% endfor %}
+      </p>
+    </div>
+
+    <div class="col-md-8">
+      {% if media.subtitle %}<h4 class="text-muted">{{ media.subtitle }}</h4>{% endif %}
+      {% if media.description %}
+        <p>{{ media.description|linebreaks }}</p>
+      {% else %}
+        <p><em>No description available.</em></p>
+      {% endif %}
+    </div>
+  </div>
+
+  <a href="{% url 'media:sorted_by' %}" class="btn btn-light mt-3">Back to Browse</a>
+</div>
+{% endblock %}

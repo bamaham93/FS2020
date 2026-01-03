@@ -4,9 +4,13 @@
   <h1>Books</h1>
   {% for book in books %}
   <div class="card" style="width: 16.5rem;">
-    <img class="card-img-top" src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80" alt="Card image cap">
+    {% if book.image %}
+      <img class="card-img-top" src="{{ book.image.url }}" alt="{{ book.title }}">
+    {% else %}
+      <img class="card-img-top" src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=876&q=80" alt="Card image cap">
+    {% endif %}
     <div class="card-body">
-      <h3 class="card-title">{{ book.title }}</h3>
+      <h3 class="card-title"><a href="{% url 'media:detail' book.id %}">{{ book.title }}</a></h3>
       {% if book.subtitle %}
         <h5 class="card-title">{{ book.subtitle }}</h5>
       {% endif %}

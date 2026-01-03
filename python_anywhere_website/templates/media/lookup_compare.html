@@ -1,0 +1,103 @@
+{% extends 'media/media_base.html' %}
+
+{% block section1 %}
+<div class="container">
+  <h3>Lookup Suggestions</h3>
+  {% if not meta %}
+    <div class="alert alert-warning">No metadata found for this item.</div>
+    <a href="{% url 'media:detail' media.id %}" class="btn btn-light">Back</a>
+  {% else %}
+    <form method="post" action="{% url 'media:apply_lookup' media.id %}">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header">Current</div>
+            <div class="card-body">
+              <h5 class="card-title">{{ media.title }}</h5>
+              {% if media.subtitle %}<h6 class="card-subtitle mb-2 text-muted">{{ media.subtitle }}</h6>{% endif %}
+              {% if media.image %}
+                <img src="{{ media.image.url }}" class="img-fluid mb-2" alt="{{ media.title }}">
+              {% endif %}
+              {% if media.description %}
+                <p>{{ media.description|truncatewords:60 }}</p>
+              {% endif %}
+              <p><strong>Genres:</strong>
+                {% for g in media.genre.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header">Suggested ({{ meta.source }})</div>
+            <div class="card-body">
+              <h5 class="card-title">{{ meta.title }}</h5>
+              {% if meta.image_url %}
+                <img src="{{ meta.image_url }}" class="img-fluid mb-2" alt="{{ meta.title }}">
+              {% endif %}
+              {% if meta.description %}
+                <p>{{ meta.description|truncatewords:60 }}</p>
+              {% endif %}
+              <p><strong>Genres:</strong> {% for c in meta.categories %}{{ c }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h5>Choose values to apply</h5>
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <div>
+          <label class="me-3"><input type="radio" name="choice_title" value="current" checked> Keep current</label>
+          <label><input type="radio" name="choice_title" value="suggested"> Use suggested</label>
+        </div>
+        <input type="hidden" name="suggested_title" value="{{ meta.title }}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Subtitle</label>
+        <div>
+          <label class="me-3"><input type="radio" name="choice_subtitle" value="current" checked> Keep current</label>
+          <label><input type="radio" name="choice_subtitle" value="suggested"> Use suggested</label>
+        </div>
+        <input type="hidden" name="suggested_subtitle" value="{{ meta.subtitle|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <div>
+          <label class="me-3"><input type="radio" name="choice_description" value="current" checked> Keep current</label>
+          <label><input type="radio" name="choice_description" value="suggested"> Use suggested</label>
+        </div>
+        <input type="hidden" name="suggested_description" value="{{ meta.description|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Cover Image</label>
+        <div>
+          <label class="me-3"><input type="radio" name="choice_image" value="current" checked> Keep current</label>
+          <label><input type="radio" name="choice_image" value="suggested"> Use suggested</label>
+        </div>
+        <input type="hidden" name="suggested_image_url" value="{{ meta.image_url|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Genres</label>
+        <div>
+          <label class="me-3"><input type="radio" name="choice_categories" value="current" checked> Keep current</label>
+          <label><input type="radio" name="choice_categories" value="suggested"> Use suggested</label>
+        </div>
+        <input type="hidden" name="suggested_categories" value="{% for c in meta.categories %}{{ c }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Apply selected</button>
+        <a class="btn btn-secondary" href="{% url 'admin:media_media_change' media.id %}">Edit in Admin</a>
+        <a class="btn btn-light" href="{% url 'media:detail' media.id %}">Cancel</a>
+      </div>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

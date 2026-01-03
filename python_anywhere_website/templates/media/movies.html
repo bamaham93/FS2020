@@ -11,7 +11,7 @@
               <img class="card-img-top" src="https://m.media-amazon.com/images/M/MV5BOTMyMjEyNzIzMV5BMl5BanBnXkFtZTgwNzIyNjU0NzE@._V1_.jpg" alt="{{ movie.title }}">
               {% endif %}
               <div class="card-body">
-                <h3 class="card-title">{{ movie.title }}</h3>
+                <h3 class="card-title"><a href="{% url 'media:detail' movie.id %}">{{ movie.title }}</a></h3>
                   {% if movie.subtitle %}
                     <h4 class="card-title">{{ movie.subtitle }}</h4>
                   {% endif %}
