@@ -151,3 +151,10 @@ class BibleAPITest(TestCase):
         response = self.client.get('/api/v1/bible/passage?ref=Invalid')
         self.assertEqual(response.status_code, 400)
 
+    def test_api_rate_limit_headers(self):
+        response = self.client.get('/api/v1/bible/books')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('X-RateLimit-Limit', response)
+        self.assertIn('X-RateLimit-Remaining', response)
+        self.assertEqual(response['X-RateLimit-Limit'], '100')
+

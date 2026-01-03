@@ -3,11 +3,13 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_GET
 from .models import BibleBook, BibleVerse
+from .decorators import rate_limit
 import re
 
 
 @require_GET
 @cache_page(60 * 60 * 24)  # Cache for 24 hours
+@rate_limit(key_prefix='bible_books', rate=100, per=60)
 def api_books(request):
     """
     GET /api/v1/bible/books
@@ -33,6 +35,7 @@ def api_books(request):
 
 @require_GET
 @cache_page(60 * 60 * 24)  # Cache for 24 hours
+@rate_limit(key_prefix='bible_chapter', rate=100, per=60)
 def api_chapter(request, book_slug, chapter):
     """
     GET /api/v1/bible/books/{slug}/chapters/{chapter}
@@ -68,6 +71,7 @@ def api_chapter(request, book_slug, chapter):
 
 @require_GET
 @cache_page(60 * 60 * 24)  # Cache for 24 hours
+@rate_limit(key_prefix='bible_passage', rate=100, per=60)
 def api_passage(request):
     """
     GET /api/v1/bible/passage?ref=John+3:16-18

@@ -160,6 +160,17 @@ MEDIA_ROOT = BASE_DIR / 'media_uploads'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Cache configuration for Bible API
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'bible-cache',
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    }
+}
+
 # Crispy Forms Defaults
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
