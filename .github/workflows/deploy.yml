@@ -5,14 +5,37 @@ on:
     branches: ["master"]
   workflow_dispatch:
 
-
 concurrency:
   group: deploy-pythonanywhere
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  tests:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # If your tests need env vars, add them here under env:
+      - name: Run Django tests
+        run: |
+          python python_anywhere_website/manage.py test -v 2
+
+  deploy:
+    needs: tests
+    runs-on: ubuntu-latest
+
     steps:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.1.0
@@ -26,7 +49,6 @@ jobs:
             sed -i 's/\r$//' deploy_pythonanywhere.sh || true
             bash ./deploy_pythonanywhere.sh ${{ github.sha }}
 
-
       - name: Reload PythonAnywhere webapp
         env:
           PA_API_KEY: ${{ secrets.PA_API_KEY }}
@@ -39,6 +61,5 @@ jobs:
           fi
 
           curl -sS -X POST \
-            -H "Authorization: Key ${PA_API_KEY}" \
+            -H "Authorization: Token ${PA_API_KEY}" \
             "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_DOMAIN_NAME}/reload/"
-
