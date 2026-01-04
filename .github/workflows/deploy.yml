@@ -1,4 +1,4 @@
-name: Deploy to PythonAnywhere
+name: Django CD - PythonAnywhere Deploy
 
 on:
   push:
@@ -28,5 +28,17 @@ jobs:
 
 
       - name: Reload PythonAnywhere webapp
+        env:
+          PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+          PA_USERNAME: ${{ secrets.PA_USERNAME }}
+          PA_DOMAIN_NAME: ${{ secrets.PA_DOMAIN_NAME }}
         run: |
-          curl -sS -X POST -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}" "https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/webapps/${{ secrets.PA_DOMAIN_NAME }}/reload/"
+          if [ -z "${PA_API_TOKEN}" ]; then
+            echo "PA_API_TOKEN is empty (GitHub secret missing or not exposed)"
+            exit 1
+          fi
+
+          curl -sS -X POST \
+            -H "Authorization: Token ${PA_API_TOKEN}" \
+            "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/webapps/${PA_DOMAIN_NAME}/reload/"
+
