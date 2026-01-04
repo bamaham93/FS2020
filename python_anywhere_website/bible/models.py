@@ -19,6 +19,7 @@ class BibleBook(models.Model):
     
     class Meta:
         ordering = ['order']
+        app_label = 'bible'
         verbose_name = 'Bible Book'
         verbose_name_plural = 'Bible Books'
     
@@ -38,6 +39,7 @@ class BibleVerse(models.Model):
     
     class Meta:
         ordering = ['book__order', 'chapter', 'verse']
+        app_label = 'bible'
         unique_together = [['book', 'chapter', 'verse']]
         indexes = [
             models.Index(fields=['book', 'chapter']),

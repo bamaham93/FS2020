@@ -25,7 +25,8 @@ from bible.urls import api_urlpatterns as bible_api_urls
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", redirect_home),
-    path("home/", include("core_app.urls", namespace="core_app")),
+    # core_app is available under /core_app/ (auth and app URLs)
+    # Removed duplicate include at /home/ to avoid namespace collision
     path("fs2020/", include("fs2020.urls", namespace="fs2020")),
     path("racing/", include("douglas.urls", namespace="racing")),
     path("resume/", include("resume.urls", namespace="resume")),

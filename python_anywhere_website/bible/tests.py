@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import BibleBook, BibleVerse
+from bible.models import BibleBook, BibleVerse
 
 
 class BibleBookModelTest(TestCase):
