@@ -10,6 +10,7 @@ __pycache__/
 # CPython-specific compiled files
 *.cpython-*.pyc
 *.cpython-*.pyo
+*.cpython
 
 # Local database files
 *.db
