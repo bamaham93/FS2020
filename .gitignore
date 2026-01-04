@@ -11,6 +11,8 @@ __pycache__/
 *.cpython-*.pyc
 *.cpython-*.pyo
 *.cpython
+.pyc
+.__pycache__
 
 # Local database files
 *.db
