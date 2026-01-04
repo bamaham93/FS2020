@@ -22,7 +22,10 @@ jobs:
           key: ${{ secrets.PA_SSH_KEY }}
           script: |
             cd /home/Bamaham93/FS2020
-            ./deploy_pythonanywhere.sh ${{ github.sha }}
+            chmod 755 deploy_pythonanywhere.sh
+            sed -i 's/\r$//' deploy_pythonanywhere.sh || true
+            bash ./deploy_pythonanywhere.sh ${{ github.sha }}
+
 
       - name: Reload PythonAnywhere webapp
         run: |
