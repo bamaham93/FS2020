@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block section1 %}
+<div class="bible-reader">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'bible:index' %}">Bible</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'bible:chapter_list' book.slug %}">{{ book.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chapter {{ chapter }}</li>
+        </ol>
+    </nav>
+
+    <header class="mb-4 text-center">
+        <h1>{{ book.name }} {{ chapter }}</h1>
+        <p class="text-muted small">King James Version (Public Domain)</p>
+    </header>
+
+    {% include "bible/_chapter_navigation.html" with extra_class="mb-4" %}
+
+    <div class="verses">
+        {% for verse in verses %}
+        <p class="verse" id="v{{ verse.verse }}">
+            <sup class="verse-number">
+                <a href="#v{{ verse.verse }}" class="verse-link">{{ verse.verse }}</a>
+            </sup>
+            <span class="verse-text">{{ verse.text }}</span>
+        </p>
+        {% empty %}
+        <p class="text-muted">No verses found.</p>
+        {% endfor %}
+    </div>
+
+    {% include "bible/_chapter_navigation.html" with extra_class="mt-4" %}
+</div>
+
+<style>
+    .bible-reader {
+        max-width: 800px;
+        margin: 0 auto;
+        font-family: Georgia, serif;
+        line-height: 1.8;
+    }
+    
+    .bible-reader h1,
+    .bible-reader .breadcrumb-item,
+    .bible-reader .breadcrumb-item a {
+        color: #e0e0e0 !important;
+    }
+    
+    .chapter-navigation {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+    
+    .verses {
+        margin: 2rem 0;
+        font-size: 1.1rem;
+    }
+    
+    .verse {
+        margin-bottom: 0.5rem;
+    }
+    
+    .verse-number {
+        font-size: 0.75em;
+        color: #999;
+        margin-right: 0.25em;
+        font-weight: normal;
+    }
+    
+    .verse-link {
+        text-decoration: none;
+        color: #999;
+    }
+    
+    .verse-link:hover {
+        color: #ccc;
+    }
+    
+    .verse:target {
+        background-color: rgba(255, 251, 204, 0.2);
+        padding: 0.25rem 0;
+        margin: 0.5rem -0.5rem;
+        padding-left: 0.5rem;
+        transition: background-color 2s ease-out;
+    }
+    
+    .verse-text {
+        color: #f0f0f0;
+    }
+</style>
+
+<script>
+// Optional: keyboard navigation
+document.addEventListener('keydown', function(e) {
+    {% if prev_book and prev_chapter %}
+    if (e.key === 'ArrowLeft') {
+        window.location.href = '{% url "bible:chapter_reader" prev_book.slug prev_chapter %}';
+    }
+    {% endif %}
+    {% if next_book and next_chapter %}
+    if (e.key === 'ArrowRight') {
+        window.location.href = '{% url "bible:chapter_reader" next_book.slug next_chapter %}';
+    }
+    {% endif %}
+});
+
+// Smooth scroll to verse on page load if hash present
+if (window.location.hash) {
+    setTimeout(function() {
+        const element = document.querySelector(window.location.hash);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, 100);
+}
+</script>
+{% endblock %}

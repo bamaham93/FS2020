@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "bible",
     "fs2020",
     "core_app",
     "douglas",
@@ -158,6 +159,17 @@ MEDIA_ROOT = BASE_DIR / 'media_uploads'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Cache configuration for Bible API
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'bible-cache',
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    }
+}
 
 # Crispy Forms Defaults
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

@@ -1,15 +1,31 @@
 venv
 /venv
-
-
-# Credential Files
-credentials/faa.py
-credentials/twilio.py
-twilio.py
-env.py
 .env
+.env.*
 
-#
-sms_logfile.txt
-# Ignore server-only local overrides
-main_app/local_settings.py
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+# CPython-specific compiled files
+*.cpython-*.pyc
+*.cpython-*.pyo
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
+
+# macOS / Windows junk
+.DS_Store
+Thumbs.db
+
+# Editor / IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# End of file
