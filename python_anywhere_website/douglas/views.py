@@ -2,46 +2,25 @@
 
 """
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-try:
-    from logic.queries import DriverQueries, RaceQueries, LeagueQueries
-    from logic.users_groups import is_group
-except ModuleNotFoundError:
-    pass
+"""
+Deprecated: Douglas views removed. Functions left as simple placeholders
+to avoid import errors; the app is no longer mounted in `urls.py`.
+"""
+
+from django.http import HttpResponse
 
 
-
-# Create your views here.
 def index(request):
-    """
-    Keeping this to make a racing home page.
-    """
-    context = {"races": RaceQueries.get_races()}
-    return render(request, "douglas/nis_index.html", context=context)
+    return HttpResponse("Douglas app retired.")
 
 
 def nis_index(request):
-    """ """
-    context = {"races": RaceQueries.get_races()}
-    return render(request, "douglas/nis_index.html", context)
+    return HttpResponse("Douglas app retired.")
 
 
 def standings(request):
-    """ """
-    context = {
-        "leagues": LeagueQueries.get_leagues(),
-        "nis_drivers": DriverQueries.get_nis_drivers(),
-        "ashoc_drivers": DriverQueries.get_ashoc_drivers(),
-        "is_staff": is_group(request.user, "Staff"),
-    }
-    return render(request, "douglas/standings.html", context)
+    return HttpResponse("Douglas app retired.")
 
 
-@login_required
 def add_race_result(request):
-    """
-    View to add race results to database.
-    """
-    context = {}
-    return render(request, "douglas/add_results.html", context=context)
+    return HttpResponse("Douglas app retired.")

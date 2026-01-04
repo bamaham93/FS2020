@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     "bible",
     "fs2020",
     "core_app",
-    "douglas",
     "resume",
     "prayer",
     "crispy_forms",

@@ -1,7 +1,14 @@
 from django.contrib import admin
 from .models import Track, Race, Driver, League
 
-# Register your models here.
+"""
+Deprecated: Douglas app removed. File left as a harmless placeholder.
+"""
+
+from django.contrib import admin
+
+
+# Placeholder - no admin registrations (app removed)
 @admin.register(Race)
 class RaceAdmin(admin.ModelAdmin):
     """ """

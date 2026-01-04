@@ -1,7 +1,15 @@
 from django.db import models
 
 
-# Create your models here.
+"""
+Deprecated: Douglas models removed. This file is a placeholder to avoid
+accidental imports while the app is retired.
+"""
+
+from django.db import models
+
+
+# No models defined - app removed
 class League(models.Model):
     """
     League model to store details related to each racing league.

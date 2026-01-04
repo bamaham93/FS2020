@@ -1,3 +1,12 @@
 from django.test import TestCase
 
-# Create your tests here.
+"""
+Deprecated: Douglas tests removed.
+"""
+
+from django.test import TestCase
+
+
+class PlaceholderTest(TestCase):
+	def test_placeholder(self):
+		self.assertTrue(True)

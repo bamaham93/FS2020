@@ -52,3 +52,14 @@ class Migration(migrations.Migration):
             ],
         ),
     ]
+"""
+Deprecated: Douglas migrations removed. This file is a harmless placeholder.
+"""
+
+from django.db import migrations
+
+
+class Migration(migrations.Migration):
+    # Empty placeholder migration (app retired)
+    dependencies = []
+    operations = []
