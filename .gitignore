@@ -13,7 +13,7 @@ __pycache__/
 *.cpython
 *.pyc
 *.__pycache__
-*/__pycache__
+/__pycache__
 *.cpython-314.pyc
 
 # Local database files
