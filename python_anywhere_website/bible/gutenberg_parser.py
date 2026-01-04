@@ -9,7 +9,6 @@ The Project Gutenberg KJV file (pg10.txt) has this structure:
 """
 
 import re
-from collections import defaultdict
 
 
 # Bible book metadata: (name, slug, order, testament, chapters)
@@ -108,9 +107,31 @@ def parse_gutenberg_kjv(file_path):
     content = content[start_marker:]
     
     # Parse the content
-    books_data = defaultdict(lambda: {'verses': []})
+    books_data = {}
     current_book = None
     current_chapter = 0
+    current_verse = None
+    current_verse_text = []
+    
+    def save_current_verse():
+        """Helper to save the accumulated verse text."""
+        if current_book and current_verse:
+            if current_book not in books_data:
+                slug, order, testament, chapters = BOOK_INFO[current_book]
+                books_data[current_book] = {
+                    'name': current_book,
+                    'slug': slug,
+                    'order': order,
+                    'testament': testament,
+                    'chapters': chapters,
+                    'verses': []
+                }
+            
+            books_data[current_book]['verses'].append({
+                'chapter': current_verse['chapter'],
+                'verse': current_verse['verse'],
+                'text': ' '.join(current_verse_text).strip()
+            })
     
     # Split into lines
     lines = content.split('\n')
@@ -127,6 +148,11 @@ def parse_gutenberg_kjv(file_path):
             if book_name.lower() in line.lower():
                 # Check if this looks like a book header
                 if any(keyword in line.lower() for keyword in ['book of', 'gospel', 'epistle', 'revelation']):
+                    # Save any pending verse before switching books
+                    save_current_verse()
+                    current_verse = None
+                    current_verse_text = []
+                    
                     current_book = book_name
                     current_chapter = 0
                     print(f"Found book: {book_name}")
@@ -135,31 +161,36 @@ def parse_gutenberg_kjv(file_path):
         # Check for chapter:verse pattern: "1:1", "2:3", etc.
         verse_match = re.match(r'^(\d+):(\d+)\s+(.+)$', line)
         if verse_match and current_book:
+            # Save previous verse before starting new one
+            save_current_verse()
+            
             chapter = int(verse_match.group(1))
-            verse = int(verse_match.group(2))
+            verse_num = int(verse_match.group(2))
             text = verse_match.group(3).strip()
             
             # Update current chapter
             if chapter != current_chapter:
                 current_chapter = chapter
             
-            # Store verse
-            if current_book not in books_data:
-                slug, order, testament, chapters = BOOK_INFO[current_book]
-                books_data[current_book] = {
-                    'name': current_book,
-                    'slug': slug,
-                    'order': order,
-                    'testament': testament,
-                    'chapters': chapters,
-                    'verses': []
-                }
-            
-            books_data[current_book]['verses'].append({
+            # Start new verse
+            current_verse = {
                 'chapter': chapter,
-                'verse': verse,
-                'text': text
-            })
+                'verse': verse_num
+            }
+            current_verse_text = [text]
+        elif current_verse and current_book and line:
+            # This is a continuation of the current verse
+            # Check if it's not the start of a new book
+            is_book_header = any(
+                book_name.lower() in line.lower() and 
+                any(keyword in line.lower() for keyword in ['book of', 'gospel', 'epistle'])
+                for book_name in BOOK_INFO.keys()
+            )
+            if not is_book_header:
+                current_verse_text.append(line)
+    
+    # Save the last verse
+    save_current_verse()
     
     return list(books_data.values())
 
