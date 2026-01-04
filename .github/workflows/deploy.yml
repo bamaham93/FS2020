@@ -1,0 +1,29 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches: ["master"]
+
+concurrency:
+  group: deploy-pythonanywhere
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.PA_HOST }}
+          username: ${{ secrets.PA_USERNAME }}
+          key: ${{ secrets.PA_SSH_KEY }}
+          script: |
+            cd /home/Bamaham93/FS2020
+            ./deploy_pythonanywhere.sh ${{ github.sha }}
+
+      - name: Reload PythonAnywhere webapp
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Token ${{ secrets.PA_API_TOKEN }}" \
+            "https://www.pythonanywhere.com/api/v0/user/${{ secrets.PA_USERNAME }}/webapps/${{ secrets.PA_DOMAIN_NAME }}/reload/"
