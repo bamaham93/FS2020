@@ -8,15 +8,34 @@ logger = logging.getLogger(__name__)
 
 
 def _run_import_kjv(caller_name=None):
+    """
+    Run the import_kjv management command with --clear flag.
+
+    Catches all exceptions to prevent thread crashes and logs them.
+    Broad exception handling is intentional - we want to catch and log
+    any error that occurs during import (CommandError, DB errors, etc.).
+    """
     try:
         logger.info("Admin-initiated KJV import started (user=%s)", caller_name)
         call_command("import_kjv", clear=True)
         logger.info("Admin-initiated KJV import completed (user=%s)", caller_name)
     except Exception:
+        # Log full traceback for debugging. Broad exception handling is intentional.
         logger.exception("Admin-initiated KJV import failed (user=%s)", caller_name)
 
 
 def import_kjv_action(modeladmin, request, queryset):
+    """
+    Admin action to trigger KJV Bible import in a background thread.
+
+    WARNING: This action clears all existing Bible data before importing.
+
+    Uses a daemon thread to avoid blocking the HTTP request. While daemon threads
+    may be terminated if the process exits, this is acceptable for this use case
+    since the import command is idempotent and can be re-run if needed.
+    For production environments with high reliability requirements, consider
+    using a task queue like Celery instead.
+    """
     if not request.user.is_staff:
         modeladmin.message_user(
             request, "Only staff users may run the KJV import.", level=messages.ERROR
@@ -25,6 +44,7 @@ def import_kjv_action(modeladmin, request, queryset):
 
     caller = getattr(request.user, "username", str(request.user))
     try:
+        # Daemon thread allows the request to complete without waiting for import
         thread = threading.Thread(target=_run_import_kjv, args=(caller,), daemon=True)
         thread.start()
         modeladmin.message_user(
