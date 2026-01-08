@@ -119,17 +119,7 @@ def parse_gutenberg_kjv(file_path):
             if start_idx > 0:
                 break
     
-    print(f"Starting parsing at line {start_idx}")
     lines = lines[start_idx:]
-    
-    # Define which lines are alternate titles that should be skipped
-    # These appear after "Commonly Called:" or "Otherwise Called:"
-    alternate_titles = {
-        'The First Book of the Kings',   # Alternate for 1 Samuel (but also real title for 1 Kings!)
-        'The Second Book of the Kings',  # Alternate for 2 Samuel (but also real title for 2 Kings!)
-        'The Third Book of the Kings',   # Alternate for 1 Kings
-        'The Fourth Book of the Kings',  # Alternate for 2 Kings
-    }
     
     # Build book header patterns for precise matching
     book_patterns = {
@@ -247,7 +237,6 @@ def parse_gutenberg_kjv(file_path):
             if re.match(pattern, line_stripped):
                 # If we're in an alternate section, this is an alternate title
                 if in_alternate_section:
-                    print(f"Skipping alternate title: {line_stripped}")
                     in_alternate_section = False
                     book_matched = True
                     break
@@ -260,7 +249,6 @@ def parse_gutenberg_kjv(file_path):
                 
                 current_book = book_name
                 current_chapter = 0
-                print(f"Found book: {book_name}")
                 book_matched = True
                 in_alternate_section = False
                 break

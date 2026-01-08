@@ -1,6 +1,160 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from bible.models import BibleBook, BibleVerse
+from bible.gutenberg_parser import parse_gutenberg_kjv, BOOK_INFO
+import tempfile
+import os
+
+
+class GutenbergParserTest(TestCase):
+    """Tests for the Gutenberg KJV parser."""
+    
+    def create_test_file(self, content):
+        """Helper to create a temporary test file."""
+        fd, path = tempfile.mkstemp(suffix='.txt')
+        with os.fdopen(fd, 'w') as f:
+            f.write(content)
+        return path
+    
+    def test_parse_simple_book(self):
+        """Test parsing a simple book with a few verses."""
+        content = """
+The First Book of Moses: Called Genesis
+
+
+1:1 In the beginning God created the heaven and the earth.
+
+1:2 And the earth was without form, and void; and darkness was upon
+the face of the deep.
+
+1:3 And God said, Let there be light: and there was light.
+"""
+        path = self.create_test_file(content)
+        try:
+            result = parse_gutenberg_kjv(path)
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]['name'], 'Genesis')
+            self.assertEqual(len(result[0]['verses']), 3)
+            self.assertEqual(result[0]['verses'][0]['chapter'], 1)
+            self.assertEqual(result[0]['verses'][0]['verse'], 1)
+            self.assertIn('beginning', result[0]['verses'][0]['text'])
+        finally:
+            os.unlink(path)
+    
+    def test_parse_with_alternate_titles(self):
+        """Test parsing books with alternate titles (Samuel/Kings)."""
+        content = """
+The First Book of Samuel
+
+Otherwise Called:
+
+The First Book of the Kings
+
+
+1:1 Now there was a certain man of Ramathaimzophim.
+
+1:2 And he had two wives.
+
+
+The Second Book of Samuel
+
+Otherwise Called:
+
+The Second Book of the Kings
+
+
+1:1 Now it came to pass after the death of Saul.
+
+
+The First Book of the Kings
+
+Commonly Called:
+
+The Third Book of the Kings
+
+
+1:1 Now king David was old and stricken in years.
+
+
+The Second Book of the Kings
+
+Commonly Called:
+
+The Fourth Book of the Kings
+
+
+1:1 Then Moab rebelled against Israel.
+"""
+        path = self.create_test_file(content)
+        try:
+            result = parse_gutenberg_kjv(path)
+            book_names = {book['name'] for book in result}
+            # Should have all 4 books, no duplicates
+            self.assertIn('1 Samuel', book_names)
+            self.assertIn('2 Samuel', book_names)
+            self.assertIn('1 Kings', book_names)
+            self.assertIn('2 Kings', book_names)
+            self.assertEqual(len(result), 4)
+        finally:
+            os.unlink(path)
+    
+    def test_parse_chronicles(self):
+        """Test parsing Chronicles books."""
+        content = """
+The First Book of the Chronicles
+
+
+1:1 Adam, Sheth, Enosh.
+
+1:2 Kenan, Mahalaleel, Jered.
+
+
+The Second Book of the Chronicles
+
+
+1:1 And Solomon the son of David was strengthened.
+"""
+        path = self.create_test_file(content)
+        try:
+            result = parse_gutenberg_kjv(path)
+            book_names = {book['name'] for book in result}
+            self.assertIn('1 Chronicles', book_names)
+            self.assertIn('2 Chronicles', book_names)
+            self.assertEqual(len(result), 2)
+        finally:
+            os.unlink(path)
+    
+    def test_multiline_verse(self):
+        """Test that verses spanning multiple lines are concatenated."""
+        content = """
+The Gospel According to Saint John
+
+
+1:1 In the beginning was the Word, and the Word was with God, and
+the Word was God.
+
+1:2 The same was in the beginning with God.
+"""
+        path = self.create_test_file(content)
+        try:
+            result = parse_gutenberg_kjv(path)
+            self.assertEqual(len(result), 1)
+            verse1_text = result[0]['verses'][0]['text']
+            # Should contain both lines joined
+            self.assertIn('In the beginning', verse1_text)
+            self.assertIn('Word was God', verse1_text)
+        finally:
+            os.unlink(path)
+    
+    def test_all_66_books_defined(self):
+        """Test that BOOK_INFO has all 66 books."""
+        self.assertEqual(len(BOOK_INFO), 66)
+        # Check a few key books
+        self.assertIn('Genesis', BOOK_INFO)
+        self.assertIn('Revelation', BOOK_INFO)
+        self.assertIn('1 Samuel', BOOK_INFO)
+        self.assertIn('2 Kings', BOOK_INFO)
+        self.assertIn('1 Chronicles', BOOK_INFO)
 
 
 class BibleBookModelTest(TestCase):
