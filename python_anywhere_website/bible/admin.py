@@ -37,8 +37,8 @@ class BibleBookAdmin(admin.ModelAdmin):
         Runs the import in a background thread to avoid blocking the request.
         """
         try:
-            # Start import in background thread
-            import_thread = threading.Thread(target=run_kjv_import)
+            # Start import in background thread (daemon=True allows clean shutdown)
+            import_thread = threading.Thread(target=run_kjv_import, daemon=True)
             import_thread.start()
 
             messages.success(
