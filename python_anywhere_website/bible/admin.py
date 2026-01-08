@@ -31,9 +31,16 @@ def import_kjv_bible_action(modeladmin, request, queryset):
 
     This action is available to staff users with change permission
     on the BibleBook model (standard admin action permission behavior).
+
+    Note: This action ignores the selected items (queryset) and always
+    imports the entire KJV Bible, replacing existing data.
     """
     try:
         # Start the import in a background thread
+        # Using daemon=True is appropriate here because:
+        # 1. The import is idempotent (--clear flag makes it safe to rerun)
+        # 2. Prevents orphaned threads if server restarts
+        # 3. For typical admin use, server runs continuously
         import_thread = threading.Thread(target=_run_import_in_background, daemon=True)
         import_thread.start()
 
