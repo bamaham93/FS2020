@@ -243,6 +243,45 @@ class BibleViewsTest(TestCase):
         response = self.client.get(reverse('bible:index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'John')
+    
+    def test_all_66_books_displayed(self):
+        """Integration test: Verify all 66 books are displayed on the home page."""
+        # Delete the book created in setUp to avoid conflicts
+        BibleBook.objects.all().delete()
+        
+        # Create all 66 books from BOOK_INFO
+        for book_name, (slug, order, testament, chapters) in BOOK_INFO.items():
+            BibleBook.objects.create(
+                name=book_name,
+                slug=slug,
+                order=order,
+                testament=testament,
+                chapters=chapters
+            )
+        
+        # Verify we have exactly 66 books
+        self.assertEqual(BibleBook.objects.count(), 66)
+        
+        # Get the Bible home page
+        response = self.client.get(reverse('bible:index'))
+        self.assertEqual(response.status_code, 200)
+        
+        # Verify all 66 books are in the response
+        for book_name in BOOK_INFO.keys():
+            with self.subTest(book=book_name):
+                self.assertContains(response, book_name)
+        
+        # Verify the correct counts are shown
+        self.assertContains(response, 'Old Testament')
+        self.assertContains(response, 'New Testament')
+        
+        # Verify specific problematic books that were previously missing
+        self.assertContains(response, '1 Samuel')
+        self.assertContains(response, '2 Samuel')
+        self.assertContains(response, '1 Kings')
+        self.assertContains(response, '2 Kings')
+        self.assertContains(response, '1 Chronicles')
+        self.assertContains(response, '2 Chronicles')
 
     def test_chapter_list_view(self):
         response = self.client.get(reverse('bible:chapter_list', args=['john']))
