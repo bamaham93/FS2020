@@ -92,6 +92,15 @@ def parse_gutenberg_kjv(file_path):
     Parse Project Gutenberg KJV Bible text file.
     
     Returns list of book dictionaries compatible with import_kjv command.
+    
+    The file has this structure:
+    - Table of contents at the beginning (skip this)
+    - Actual Bible text starting at "The First Book of Moses: Called Genesis"
+    - Some books have alternate titles:
+      * "The First Book of Samuel" is also called "The First Book of the Kings"
+      * "The Second Book of Samuel" is also called "The Second Book of the Kings"
+      * "The First Book of the Kings" (1 Kings) is also called "The Third Book of the Kings"
+      * "The Second Book of the Kings" (2 Kings) is also called "The Fourth Book of the Kings"
     """
     with open(file_path, 'r', encoding='utf-8') as f:
         lines = f.readlines()
@@ -113,8 +122,16 @@ def parse_gutenberg_kjv(file_path):
     print(f"Starting parsing at line {start_idx}")
     lines = lines[start_idx:]
     
+    # Define which lines are alternate titles that should be skipped
+    # These appear after "Commonly Called:" or "Otherwise Called:"
+    alternate_titles = {
+        'The First Book of the Kings',   # Alternate for 1 Samuel (but also real title for 1 Kings!)
+        'The Second Book of the Kings',  # Alternate for 2 Samuel (but also real title for 2 Kings!)
+        'The Third Book of the Kings',   # Alternate for 1 Kings
+        'The Fourth Book of the Kings',  # Alternate for 2 Kings
+    }
+    
     # Build book header patterns for precise matching
-    # This prevents false positives from verse text
     book_patterns = {
         'Genesis': r'^The First Book of Moses:\s*Called Genesis\s*$',
         'Exodus': r'^The Second Book of Moses:\s*Called Exodus\s*$',
@@ -190,6 +207,7 @@ def parse_gutenberg_kjv(file_path):
     current_chapter = 0
     current_verse = None
     current_verse_text = []
+    in_alternate_section = False
     
     def save_current_verse():
         """Helper to save the accumulated verse text."""
@@ -211,33 +229,30 @@ def parse_gutenberg_kjv(file_path):
                 'text': ' '.join(current_verse_text).strip()
             })
     
-    # Split into lines
-    
-    # Track if we're in a "Commonly Called" or "Otherwise Called" section
-    skip_next_header = False
-    
     for i, line in enumerate(lines):
         line_stripped = line.strip()
         if not line_stripped:
+            # Don't reset in_alternate_section on blank lines - the alternate title
+            # might be on the next non-blank line
             continue
         
         # Check for "Commonly Called" or "Otherwise Called" markers
         if re.match(r'^(Commonly Called:|Otherwise Called:)\s*$', line_stripped):
-            skip_next_header = True
-            print(f"DEBUG: Setting skip_next_header=True at: {line_stripped}")
+            in_alternate_section = True
             continue
         
-        # Check for book headers using precise patterns
+        # Check for book headers using precise patterns FIRST
         book_matched = False
         for book_name, pattern in book_patterns.items():
             if re.match(pattern, line_stripped):
-                # Skip if this is an alternate title
-                if skip_next_header:
+                # If we're in an alternate section, this is an alternate title
+                if in_alternate_section:
                     print(f"Skipping alternate title: {line_stripped}")
-                    skip_next_header = False
+                    in_alternate_section = False
                     book_matched = True
                     break
                 
+                # This is a real book header
                 # Save any pending verse before switching books
                 save_current_verse()
                 current_verse = None
@@ -247,6 +262,7 @@ def parse_gutenberg_kjv(file_path):
                 current_chapter = 0
                 print(f"Found book: {book_name}")
                 book_matched = True
+                in_alternate_section = False
                 break
         
         if book_matched:
@@ -272,9 +288,11 @@ def parse_gutenberg_kjv(file_path):
                 'verse': verse_num
             }
             current_verse_text = [text]
+            in_alternate_section = False  # Definitely not in alternate section if we're in verses
         elif current_verse and current_book and line_stripped:
             # This is a continuation of the current verse
             current_verse_text.append(line_stripped)
+            in_alternate_section = False
     
     # Save the last verse
     save_current_verse()
