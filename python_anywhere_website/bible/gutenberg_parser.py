@@ -92,19 +92,104 @@ def parse_gutenberg_kjv(file_path):
     Parse Project Gutenberg KJV Bible text file.
     
     Returns list of book dictionaries compatible with import_kjv command.
+    
+    The file has this structure:
+    - Table of contents at the beginning (skip this)
+    - Actual Bible text starting at "The First Book of Moses: Called Genesis"
+    - Some books have alternate titles:
+      * "The First Book of Samuel" is also called "The First Book of the Kings"
+      * "The Second Book of Samuel" is also called "The Second Book of the Kings"
+      * "The First Book of the Kings" (1 Kings) is also called "The Third Book of the Kings"
+      * "The Second Book of the Kings" (2 Kings) is also called "The Fourth Book of the Kings"
     """
     with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
+        lines = f.readlines()
     
-    # Find where the actual Bible text starts (after header)
-    # Usually starts with "The First Book of Moses"
-    start_marker = content.find("The First Book of Moses")
-    if start_marker == -1:
-        start_marker = content.find("Genesis")
-    if start_marker == -1:
-        start_marker = 0
+    # Find the start of actual Bible text (skip table of contents)
+    # Look for the first occurrence of "The First Book of Moses: Called Genesis" 
+    # followed by a verse (1:1)
+    start_idx = 0
+    for i, line in enumerate(lines):
+        if 'The First Book of Moses: Called Genesis' in line:
+            # Check if there's a verse nearby
+            for j in range(i, min(i+10, len(lines))):
+                if re.match(r'^\s*1:1\s+', lines[j]):
+                    start_idx = i
+                    break
+            if start_idx > 0:
+                break
     
-    content = content[start_marker:]
+    lines = lines[start_idx:]
+    
+    # Build book header patterns for precise matching
+    book_patterns = {
+        'Genesis': r'^The First Book of Moses:\s*Called Genesis\s*$',
+        'Exodus': r'^The Second Book of Moses:\s*Called Exodus\s*$',
+        'Leviticus': r'^The Third Book of Moses:\s*Called Leviticus\s*$',
+        'Numbers': r'^The Fourth Book of Moses:\s*Called Numbers\s*$',
+        'Deuteronomy': r'^The Fifth Book of Moses:\s*Called Deuteronomy\s*$',
+        'Joshua': r'^The Book of Joshua\s*$',
+        'Judges': r'^The Book of Judges\s*$',
+        'Ruth': r'^The Book of Ruth\s*$',
+        '1 Samuel': r'^The First Book of Samuel\s*$',
+        '2 Samuel': r'^The Second Book of Samuel\s*$',
+        '1 Kings': r'^The First Book of the Kings\s*$',
+        '2 Kings': r'^The Second Book of the Kings\s*$',
+        '1 Chronicles': r'^The First Book of the Chronicles\s*$',
+        '2 Chronicles': r'^The Second Book of the Chronicles\s*$',
+        'Ezra': r'^Ezra\s*$',
+        'Nehemiah': r'^The Book of Nehemiah\s*$',
+        'Esther': r'^The Book of Esther\s*$',
+        'Job': r'^The Book of Job\s*$',
+        'Psalms': r'^The Book of Psalms\s*$',
+        'Proverbs': r'^The Proverbs\s*$',
+        'Ecclesiastes': r'^Ecclesiastes\s*$',
+        'Song of Solomon': r'^The Song of Solomon\s*$',
+        'Isaiah': r'^The Book of the Prophet Isaiah\s*$',
+        'Jeremiah': r'^The Book of the Prophet Jeremiah\s*$',
+        'Lamentations': r'^The Lamentations of Jeremiah\s*$',
+        'Ezekiel': r'^The Book of the Prophet Ezekiel\s*$',
+        'Daniel': r'^The Book of Daniel\s*$',
+        'Hosea': r'^Hosea\s*$',
+        'Joel': r'^Joel\s*$',
+        'Amos': r'^Amos\s*$',
+        'Obadiah': r'^Obadiah\s*$',
+        'Jonah': r'^Jonah\s*$',
+        'Micah': r'^Micah\s*$',
+        'Nahum': r'^Nahum\s*$',
+        'Habakkuk': r'^Habakkuk\s*$',
+        'Zephaniah': r'^Zephaniah\s*$',
+        'Haggai': r'^Haggai\s*$',
+        'Zechariah': r'^Zechariah\s*$',
+        'Malachi': r'^Malachi\s*$',
+        'Matthew': r'^The Gospel According to Saint Matthew\s*$',
+        'Mark': r'^The Gospel According to Saint Mark\s*$',
+        'Luke': r'^The Gospel According to Saint Luke\s*$',
+        'John': r'^The Gospel According to Saint John\s*$',
+        'Acts': r'^The Acts of the Apostles\s*$',
+        'Romans': r'^The Epistle of Paul the Apostle to the Romans\s*$',
+        '1 Corinthians': r'^The First Epistle of Paul the Apostle to the Corinthians\s*$',
+        '2 Corinthians': r'^The Second Epistle of Paul the Apostle to the Corinthians\s*$',
+        'Galatians': r'^The Epistle of Paul the Apostle to the Galatians\s*$',
+        'Ephesians': r'^The Epistle of Paul the Apostle to the Ephesians\s*$',
+        'Philippians': r'^The Epistle of Paul the Apostle to the Philippians\s*$',
+        'Colossians': r'^The Epistle of Paul the Apostle to the Colossians\s*$',
+        '1 Thessalonians': r'^The First Epistle of Paul the Apostle to the Thessalonians\s*$',
+        '2 Thessalonians': r'^The Second Epistle of Paul the Apostle to the Thessalonians\s*$',
+        '1 Timothy': r'^The First Epistle of Paul the Apostle to Timothy\s*$',
+        '2 Timothy': r'^The Second Epistle of Paul the Apostle to Timothy\s*$',
+        'Titus': r'^The Epistle of Paul the Apostle to Titus\s*$',
+        'Philemon': r'^The Epistle of Paul the Apostle to Philemon\s*$',
+        'Hebrews': r'^The Epistle of Paul the Apostle to the Hebrews\s*$',
+        'James': r'^The General Epistle of James\s*$',
+        '1 Peter': r'^The First Epistle General of Peter\s*$',
+        '2 Peter': r'^The Second General Epistle of Peter\s*$',
+        '1 John': r'^The First Epistle General of John\s*$',
+        '2 John': r'^The Second Epistle General of John\s*$',
+        '3 John': r'^The Third Epistle General of John\s*$',
+        'Jude': r'^The General Epistle of Jude\s*$',
+        'Revelation': r'^The Revelation of Saint John the Divine\s*$',
+    }
     
     # Parse the content
     books_data = {}
@@ -112,6 +197,7 @@ def parse_gutenberg_kjv(file_path):
     current_chapter = 0
     current_verse = None
     current_verse_text = []
+    in_alternate_section = False
     
     def save_current_verse():
         """Helper to save the accumulated verse text."""
@@ -133,33 +219,45 @@ def parse_gutenberg_kjv(file_path):
                 'text': ' '.join(current_verse_text).strip()
             })
     
-    # Split into lines
-    lines = content.split('\n')
-    
     for i, line in enumerate(lines):
-        line = line.strip()
-        if not line:
+        line_stripped = line.strip()
+        if not line_stripped:
+            # Don't reset in_alternate_section on blank lines - the alternate title
+            # might be on the next non-blank line
             continue
         
-        # Check for book title patterns
-        # e.g., "The First Book of Moses: Called Genesis"
-        # or "The Gospel According to Saint John"
-        for book_name in BOOK_INFO.keys():
-            if book_name.lower() in line.lower():
-                # Check if this looks like a book header
-                if any(keyword in line.lower() for keyword in ['book of', 'gospel', 'epistle', 'revelation']):
-                    # Save any pending verse before switching books
-                    save_current_verse()
-                    current_verse = None
-                    current_verse_text = []
-                    
-                    current_book = book_name
-                    current_chapter = 0
-                    print(f"Found book: {book_name}")
+        # Check for "Commonly Called" or "Otherwise Called" markers
+        if re.match(r'^(Commonly Called:|Otherwise Called:)\s*$', line_stripped):
+            in_alternate_section = True
+            continue
+        
+        # Check for book headers using precise patterns FIRST
+        book_matched = False
+        for book_name, pattern in book_patterns.items():
+            if re.match(pattern, line_stripped):
+                # If we're in an alternate section, this is an alternate title
+                if in_alternate_section:
+                    in_alternate_section = False
+                    book_matched = True
                     break
+                
+                # This is a real book header
+                # Save any pending verse before switching books
+                save_current_verse()
+                current_verse = None
+                current_verse_text = []
+                
+                current_book = book_name
+                current_chapter = 0
+                book_matched = True
+                in_alternate_section = False
+                break
+        
+        if book_matched:
+            continue
         
         # Check for chapter:verse pattern: "1:1", "2:3", etc.
-        verse_match = re.match(r'^(\d+):(\d+)\s+(.+)$', line)
+        verse_match = re.match(r'^(\d+):(\d+)\s+(.+)$', line_stripped)
         if verse_match and current_book:
             # Save previous verse before starting new one
             save_current_verse()
@@ -178,16 +276,11 @@ def parse_gutenberg_kjv(file_path):
                 'verse': verse_num
             }
             current_verse_text = [text]
-        elif current_verse and current_book and line:
+            in_alternate_section = False  # Definitely not in alternate section if we're in verses
+        elif current_verse and current_book and line_stripped:
             # This is a continuation of the current verse
-            # Check if it's not the start of a new book
-            is_book_header = any(
-                book_name.lower() in line.lower() and 
-                any(keyword in line.lower() for keyword in ['book of', 'gospel', 'epistle'])
-                for book_name in BOOK_INFO.keys()
-            )
-            if not is_book_header:
-                current_verse_text.append(line)
+            current_verse_text.append(line_stripped)
+            in_alternate_section = False
     
     # Save the last verse
     save_current_verse()
