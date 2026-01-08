@@ -13,7 +13,7 @@ def _run_import_kjv(caller_name=None):
     """
     try:
         logger.info("Admin-initiated KJV import started (user=%s)", caller_name)
-        # Call the management command; use keyword arg for the --clear flag
+        # Always call with clear=True to ensure a clean import (per requirements)
         call_command('import_kjv', clear=True)
         logger.info("Admin-initiated KJV import completed (user=%s)", caller_name)
     except Exception:

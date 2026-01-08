@@ -1,7 +1,10 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
+from django.contrib.auth.models import User
+from django.contrib.messages.storage.fallback import FallbackStorage
 from bible.models import BibleBook, BibleVerse
 from bible.gutenberg_parser import parse_gutenberg_kjv, BOOK_INFO
+from bible.admin import import_kjv_action, BibleBookAdmin
 import tempfile
 import os
 
@@ -356,9 +359,6 @@ class AdminActionTest(TestCase):
     """Tests for admin actions."""
 
     def setUp(self):
-        from django.contrib.auth.models import User
-        from bible.admin import import_kjv_action, BibleBookAdmin
-        
         self.user_staff = User.objects.create_user(
             username='staffuser',
             password='testpass',
@@ -380,10 +380,6 @@ class AdminActionTest(TestCase):
 
     def test_import_kjv_action_requires_staff(self):
         """Test that non-staff users cannot run the import action."""
-        from django.contrib.messages.storage.fallback import FallbackStorage
-        from django.test import RequestFactory
-        from bible.admin import import_kjv_action
-
         factory = RequestFactory()
         request = factory.post('/admin/bible/biblebook/')
         request.user = self.user_nonstaff
@@ -404,10 +400,6 @@ class AdminActionTest(TestCase):
 
     def test_import_kjv_action_starts_thread_for_staff(self):
         """Test that staff users can start the import action."""
-        from django.contrib.messages.storage.fallback import FallbackStorage
-        from django.test import RequestFactory
-        from bible.admin import import_kjv_action
-
         factory = RequestFactory()
         request = factory.post('/admin/bible/biblebook/')
         request.user = self.user_staff
@@ -428,15 +420,11 @@ class AdminActionTest(TestCase):
 
     def test_import_kjv_action_metadata(self):
         """Test that the action has proper metadata."""
-        from bible.admin import import_kjv_action
-
         self.assertEqual(import_kjv_action.short_description, "Import KJV Bible")
         self.assertEqual(import_kjv_action.allowed_permissions, ('change',))
 
     def test_admin_has_action_registered(self):
         """Test that BibleBookAdmin has the import action registered."""
-        from bible.admin import BibleBookAdmin, import_kjv_action
-
         # Get the admin class
         admin = BibleBookAdmin(BibleBook, None)
         
