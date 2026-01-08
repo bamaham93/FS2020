@@ -1,7 +1,10 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
+from django.contrib.auth.models import User
+from django.contrib.messages.storage.fallback import FallbackStorage
 from bible.models import BibleBook, BibleVerse
 from bible.gutenberg_parser import parse_gutenberg_kjv, BOOK_INFO
+from bible.admin import import_kjv_action, BibleBookAdmin
 import tempfile
 import os
 
@@ -350,4 +353,81 @@ class BibleAPITest(TestCase):
         self.assertIn('X-RateLimit-Limit', response)
         self.assertIn('X-RateLimit-Remaining', response)
         self.assertEqual(response['X-RateLimit-Limit'], '100')
+
+
+class AdminActionTest(TestCase):
+    """Tests for admin actions."""
+
+    def setUp(self):
+        self.user_staff = User.objects.create_user(
+            username='staffuser',
+            password='testpass',
+            is_staff=True
+        )
+        self.user_nonstaff = User.objects.create_user(
+            username='normaluser',
+            password='testpass',
+            is_staff=False
+        )
+        self.book = BibleBook.objects.create(
+            name='John',
+            slug='john',
+            order=43,
+            testament='NT',
+            chapters=21
+        )
+        self.admin = BibleBookAdmin(BibleBook, None)
+
+    def test_import_kjv_action_requires_staff(self):
+        """Test that non-staff users cannot run the import action."""
+        factory = RequestFactory()
+        request = factory.post('/admin/bible/biblebook/')
+        request.user = self.user_nonstaff
+        
+        # Add message support to request
+        setattr(request, 'session', {})
+        messages = FallbackStorage(request)
+        setattr(request, '_messages', messages)
+
+        # Run the action
+        queryset = BibleBook.objects.all()
+        import_kjv_action(self.admin, request, queryset)
+
+        # Check that an error message was sent
+        message_list = list(messages)
+        self.assertEqual(len(message_list), 1)
+        self.assertIn('Only staff users', str(message_list[0]))
+
+    def test_import_kjv_action_starts_thread_for_staff(self):
+        """Test that staff users can start the import action."""
+        factory = RequestFactory()
+        request = factory.post('/admin/bible/biblebook/')
+        request.user = self.user_staff
+        
+        # Add message support to request
+        setattr(request, 'session', {})
+        messages = FallbackStorage(request)
+        setattr(request, '_messages', messages)
+
+        # Run the action
+        queryset = BibleBook.objects.all()
+        import_kjv_action(self.admin, request, queryset)
+
+        # Check that a success message was sent
+        message_list = list(messages)
+        self.assertEqual(len(message_list), 1)
+        self.assertIn('started in the background', str(message_list[0]))
+
+    def test_import_kjv_action_metadata(self):
+        """Test that the action has proper metadata."""
+        self.assertEqual(import_kjv_action.short_description, "Import KJV Bible")
+        self.assertEqual(import_kjv_action.allowed_permissions, ('change',))
+
+    def test_admin_has_action_registered(self):
+        """Test that BibleBookAdmin has the import action registered."""
+        # Get the admin class
+        admin = BibleBookAdmin(BibleBook, None)
+        
+        # Check that actions includes our import action
+        self.assertIn(import_kjv_action, admin.actions)
 
