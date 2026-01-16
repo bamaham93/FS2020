@@ -285,3 +285,47 @@ class TestPrayerForms(TestCase):
         #         path=endpoint,
         #         data=data,
         #     )
+
+
+class TestSMSConsent(TestCase):
+    """Test SMS consent functionality."""
+    
+    def setUp(self):
+        """Set up test data."""
+        from prayer.models import Person
+        
+        User.objects.create_user(
+            username="testuser",
+            password="testpass123",
+            email="test@example.com",
+        )
+        
+        # Create a person with SMS consent
+        self.person_with_consent = Person.objects.create(
+            first_name="John",
+            last_name="Doe",
+            phone_number="+12345678900",
+            email="john@example.com",
+            sms_consent=True,
+        )
+        
+        # Create a person without SMS consent
+        self.person_without_consent = Person.objects.create(
+            first_name="Jane",
+            last_name="Smith",
+            phone_number="+12345678901",
+            email="jane@example.com",
+            sms_consent=False,
+        )
+    
+    def test_person_has_sms_consent_field(self):
+        """Test that Person model has sms_consent field."""
+        self.assertTrue(hasattr(self.person_with_consent, 'sms_consent'))
+        self.assertTrue(hasattr(self.person_with_consent, 'sms_consent_date'))
+    
+    def test_person_form_includes_consent_field(self):
+        """Test that NewPersonForm includes sms_consent field."""
+        from prayer.forms import NewPersonForm
+        form = NewPersonForm()
+        self.assertIn('sms_consent', form.fields)
+
