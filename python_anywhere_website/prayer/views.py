@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
 from prayer.models import Person, PrayerGroup
 
@@ -88,8 +89,14 @@ def message_detail(request, id):
                 group_ = PrayerGroup.objects.get(name=group).people.all()
             people_set.update(group_)
 
-        # Filter to only people who have consented to SMS
-        consented_people = {person for person in people_set if person.sms_consent and person.phone_number}
+        # Filter to only people who have consented to SMS - use database filtering
+        consented_people = set(
+            Person.objects.filter(
+                id__in=[p.id for p in people_set],
+                sms_consent=True,
+                phone_number__isnull=False
+            ).exclude(phone_number='')
+        )
         
         if consented_people:
             try:
@@ -200,7 +207,6 @@ def people(request) -> render:
             person = form.save(commit=False)
             # Set consent date if consent is given
             if person.sms_consent and not person.sms_consent_date:
-                from django.utils import timezone
                 person.sms_consent_date = timezone.now()
             person.save()
             messages.success(request, "Your submission was saved!")

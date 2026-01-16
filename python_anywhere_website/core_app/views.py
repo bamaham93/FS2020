@@ -20,6 +20,13 @@ def profile(request):
     return render(request, "Hello.")
 
 
+def privacy_policy(request):
+    """
+    Display the privacy policy page.
+    """
+    return render(request, "core_app/privacy_policy.html")
+
+
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy("login")
@@ -34,13 +41,19 @@ class SignUpView(generic.CreateView):
         sms_consent = form.cleaned_data.get('sms_consent')
         
         if phone_number:
-            Person.objects.create(
-                first_name=form.cleaned_data.get('first_name'),
-                last_name=form.cleaned_data.get('last_name'),
-                phone_number=phone_number,
-                email=form.cleaned_data.get('email'),
-                sms_consent=sms_consent,
-                sms_consent_date=timezone.now() if sms_consent else None
-            )
+            try:
+                Person.objects.create(
+                    first_name=form.cleaned_data.get('first_name'),
+                    last_name=form.cleaned_data.get('last_name'),
+                    phone_number=phone_number,
+                    email=form.cleaned_data.get('email'),
+                    sms_consent=sms_consent,
+                    sms_consent_date=timezone.now() if sms_consent else None
+                )
+            except Exception as e:
+                # Log the error but don't fail the user creation
+                # The user account is already created at this point
+                import logging
+                logging.error(f"Failed to create Person record during signup: {e}")
         
         return response
