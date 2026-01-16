@@ -27,14 +27,20 @@ def new_message(request) -> render:
     """
     Create a new message.
     """
-    msg_query = PrayerMessageQueries()
-    pg_queries = logic.queries.PrayerGroupQueries()
-
-    prayer_groups = pg_queries.get_all()
+    try:
+        msg_query = PrayerMessageQueries()
+        pg_queries = logic.queries.PrayerGroupQueries()
+        prayer_groups = pg_queries.get_all()
+        all_messages = reversed(msg_query.get_all_messages())
+    except (NameError, AttributeError):
+        # Fallback when logic.queries is not available
+        from prayer.models import PrayerMessage
+        prayer_groups = PrayerGroup.objects.all()
+        all_messages = reversed(PrayerMessage.objects.all())
 
     context = {
         "form": NewMessageForm(),
-        "messages": reversed(msg_query.get_all_messages()),
+        "messages": all_messages,
         "prayer_groups": prayer_groups,
     }
     if request.method == "POST":
@@ -50,12 +56,16 @@ def message_detail(request, id):
     See message details, send to prayer groups.
     Todo: Move code pertaining to sending sms messages to the function below.
     """
-
-    pm_queries = logic.queries.PrayerMessageQueries()
-    message = pm_queries.get_message_by_id(id=id)
-    pg_queries = logic.queries.PrayerGroupQueries()
-
-    prayer_groups = pg_queries.get_all()
+    try:
+        pm_queries = logic.queries.PrayerMessageQueries()
+        message = pm_queries.get_message_by_id(id=id)
+        pg_queries = logic.queries.PrayerGroupQueries()
+        prayer_groups = pg_queries.get_all()
+    except (NameError, AttributeError):
+        # Fallback when logic.queries is not available
+        from prayer.models import PrayerMessage
+        message = PrayerMessage.objects.get(id=id)
+        prayer_groups = PrayerGroup.objects.all()
 
     context = {
         "message": message,
@@ -70,20 +80,26 @@ def message_detail(request, id):
         # print(people_set)
 
         for group in checks:  # group is a string the name of the group.
-            group_ = pg_queries.get_group_members(
-                group
-            )  # group_ is a queryset of person objects.
+            try:
+                group_ = pg_queries.get_group_members(
+                    group
+                )  # group_ is a queryset of person objects.
+            except (NameError, UnboundLocalError):
+                group_ = PrayerGroup.objects.get(name=group).people.all()
             people_set.update(group_)
 
         # Filter to only people who have consented to SMS
         consented_people = {person for person in people_set if person.sms_consent and person.phone_number}
         
         if consented_people:
-            sms_message = SMSMessage(
-                body=message.message, contacts=consented_people, testing=False
-            )
-            sms_message.send()
-            messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
+            try:
+                sms_message = SMSMessage(
+                    body=message.message, contacts=consented_people, testing=False
+                )
+                sms_message.send()
+                messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
+            except NameError:
+                messages.warning(request, "SMS functionality is not available.")
         else:
             messages.warning(request, "No recipients with SMS consent found in the selected groups.")
 
