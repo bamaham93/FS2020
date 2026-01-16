@@ -97,6 +97,30 @@ class TestPrayerModule(TestCase):
         # self.assertContains(response, 'Details')
         # self.assertContains(response, 'Delete')
 
+    def test_people_view_public_access(self):
+        """
+        Test that people view is accessible without login and shows signup form.
+        Test that personal information is not displayed.
+        """
+        client = TestPrayerModule.client
+        response = client.get("/prayer/people")
+
+        # Should be accessible without login
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+        # Should contain signup-related text
+        self.assertContains(response, "Sign Up")
+        self.assertContains(response, "Join Our Prayer Chain")
+
+        # Should NOT contain table headers that would show personal info
+        self.assertNotContains(response, '<th class="col">Phone</th>')
+        self.assertNotContains(response, '<th class="col">Email Address</th>')
+
+        # Should NOT contain Delete button (admin functionality)
+        self.assertNotContains(response, "btn-danger")
+
+        self.assertTemplateUsed("prayer/prayer-people.html")
+
 
 class TestPrayerForms(TestCase):
     """
@@ -165,21 +189,19 @@ class TestPrayerForms(TestCase):
             )
 
     def test_new_person_form(self):
-        """ """
-        user = User.objects.get(id=1)
+        """Test that new person form works without requiring login."""
         client = TestPrayerForms.client
-        client.force_login(user)
         endpoint = "/prayer/people"
 
-        # Test data that should submit successfully.
+        # Test data that should submit successfully without login
         data = {
             "first_name": "My",
             "last_name": "Name",
             "phone_number": "Is",
-            "email": "This!",
+            "email": "test@example.com",
         }
 
-        # Should succeed.
+        # Should succeed without login.
         response = client.post(endpoint, data)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
@@ -289,17 +311,17 @@ class TestPrayerForms(TestCase):
 
 class TestSMSConsent(TestCase):
     """Test SMS consent functionality."""
-    
+
     def setUp(self):
         """Set up test data."""
         from prayer.models import Person
-        
+
         User.objects.create_user(
             username="testuser",
             password="testpass123",
             email="test@example.com",
         )
-        
+
         # Create a person with SMS consent
         self.person_with_consent = Person.objects.create(
             first_name="John",
@@ -308,7 +330,7 @@ class TestSMSConsent(TestCase):
             email="john@example.com",
             sms_consent=True,
         )
-        
+
         # Create a person without SMS consent
         self.person_without_consent = Person.objects.create(
             first_name="Jane",
@@ -317,15 +339,15 @@ class TestSMSConsent(TestCase):
             email="jane@example.com",
             sms_consent=False,
         )
-    
+
     def test_person_has_sms_consent_field(self):
         """Test that Person model has sms_consent field."""
-        self.assertTrue(hasattr(self.person_with_consent, 'sms_consent'))
-        self.assertTrue(hasattr(self.person_with_consent, 'sms_consent_date'))
-    
+        self.assertTrue(hasattr(self.person_with_consent, "sms_consent"))
+        self.assertTrue(hasattr(self.person_with_consent, "sms_consent_date"))
+
     def test_person_form_includes_consent_field(self):
         """Test that NewPersonForm includes sms_consent field."""
         from prayer.forms import NewPersonForm
-        form = NewPersonForm()
-        self.assertIn('sms_consent', form.fields)
 
+        form = NewPersonForm()
+        self.assertIn("sms_consent", form.fields)

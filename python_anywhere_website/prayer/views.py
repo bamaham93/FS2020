@@ -14,6 +14,7 @@ except ModuleNotFoundError:
 
 # from django.contrib.messages import get_messages
 
+
 # Create your views here.
 def index(request) -> render:
     """
@@ -29,7 +30,7 @@ def new_message(request) -> render:
     Create a new message.
     """
     # Check if logic.queries classes are available
-    if 'PrayerMessageQueries' in globals() and 'PrayerGroupQueries' in globals():
+    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
         try:
             msg_query = PrayerMessageQueries()
             pg_queries = PrayerGroupQueries()
@@ -38,11 +39,13 @@ def new_message(request) -> render:
         except (AttributeError, ImportError):
             # Fallback if queries fail
             from prayer.models import PrayerMessage
+
             prayer_groups = PrayerGroup.objects.all()
             all_messages = reversed(PrayerMessage.objects.all())
     else:
         # Fallback when logic.queries is not available
         from prayer.models import PrayerMessage
+
         prayer_groups = PrayerGroup.objects.all()
         all_messages = reversed(PrayerMessage.objects.all())
 
@@ -65,7 +68,7 @@ def message_detail(request, id):
     Todo: Move code pertaining to sending sms messages to the function below.
     """
     # Check if logic.queries classes are available
-    if 'PrayerMessageQueries' in globals() and 'PrayerGroupQueries' in globals():
+    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
         try:
             pm_queries = PrayerMessageQueries()
             message = pm_queries.get_message_by_id(id=id)
@@ -74,12 +77,14 @@ def message_detail(request, id):
         except (AttributeError, ImportError):
             # Fallback if queries fail
             from prayer.models import PrayerMessage
+
             message = PrayerMessage.objects.get(id=id)
             prayer_groups = PrayerGroup.objects.all()
             pg_queries = None
     else:
         # Fallback when logic.queries is not available
         from prayer.models import PrayerMessage
+
         message = PrayerMessage.objects.get(id=id)
         prayer_groups = PrayerGroup.objects.all()
         pg_queries = None
@@ -113,25 +118,30 @@ def message_detail(request, id):
             Person.objects.filter(
                 id__in=[p.id for p in people_set],
                 sms_consent=True,
-                phone_number__isnull=False
-            ).exclude(phone_number='')
+                phone_number__isnull=False,
+            ).exclude(phone_number="")
         )
-        
+
         if consented_people:
             # Check if SMSMessage is available
-            if 'SMSMessage' in globals():
+            if "SMSMessage" in globals():
                 try:
                     sms_message = SMSMessage(
                         body=message.message, contacts=consented_people, testing=False
                     )
                     sms_message.send()
-                    messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
+                    messages.success(
+                        request,
+                        f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.",
+                    )
                 except (AttributeError, ImportError) as e:
                     messages.error(request, f"Failed to send SMS messages: {e}")
             else:
                 messages.warning(request, "SMS functionality is not available.")
         else:
-            messages.warning(request, "No recipients with SMS consent found in the selected groups.")
+            messages.warning(
+                request, "No recipients with SMS consent found in the selected groups."
+            )
 
         # for person in people_set:  # Used a set so to eliminate duplicate messages.
         #     print(f"First Name: {person.first_name}")
@@ -148,7 +158,7 @@ def send_message(request, id: int):
     instead of handling it in the views.
     """
     # Check if classes are available
-    if 'PrayerMessageQueries' in globals() and 'SMSMessage' in globals():
+    if "PrayerMessageQueries" in globals() and "SMSMessage" in globals():
         try:
             message = PrayerMessageQueries.get_message_by_id(id=id)
             body = message.message
@@ -184,9 +194,9 @@ def group(request, group_id):
     Group detail page, user editable.
     """
     group_ = PrayerGroup.objects.get(id=group_id)
-    
+
     # Get group membership
-    if 'PrayerGroupQueries' in globals():
+    if "PrayerGroupQueries" in globals():
         try:
             membership = PrayerGroupQueries()
             group_membership = membership.get_group_members(group=group_.name)
@@ -194,7 +204,7 @@ def group(request, group_id):
             group_membership = group_.people.all()
     else:
         group_membership = group_.people.all()
-    
+
     context = {
         "group": group_,
         "form": NewGroupForm(PrayerGroup.objects.get(id=group_id).__dict__),
@@ -231,15 +241,12 @@ def prayer_requests(request) -> render:
     return render(request, "prayer/prayer_request.html", context)
 
 
-@login_required()
 def people(request) -> render:
     """
-    List of people.
+    Public signup page for prayer chain.
     """
     context = {
         "new_person_form": NewPersonForm(),
-        "people_list": Person.objects.all(),  # TODO Move to logic/queries.py
-        # 'messages': get_messages(request)
     }
     if request.method == "POST":
         form = NewPersonForm(request.POST)
@@ -249,10 +256,15 @@ def people(request) -> render:
             if person.sms_consent and not person.sms_consent_date:
                 person.sms_consent_date = timezone.now()
             person.save()
-            messages.success(request, "Your submission was saved!")
+            messages.success(
+                request, "Thank you for signing up! Your information has been saved."
+            )
         else:
             context["new_person_form"] = NewPersonForm(request.POST)
-            messages.warning(request, "There was a problem saving your form.")
+            messages.warning(
+                request,
+                "There was a problem saving your form. Please check the information and try again.",
+            )
     return render(request, "prayer/prayer-people.html", context)
 
 

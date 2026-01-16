@@ -1,6 +1,7 @@
 from django.contrib import admin
 from prayer.models import PrayerGroup, PrayerProfile, Person, PrayerMessage
 
+
 # Register your models here.
 @admin.register(PrayerGroup)
 class GroupAdmin(admin.ModelAdmin):
