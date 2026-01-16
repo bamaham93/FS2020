@@ -28,12 +28,19 @@ def new_message(request) -> render:
     """
     Create a new message.
     """
-    try:
-        msg_query = PrayerMessageQueries()
-        pg_queries = logic.queries.PrayerGroupQueries()
-        prayer_groups = pg_queries.get_all()
-        all_messages = reversed(msg_query.get_all_messages())
-    except (NameError, AttributeError):
+    # Check if logic.queries classes are available
+    if 'PrayerMessageQueries' in globals() and 'PrayerGroupQueries' in globals():
+        try:
+            msg_query = PrayerMessageQueries()
+            pg_queries = PrayerGroupQueries()
+            prayer_groups = pg_queries.get_all()
+            all_messages = reversed(msg_query.get_all_messages())
+        except Exception:
+            # Fallback if queries fail
+            from prayer.models import PrayerMessage
+            prayer_groups = PrayerGroup.objects.all()
+            all_messages = reversed(PrayerMessage.objects.all())
+    else:
         # Fallback when logic.queries is not available
         from prayer.models import PrayerMessage
         prayer_groups = PrayerGroup.objects.all()
@@ -57,16 +64,25 @@ def message_detail(request, id):
     See message details, send to prayer groups.
     Todo: Move code pertaining to sending sms messages to the function below.
     """
-    try:
-        pm_queries = logic.queries.PrayerMessageQueries()
-        message = pm_queries.get_message_by_id(id=id)
-        pg_queries = logic.queries.PrayerGroupQueries()
-        prayer_groups = pg_queries.get_all()
-    except (NameError, AttributeError):
+    # Check if logic.queries classes are available
+    if 'PrayerMessageQueries' in globals() and 'PrayerGroupQueries' in globals():
+        try:
+            pm_queries = PrayerMessageQueries()
+            message = pm_queries.get_message_by_id(id=id)
+            pg_queries = PrayerGroupQueries()
+            prayer_groups = pg_queries.get_all()
+        except Exception:
+            # Fallback if queries fail
+            from prayer.models import PrayerMessage
+            message = PrayerMessage.objects.get(id=id)
+            prayer_groups = PrayerGroup.objects.all()
+            pg_queries = None
+    else:
         # Fallback when logic.queries is not available
         from prayer.models import PrayerMessage
         message = PrayerMessage.objects.get(id=id)
         prayer_groups = PrayerGroup.objects.all()
+        pg_queries = None
 
     context = {
         "message": message,
@@ -81,11 +97,14 @@ def message_detail(request, id):
         # print(people_set)
 
         for group in checks:  # group is a string the name of the group.
-            try:
-                group_ = pg_queries.get_group_members(
-                    group
-                )  # group_ is a queryset of person objects.
-            except (NameError, UnboundLocalError):
+            if pg_queries is not None:
+                try:
+                    group_ = pg_queries.get_group_members(
+                        group
+                    )  # group_ is a queryset of person objects.
+                except Exception:
+                    group_ = PrayerGroup.objects.get(name=group).people.all()
+            else:
                 group_ = PrayerGroup.objects.get(name=group).people.all()
             people_set.update(group_)
 
@@ -99,13 +118,17 @@ def message_detail(request, id):
         )
         
         if consented_people:
-            try:
-                sms_message = SMSMessage(
-                    body=message.message, contacts=consented_people, testing=False
-                )
-                sms_message.send()
-                messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
-            except NameError:
+            # Check if SMSMessage is available
+            if 'SMSMessage' in globals():
+                try:
+                    sms_message = SMSMessage(
+                        body=message.message, contacts=consented_people, testing=False
+                    )
+                    sms_message.send()
+                    messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
+                except Exception as e:
+                    messages.error(request, f"Failed to send SMS messages: {e}")
+            else:
                 messages.warning(request, "SMS functionality is not available.")
         else:
             messages.warning(request, "No recipients with SMS consent found in the selected groups.")
