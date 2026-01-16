@@ -35,7 +35,7 @@ def new_message(request) -> render:
             pg_queries = PrayerGroupQueries()
             prayer_groups = pg_queries.get_all()
             all_messages = reversed(msg_query.get_all_messages())
-        except Exception:
+        except (AttributeError, ImportError):
             # Fallback if queries fail
             from prayer.models import PrayerMessage
             prayer_groups = PrayerGroup.objects.all()
@@ -71,7 +71,7 @@ def message_detail(request, id):
             message = pm_queries.get_message_by_id(id=id)
             pg_queries = PrayerGroupQueries()
             prayer_groups = pg_queries.get_all()
-        except Exception:
+        except (AttributeError, ImportError):
             # Fallback if queries fail
             from prayer.models import PrayerMessage
             message = PrayerMessage.objects.get(id=id)
@@ -102,7 +102,7 @@ def message_detail(request, id):
                     group_ = pg_queries.get_group_members(
                         group
                     )  # group_ is a queryset of person objects.
-                except Exception:
+                except (AttributeError, ImportError):
                     group_ = PrayerGroup.objects.get(name=group).people.all()
             else:
                 group_ = PrayerGroup.objects.get(name=group).people.all()
@@ -126,7 +126,7 @@ def message_detail(request, id):
                     )
                     sms_message.send()
                     messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
-                except Exception as e:
+                except (AttributeError, ImportError) as e:
                     messages.error(request, f"Failed to send SMS messages: {e}")
             else:
                 messages.warning(request, "SMS functionality is not available.")
@@ -147,13 +147,20 @@ def send_message(request, id: int):
     Todo: Move code related to sending text messages into this function
     instead of handling it in the views.
     """
-    message = PrayerMessageQueries.get_message_by_id(id=id)
-    body = message.message
-
-    # SMSMessage.contacts list of tuples
-    sms = SMSMessage(body=body)
-    sms.send()
-    return redirect()
+    # Check if classes are available
+    if 'PrayerMessageQueries' in globals() and 'SMSMessage' in globals():
+        try:
+            message = PrayerMessageQueries.get_message_by_id(id=id)
+            body = message.message
+            # SMSMessage.contacts list of tuples
+            sms = SMSMessage(body=body)
+            sms.send()
+        except (AttributeError, ImportError) as e:
+            messages.error(request, f"Failed to send message: {e}")
+            return redirect("prayer:new_message")
+    else:
+        messages.error(request, "SMS functionality is not available.")
+    return redirect("prayer:new_message")
 
 
 @login_required()
@@ -177,11 +184,21 @@ def group(request, group_id):
     Group detail page, user editable.
     """
     group_ = PrayerGroup.objects.get(id=group_id)
-    membership = PrayerGroupQueries()
+    
+    # Get group membership
+    if 'PrayerGroupQueries' in globals():
+        try:
+            membership = PrayerGroupQueries()
+            group_membership = membership.get_group_members(group=group_.name)
+        except (AttributeError, ImportError):
+            group_membership = group_.people.all()
+    else:
+        group_membership = group_.people.all()
+    
     context = {
         "group": group_,
         "form": NewGroupForm(PrayerGroup.objects.get(id=group_id).__dict__),
-        "group_membership": membership.get_group_members(group=group_.name),
+        "group_membership": group_membership,
     }
     if request.method == "POST":
         # Takes new data from form, applies it to instance to overwrite prev data
