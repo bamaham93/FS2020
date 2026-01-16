@@ -20,6 +20,15 @@ class Person(models.Model):
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=50, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
+    sms_consent = models.BooleanField(
+        default=False,
+        help_text="User has consented to receive SMS messages"
+    )
+    sms_consent_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Date and time when SMS consent was given"
+    )
 
     def __str__(self):
         """ """

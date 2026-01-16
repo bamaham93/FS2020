@@ -24,6 +24,7 @@ class NewPersonForm(forms.ModelForm):
             "last_name",
             "phone_number",
             "email",
+            "sms_consent",
         ]
 
 

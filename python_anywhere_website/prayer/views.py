@@ -75,10 +75,17 @@ def message_detail(request, id):
             )  # group_ is a queryset of person objects.
             people_set.update(group_)
 
-        sms_message = SMSMessage(
-            body=message.message, contacts=people_set, testing=False
-        )
-        sms_message.send()
+        # Filter to only people who have consented to SMS
+        consented_people = {person for person in people_set if person.sms_consent and person.phone_number}
+        
+        if consented_people:
+            sms_message = SMSMessage(
+                body=message.message, contacts=consented_people, testing=False
+            )
+            sms_message.send()
+            messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
+        else:
+            messages.warning(request, "No recipients with SMS consent found in the selected groups.")
 
         # for person in people_set:  # Used a set so to eliminate duplicate messages.
         #     print(f"First Name: {person.first_name}")
@@ -174,7 +181,12 @@ def people(request) -> render:
     if request.method == "POST":
         form = NewPersonForm(request.POST)
         if form.is_valid():
-            form.save()
+            person = form.save(commit=False)
+            # Set consent date if consent is given
+            if person.sms_consent and not person.sms_consent_date:
+                from django.utils import timezone
+                person.sms_consent_date = timezone.now()
+            person.save()
             messages.success(request, "Your submission was saved!")
         else:
             context["new_person_form"] = NewPersonForm(request.POST)

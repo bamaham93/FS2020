@@ -5,10 +5,30 @@
 {% block section1 %}
   <div>
     <h1>Signup</h1>
+    <p>Create an account to access messaging and other features.</p>
+    
     <form action="#" method="POST">
       {% csrf_token %}
       {{ form | crispy }}
-      <input type="submit" value="Submit">
+      
+      <div class="alert alert-info mt-3" role="alert">
+        <h6><strong>SMS Messaging Consent</strong></h6>
+        <p class="mb-1">
+          By providing your phone number and checking the consent box above, you expressly consent to receive 
+          text messages from us at the phone number provided. Message frequency may vary. Message and data rates 
+          may apply.
+        </p>
+        <p class="mb-1">
+          You can opt out at any time by replying <strong>STOP</strong> to any message. Reply <strong>HELP</strong> 
+          for assistance.
+        </p>
+        <p class="mb-0">
+          Your information will be handled according to our privacy policy and will not be shared with third parties 
+          without your consent.
+        </p>
+      </div>
+      
+      <input type="submit" class="btn btn-primary" value="Submit">
     </form>
   </div>
 {% endblock %}
