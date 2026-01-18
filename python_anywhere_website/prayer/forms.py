@@ -75,6 +75,15 @@ class PublicSignupForm(forms.ModelForm):
             "email": "Email Address (Optional)",
         }
 
+    def clean_phone_number(self):
+        """Validate that phone number is provided and not empty."""
+        phone_number = self.cleaned_data.get("phone_number")
+        if not phone_number or not phone_number.strip():
+            raise forms.ValidationError(
+                "Phone number is required to receive SMS messages."
+            )
+        return phone_number.strip()
+
 
 class PermissionsForm(forms.ModelForm):
     """ """

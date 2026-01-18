@@ -543,6 +543,26 @@ class TestPublicSignup(TestCase):
         self.assertEqual(Person.objects.count(), initial_count)
         self.assertContains(response, "There was a problem with your submission")
 
+    def test_public_signup_requires_phone_number(self):
+        """Form submission without phone number should not create Person."""
+        from prayer.models import Person
+
+        initial_count = Person.objects.count()
+
+        # Missing phone number
+        data = {
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "phone_number": "",
+            "email": "jane@example.com",
+        }
+
+        response = self.client.post("/prayer/signup", data)
+        # Should re-render form with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Person.objects.count(), initial_count)
+        self.assertContains(response, "There was a problem with your submission")
+
     def test_public_signup_allows_optional_email(self):
         """Email field should be optional during signup."""
         from prayer.models import Person
