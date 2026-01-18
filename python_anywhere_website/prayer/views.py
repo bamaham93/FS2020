@@ -235,7 +235,26 @@ def prayer_requests(request) -> render:
     """
     List of prayer requests.
     """
-    context = {}
+    from prayer.forms import NewPrayerRequestForm
+
+    form = NewPrayerRequestForm()
+    if request.method == "POST":
+        form = NewPrayerRequestForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            # Use authenticated user's name for the request
+            user = request.user
+            if user.first_name or user.last_name:
+                instance.name = f"{user.first_name} {user.last_name}".strip()
+            else:
+                instance.name = user.username
+            instance.save()
+            messages.success(request, "Your prayer request was submitted.")
+            return redirect("prayer:prayer_requests")
+        else:
+            messages.warning(request, "There was a problem with your submission.")
+
+    context = {"form": form}
     return render(request, "prayer/prayer_request.html", context)
 
 

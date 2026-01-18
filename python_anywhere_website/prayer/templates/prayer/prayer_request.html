@@ -1,5 +1,23 @@
 {% extends 'prayer/prayer_base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block section1 %}
   <h1>Prayer Requests</h1>
+  {% include 'messages.html' %}
+  <p class="lead">Share a request and our community will pray for you. Please be respectful and avoid sharing sensitive personal data.</p>
+
+  <div class="card shadow-sm my-3">
+    <div class="card-body">
+      <h2 class="card-title">Submit a Prayer Request</h2>
+      <form method="POST" action="#" aria-label="Submit a prayer request">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <div class="mt-3">
+          <button class="accessible-cta" type="submit">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 {% endblock %}

@@ -299,5 +299,40 @@ body.no-card-animate .card { animation: none !important; }
 /* Ensure strong contrast for CTA on hover */
 .card-accessible:hover .accessible-cta { background: #002244; color: #fff; }
 
+/* Accessible people table */
+.accessible-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 1.1rem; /* slightly larger text */
+}
+.accessible-table thead th {
+  background: #001f3f; /* deep blue header */
+  color: #fff;
+  padding: 0.85rem 0.9rem;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 3px solid #ffd54f;
+}
+.accessible-table tbody td {
+  background: rgba(255,255,255,0.02);
+  color: #f8fafc;
+  padding: 0.9rem 0.9rem;
+  vertical-align: middle;
+}
+.accessible-table tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
+.accessible-table tbody tr:focus,
+.accessible-table tbody tr:hover { outline: none; background: rgba(255,255,255,0.03); }
+.accessible-table tbody tr:focus-visible { box-shadow: 0 0 0 4px rgba(255,213,79,0.12); }
+.accessible-table .action-btn { padding: 0.5rem 0.8rem; font-weight:700; border-radius:8px; }
+.accessible-table .action-btn.delete { background:#b91c1c; color:#fff; border:2px solid #ffd54f; }
+.accessible-table .action-btn.delete:focus-visible { box-shadow: 0 0 0 4px rgba(255,213,79,0.18); }
+
+@media (max-width:576px) {
+  .accessible-table thead { display:none; }
+  .accessible-table tbody td { display:block; padding:0.6rem 0.8rem; }
+  .accessible-table tbody tr { margin-bottom:0.6rem; display:block; border-bottom:none; }
+}
+
 
 

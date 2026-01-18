@@ -260,6 +260,78 @@ class TestPrayerForms(TestCase):
                 data=data,
             )
 
+    def test_prayer_request_form_valid_and_name_set(self):
+        """Test that a valid prayer request is saved and name is taken from user."""
+        user = User.objects.get(id=1)
+        client = TestPrayerForms.client
+        client.force_login(user)
+        endpoint = "/prayer/prayer-requests"
+
+        data = {
+            "subject": "Please pray for testing",
+            "message": "This is a test prayer request",
+        }
+
+        response = client.post(endpoint, data)
+        # View redirects on success
+        self.assertEqual(response.status_code, 302)
+
+        from prayer.models import PrayerMessage
+        self.assertTrue(PrayerMessage.objects.filter(subject=data["subject"], message=data["message"]).exists())
+        pm = PrayerMessage.objects.get(subject=data["subject"])
+        # User in setUpClass has no first/last name, so name should equal username
+        self.assertEqual(pm.name, user.username)
+
+    def test_prayer_request_form_invalid_missing_fields(self):
+        """Test that missing subject or message prevents saving and returns form with errors."""
+        user = User.objects.get(id=1)
+        client = TestPrayerForms.client
+        client.force_login(user)
+        endpoint = "/prayer/prayer-requests"
+
+        bad_cases = [
+            {"subject": "", "message": "Has message"},
+            {"subject": "Has subject", "message": ""},
+        ]
+
+        from prayer.models import PrayerMessage
+        initial_count = PrayerMessage.objects.count()
+
+        for data in bad_cases:
+            response = client.post(endpoint, data)
+            # Form should re-render with status 200 and not save
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(PrayerMessage.objects.count(), initial_count)
+
+    def test_prayer_request_submission_logged_in_success(self):
+        """Authenticated user can submit a prayer request successfully."""
+        user = User.objects.get(id=1)
+        client = TestPrayerForms.client
+        client.force_login(user)
+        endpoint = "/prayer/prayer-requests"
+
+        data = {"subject": "Login success test", "message": "Logged in user request."}
+        response = client.post(endpoint, data)
+        # Successful submissions redirect
+        self.assertEqual(response.status_code, 302)
+
+        from prayer.models import PrayerMessage
+        self.assertTrue(PrayerMessage.objects.filter(subject=data["subject"]).exists())
+
+    def test_prayer_request_submission_anonymous_blocked(self):
+        """Anonymous POST to prayer requests should be redirected and not saved."""
+        client = TestPrayerForms.client
+        endpoint = "/prayer/prayer-requests"
+        data = {"subject": "Anon test", "message": "Should not be saved"}
+
+        from prayer.models import PrayerMessage
+        initial_count = PrayerMessage.objects.count()
+
+        response = client.post(endpoint, data)
+        # Should redirect to login (302)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(PrayerMessage.objects.count(), initial_count)
+
     def test_permissions_form(self):
         """ """
         user = User.objects.get(id=1)
