@@ -459,3 +459,92 @@ class TestSMSConsent(TestCase):
         form = NewPersonForm()
         self.assertIn('sms_consent', form.fields)
 
+
+class TestPrayerRegression(TestCase):
+    """Regression tests to ensure answered toggle text and aria attributes persist."""
+
+    client = Client()
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user = User.objects.create_user(username="reguser", password="pw", email="r@example.com")
+        from django.contrib.auth.models import User as AuthUser
+        cls.staff = AuthUser.objects.create_user(username="regstaff", password="pwstaff")
+        cls.staff.is_staff = True
+        cls.staff.save()
+
+    def test_unanswered_shows_mark_answered_and_aria_false(self):
+        """Unanswered requests should show 'Mark Answered' and aria-pressed="false" for staff."""
+        from prayer.models import PrayerMessage
+
+        PrayerMessage.objects.create(subject="R1", message="please", name=self.user.username, submitted_by=self.user, is_completed=False)
+        client = TestPrayerRegression.client
+        client.force_login(self.staff)
+        resp = client.get("/prayer/prayer-requests")
+        self.assertContains(resp, "Mark Answered")
+        self.assertContains(resp, 'aria-pressed="false"')
+
+    def test_answered_shows_unmark_answered_and_aria_true(self):
+        """Answered requests should show 'Unmark Answered' and aria-pressed="true" for staff."""
+        from prayer.models import PrayerMessage
+
+        PrayerMessage.objects.create(subject="R2", message="thanks", name=self.user.username, submitted_by=self.user, is_completed=True)
+        client = TestPrayerRegression.client
+        client.force_login(self.staff)
+        resp = client.get("/prayer/prayer-requests")
+        self.assertContains(resp, "Unmark Answered")
+        self.assertContains(resp, 'aria-pressed="true"')
+
+    def test_toggle_complete_endpoint_toggles_is_completed(self):
+        """POSTing to the toggle_complete endpoint should flip `is_completed`."""
+        from prayer.models import PrayerMessage
+
+        pm = PrayerMessage.objects.create(subject="TC1", message="tc", name=self.user.username, submitted_by=self.user, is_completed=False)
+        client = TestPrayerRegression.client
+        client.force_login(self.staff)
+
+        resp = client.post(f"/prayer/prayer-requests/mark-complete/{pm.id}")
+        self.assertEqual(resp.status_code, 302)
+        pm.refresh_from_db()
+        self.assertTrue(pm.is_completed)
+
+        # toggle back
+        resp2 = client.post(f"/prayer/prayer-requests/mark-complete/{pm.id}")
+        self.assertEqual(resp2.status_code, 302)
+        pm.refresh_from_db()
+        self.assertFalse(pm.is_completed)
+
+    def test_toggle_important_endpoint_toggles_is_important(self):
+        """POSTing to the toggle_important endpoint should flip `is_important`."""
+        from prayer.models import PrayerMessage
+
+        pm = PrayerMessage.objects.create(subject="TI1", message="ti", name=self.user.username, submitted_by=self.user, is_important=False)
+        client = TestPrayerRegression.client
+        client.force_login(self.staff)
+
+        resp = client.post(f"/prayer/prayer-requests/mark-important/{pm.id}")
+        self.assertEqual(resp.status_code, 302)
+        pm.refresh_from_db()
+        self.assertTrue(pm.is_important)
+
+        resp2 = client.post(f"/prayer/prayer-requests/mark-important/{pm.id}")
+        self.assertEqual(resp2.status_code, 302)
+        pm.refresh_from_db()
+        self.assertFalse(pm.is_important)
+
+    def test_answer_endpoint_sets_answered_at(self):
+        """Posting an answer should set `answer_text` and `answered_at`."""
+        from prayer.models import PrayerMessage
+        import datetime
+
+        pm = PrayerMessage.objects.create(subject="A1", message="ans", name=self.user.username, submitted_by=self.user)
+        client = TestPrayerRegression.client
+        client.force_login(self.staff)
+
+        resp = client.post(f"/prayer/prayer-requests/answer/{pm.id}", {"answer": "Got it"})
+        self.assertEqual(resp.status_code, 302)
+        pm.refresh_from_db()
+        self.assertEqual(pm.answer_text, "Got it")
+        self.assertIsNotNone(pm.answered_at)
+

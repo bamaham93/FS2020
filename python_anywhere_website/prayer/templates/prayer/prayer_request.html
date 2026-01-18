@@ -26,7 +26,7 @@
         {% for req in prayer_requests %}
           <div class="list-group-item mb-2">
             <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">{{ req.subject }} {% if req.is_important %}<span class="badge bg-warning text-dark">Important</span>{% endif %} {% if req.is_completed %}<span class="badge bg-success">Done</span>{% endif %}</h5>
+              <h5 class="mb-1">{{ req.subject }} {% if req.is_important %}<span class="badge bg-warning text-dark">Important</span>{% endif %} {% if req.is_completed %}<span class="badge bg-success">Answered</span>{% endif %}</h5>
               <small class="text-muted">By {{ req.name }} &middot; {{ req.created_at|date:"M j, Y H:i" }}</small>
             </div>
             <p class="mb-1">{{ req.message|truncatechars:200 }}</p>
@@ -36,7 +36,7 @@
                   <button class="btn btn-outline-warning btn-sm" type="submit" aria-pressed="{{ req.is_important|yesno:'true,false' }}">{% if req.is_important %}Unmark Important{% else %}Mark Important{% endif %}</button>
                 </form>
                 <form method="POST" action="{% url 'prayer:toggle_complete' req.id %}">{% csrf_token %}
-                  <button class="btn btn-outline-success btn-sm" type="submit">Toggle Complete</button>
+                  <button class="btn btn-outline-success btn-sm" type="submit" aria-pressed="{{ req.is_completed|yesno:'true,false' }}">{% if req.is_completed %}Unmark Answered{% else %}Mark Answered{% endif %}</button>
                 </form>
                 <form method="POST" action="{% url 'prayer:delete_prayer_request' req.id %}" onsubmit="return confirm('Delete this request?');">{% csrf_token %}
                   <button class="btn btn-danger btn-sm" type="submit">Delete</button>
