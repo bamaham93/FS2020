@@ -53,11 +53,12 @@ import_kjv_action.allowed_permissions = ('change',)
 
 @admin.register(BibleBook)
 class BibleBookAdmin(admin.ModelAdmin):
-    list_display = ['order', 'name', 'slug', 'testament', 'chapters']
-    list_filter = ['testament']
-    search_fields = ['name', 'slug']
-    prepopulated_fields = {'slug': ('name',)}
-    ordering = ['order']
+    list_display = ["order", "name", "slug", "testament", "chapters"]
+    list_filter = ["testament"]
+    search_fields = ["name", "slug"]
+    prepopulated_fields = {"slug": ("name",)}
+    ordering = ["order"]
+    actions = [import_kjv_action]
 
     # Register the import action on the changelist actions dropdown
     actions = [import_kjv_action]
