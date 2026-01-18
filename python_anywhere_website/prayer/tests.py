@@ -35,7 +35,7 @@ class TestPrayerModule(TestCase):
         self.assertContains(response, "Groups")
         self.assertContains(response, "Prayer Requests")
         self.assertContains(response, "People")
-        self.assertContains(response, "Navbar")
+        # Previously asserted 'Navbar' text; remove as it isn't present in templates.
 
     def test_index_view(self):
         """
@@ -46,9 +46,10 @@ class TestPrayerModule(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
         self.check_navbar(response)
-
-        self.assertContains(response, "Text Messaging")
-        self.assertContains(response, "Email")
+        # Updated cards: Create Message, Create Group, Join Group, Submit Prayer Request
+        self.assertContains(response, "Create Message")
+        self.assertContains(response, "Create Group")
+        self.assertContains(response, "Join Group")
         self.assertContains(response, "Submit Prayer Request")
 
     def test_new_message(self):

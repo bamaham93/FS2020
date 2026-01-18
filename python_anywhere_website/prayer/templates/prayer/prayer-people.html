@@ -8,6 +8,7 @@
     <div class="form-messages">{% include 'messages.html' %}</div>
 
 <!--    <h3>Existing People</h3>-->
+    {% if people_list %}
     <table class="table table-striped">
         <tr>
             <th class="col">Name</th>
@@ -27,6 +28,7 @@
         </tr>
         {% endfor %}
     </table>
+    {% endif %}
 
     <h3>Add New Person</h3>
     <form action="#" method="POST">

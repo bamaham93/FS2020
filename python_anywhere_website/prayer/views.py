@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
+# from logic.users_groups import is_group
 from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
 from prayer.models import Person, PrayerGroup
 
@@ -13,6 +14,13 @@ except ModuleNotFoundError:
     pass
 
 # from django.contrib.messages import get_messages
+
+
+def is_group(user, group):
+    if user.groups.filter(name=group):
+        return True
+    else:
+        return False
 
 # Create your views here.
 def index(request) -> render:
@@ -238,9 +246,13 @@ def people(request) -> render:
     """
     context = {
         "new_person_form": NewPersonForm(),
-        "people_list": Person.objects.all(),  # TODO Move to logic/queries.py
+        "people_list": None,
         # 'messages': get_messages(request)
     }
+
+    if request.user.is_staff:
+        context["people_list"] = Person.objects.all()
+
     if request.method == "POST":
         form = NewPersonForm(request.POST)
         if form.is_valid():
