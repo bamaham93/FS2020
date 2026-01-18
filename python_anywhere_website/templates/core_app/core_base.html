@@ -24,6 +24,9 @@
             <li class="nav-item btn btn-dark">
               <a href="{% url 'bible:index' %}" class="nav-link">Bible</a>
             </li>
+                        <li class="nav-item btn btn-dark">
+              <a href="{% url 'prayer:index' %}" class="nav-link">Corydon</a>
+            </li>
             <li class="nav-item btn btn-dark dropdown">
               <a class="nav-link dropdown-toggle" href="{% url 'core_app:index' %}" role="button" data-bs-toggle="dropdown"
                  aria-expanded="false">
@@ -31,6 +34,9 @@
               </a>
               <ul class="dropdown-menu">
                 {% if user.is_authenticated %}
+                  {% if user.is_staff %}
+                    <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
+                  {% endif %}
                   <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
                   <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
