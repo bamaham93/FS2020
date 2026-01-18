@@ -6,18 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('prayer', '0006_permissions'),
+        ("prayer", "0006_permissions"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='person',
-            name='sms_consent',
-            field=models.BooleanField(default=False, help_text='User has consented to receive SMS messages'),
+            model_name="person",
+            name="sms_consent",
+            field=models.BooleanField(
+                default=False, help_text="User has consented to receive SMS messages"
+            ),
         ),
         migrations.AddField(
-            model_name='person',
-            name='sms_consent_date',
-            field=models.DateTimeField(blank=True, help_text='Date and time when SMS consent was given', null=True),
+            model_name="person",
+            name="sms_consent_date",
+            field=models.DateTimeField(
+                blank=True,
+                help_text="Date and time when SMS consent was given",
+                null=True,
+            ),
         ),
     ]

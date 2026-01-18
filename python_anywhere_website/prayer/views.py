@@ -2,8 +2,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
+
 # from logic.users_groups import is_group
-from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
+from prayer.forms import (
+    NewGroupForm,
+    NewPersonForm,
+    NewMessageForm,
+    PermissionsForm,
+    PublicSignupForm,
+)
 from prayer.models import Person, PrayerGroup, PrayerMessage
 
 try:
@@ -22,6 +29,7 @@ def is_group(user, group):
     else:
         return False
 
+
 # Create your views here.
 def index(request) -> render:
     """
@@ -37,7 +45,7 @@ def new_message(request) -> render:
     Create a new message.
     """
     # Check if logic.queries classes are available
-    if 'PrayerMessageQueries' in globals() and 'PrayerGroupQueries' in globals():
+    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
         try:
             msg_query = PrayerMessageQueries()
             pg_queries = PrayerGroupQueries()
@@ -46,11 +54,13 @@ def new_message(request) -> render:
         except (AttributeError, ImportError):
             # Fallback if queries fail
             from prayer.models import PrayerMessage
+
             prayer_groups = PrayerGroup.objects.all()
             all_messages = reversed(PrayerMessage.objects.all())
     else:
         # Fallback when logic.queries is not available
         from prayer.models import PrayerMessage
+
         prayer_groups = PrayerGroup.objects.all()
         all_messages = reversed(PrayerMessage.objects.all())
 
@@ -73,7 +83,7 @@ def message_detail(request, id):
     Todo: Move code pertaining to sending sms messages to the function below.
     """
     # Check if logic.queries classes are available
-    if 'PrayerMessageQueries' in globals() and 'PrayerGroupQueries' in globals():
+    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
         try:
             pm_queries = PrayerMessageQueries()
             message = pm_queries.get_message_by_id(id=id)
@@ -82,12 +92,14 @@ def message_detail(request, id):
         except (AttributeError, ImportError):
             # Fallback if queries fail
             from prayer.models import PrayerMessage
+
             message = PrayerMessage.objects.get(id=id)
             prayer_groups = PrayerGroup.objects.all()
             pg_queries = None
     else:
         # Fallback when logic.queries is not available
         from prayer.models import PrayerMessage
+
         message = PrayerMessage.objects.get(id=id)
         prayer_groups = PrayerGroup.objects.all()
         pg_queries = None
@@ -121,25 +133,30 @@ def message_detail(request, id):
             Person.objects.filter(
                 id__in=[p.id for p in people_set],
                 sms_consent=True,
-                phone_number__isnull=False
-            ).exclude(phone_number='')
+                phone_number__isnull=False,
+            ).exclude(phone_number="")
         )
-        
+
         if consented_people:
             # Check if SMSMessage is available
-            if 'SMSMessage' in globals():
+            if "SMSMessage" in globals():
                 try:
                     sms_message = SMSMessage(
                         body=message.message, contacts=consented_people, testing=False
                     )
                     sms_message.send()
-                    messages.success(request, f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.")
+                    messages.success(
+                        request,
+                        f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.",
+                    )
                 except (AttributeError, ImportError) as e:
                     messages.error(request, f"Failed to send SMS messages: {e}")
             else:
                 messages.warning(request, "SMS functionality is not available.")
         else:
-            messages.warning(request, "No recipients with SMS consent found in the selected groups.")
+            messages.warning(
+                request, "No recipients with SMS consent found in the selected groups."
+            )
 
         # for person in people_set:  # Used a set so to eliminate duplicate messages.
         #     print(f"First Name: {person.first_name}")
@@ -156,7 +173,7 @@ def send_message(request, id: int):
     instead of handling it in the views.
     """
     # Check if classes are available
-    if 'PrayerMessageQueries' in globals() and 'SMSMessage' in globals():
+    if "PrayerMessageQueries" in globals() and "SMSMessage" in globals():
         try:
             message = PrayerMessageQueries.get_message_by_id(id=id)
             body = message.message
@@ -192,9 +209,9 @@ def group(request, group_id):
     Group detail page, user editable.
     """
     group_ = PrayerGroup.objects.get(id=group_id)
-    
+
     # Get group membership
-    if 'PrayerGroupQueries' in globals():
+    if "PrayerGroupQueries" in globals():
         try:
             membership = PrayerGroupQueries()
             group_membership = membership.get_group_members(group=group_.name)
@@ -202,7 +219,7 @@ def group(request, group_id):
             group_membership = group_.people.all()
     else:
         group_membership = group_.people.all()
-    
+
     context = {
         "group": group_,
         "form": NewGroupForm(PrayerGroup.objects.get(id=group_id).__dict__),
@@ -258,7 +275,9 @@ def prayer_requests(request) -> render:
     if request.user.is_staff:
         requests_qs = PrayerMessage.objects.all().order_by("-id")
     else:
-        requests_qs = PrayerMessage.objects.filter(submitted_by=request.user).order_by("-id")
+        requests_qs = PrayerMessage.objects.filter(submitted_by=request.user).order_by(
+            "-id"
+        )
 
     context = {"form": form, "prayer_requests": requests_qs}
     return render(request, "prayer/prayer_request.html", context)
@@ -370,3 +389,37 @@ def delete_person(request, person_id: int) -> redirect:
 def permissions(request, id: int):
     context = {"form": PermissionsForm()}
     return render(request, "prayer/permissions.html", context)
+
+
+def public_signup(request) -> render:
+    """
+    Public signup form for people to opt-in to receive SMS messages.
+    Does not require login - anyone can sign up.
+    """
+    context = {
+        "signup_form": PublicSignupForm(),
+    }
+
+    if request.method == "POST":
+        form = PublicSignupForm(request.POST)
+        if form.is_valid():
+            person = form.save(commit=False)
+            # Automatically set SMS consent to True for public signups
+            person.sms_consent = True
+            person.sms_consent_date = timezone.now()
+            person.save()
+            messages.success(
+                request,
+                "Thank you for signing up! You'll now receive prayer updates via SMS. "
+                "Reply STOP at any time to unsubscribe.",
+            )
+            # Redirect to prevent resubmission
+            return redirect("prayer:public_signup")
+        else:
+            context["signup_form"] = form
+            messages.warning(
+                request,
+                "There was a problem with your submission. Please check the form.",
+            )
+
+    return render(request, "prayer/public_signup.html", context)

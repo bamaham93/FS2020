@@ -1,0 +1,55 @@
+{% extends 'prayer/prayer_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block section1 %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <h1 class="mb-4">Join Our Prayer Group</h1>
+                
+                <div class="form-messages mb-4">{% include 'messages.html' %}</div>
+
+                <div class="alert alert-info" role="alert">
+                    <h5 class="alert-heading">SMS Prayer Updates</h5>
+                    <p>
+                        Sign up to receive prayer requests and updates via text message. 
+                        By submitting this form, you consent to receive SMS messages from our prayer group.
+                    </p>
+                    <hr>
+                    <ul class="mb-0 small">
+                        <li>Message frequency varies based on prayer needs</li>
+                        <li>Message and data rates may apply</li>
+                        <li>Reply <strong>STOP</strong> at any time to unsubscribe</li>
+                        <li>Reply <strong>HELP</strong> for assistance</li>
+                        <li>Your information is kept private and will only be used for prayer group communications</li>
+                    </ul>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4">Sign Up</h3>
+                        <form action="#" method="POST">
+                            {% csrf_token %}
+                            {{ signup_form | crispy }}
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="consent_checkbox" required>
+                                <label class="form-check-label" for="consent_checkbox">
+                                    I consent to receive SMS messages from the prayer group. I understand I can reply STOP to unsubscribe at any time.
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Sign Up for SMS Updates</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'prayer:index' %}" class="btn btn-link">← Back to Prayer Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block section2 %}
+{% endblock %}
