@@ -7,6 +7,7 @@ app_name = "prayer"
 urlpatterns = [
     path("", views.index, name="index"),
     path("index", views.index, name="index"),
+    path("signup", views.public_signup, name="public_signup"),
     path("new-message", views.new_message, name="new_message"),
     path("message-detail/<int:id>", views.message_detail, name="message-detail"),
     path("send-message/<int:id>", views.send_message, name="send_message"),

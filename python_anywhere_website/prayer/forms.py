@@ -55,6 +55,27 @@ class NewPrayerRequestForm(forms.ModelForm):
         }
 
 
+class PublicSignupForm(forms.ModelForm):
+    """Form for public SMS signup without requiring login."""
+
+    class Meta:
+        model = Person
+        fields = [
+            "first_name",
+            "last_name",
+            "phone_number",
+            "email",
+        ]
+        help_texts = {
+            "phone_number": "We'll send prayer updates to this number. Standard messaging rates may apply.",
+            "email": "Optional - for account recovery purposes only.",
+        }
+        labels = {
+            "phone_number": "Mobile Phone Number",
+            "email": "Email Address (Optional)",
+        }
+
+
 class PermissionsForm(forms.ModelForm):
     """ """
 

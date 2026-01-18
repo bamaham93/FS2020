@@ -460,6 +460,91 @@ class TestSMSConsent(TestCase):
         self.assertIn('sms_consent', form.fields)
 
 
+
+
+class TestPublicSignup(TestCase):
+    """Test public signup functionality for SMS opt-in."""
+
+    client = Client()
+
+    def test_public_signup_accessible_without_login(self):
+        """Public signup page should be accessible without authentication."""
+        response = self.client.get("/prayer/signup")
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Join Our Prayer Group")
+        self.assertContains(response, "Sign Up for SMS Updates")
+
+    def test_public_signup_form_valid_submission(self):
+        """Valid form submission should create a Person with SMS consent."""
+        from prayer.models import Person
+
+        initial_count = Person.objects.count()
+
+        data = {
+            "first_name": "John",
+            "last_name": "Doe",
+            "phone_number": "+12345678900",
+            "email": "john@example.com",
+        }
+
+        response = self.client.post("/prayer/signup", data)
+        # Should redirect on success
+        self.assertEqual(response.status_code, 302)
+
+        # Check that person was created with SMS consent
+        self.assertEqual(Person.objects.count(), initial_count + 1)
+        person = Person.objects.latest("id")
+        self.assertEqual(person.first_name, "John")
+        self.assertEqual(person.last_name, "Doe")
+        self.assertEqual(person.phone_number, "+12345678900")
+        self.assertTrue(person.sms_consent)
+        self.assertIsNotNone(person.sms_consent_date)
+
+    def test_public_signup_form_missing_required_fields(self):
+        """Form submission with missing required fields should not create Person."""
+        from prayer.models import Person
+
+        initial_count = Person.objects.count()
+
+        # Missing last name
+        data = {
+            "first_name": "Jane",
+            "last_name": "",
+            "phone_number": "+12345678901",
+        }
+
+        response = self.client.post("/prayer/signup", data)
+        # Should re-render form with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Person.objects.count(), initial_count)
+        self.assertContains(response, "There was a problem with your submission")
+
+    def test_public_signup_allows_optional_email(self):
+        """Email field should be optional during signup."""
+        from prayer.models import Person
+
+        data = {
+            "first_name": "Jane",
+            "last_name": "Smith",
+            "phone_number": "+12345678901",
+            # No email provided
+        }
+
+        response = self.client.post("/prayer/signup", data)
+        self.assertEqual(response.status_code, 302)
+
+        person = Person.objects.latest("id")
+        self.assertEqual(person.first_name, "Jane")
+        # Email can be None or empty string
+        self.assertTrue(person.email is None or person.email == "")
+
+    def test_index_links_to_public_signup(self):
+        """Index page should link to public signup, not the staff people page."""
+        response = self.client.get("/prayer/index")
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, 'href="{% url \'prayer:public_signup\' %}"'.replace("{% url 'prayer:public_signup' %}", "/prayer/signup"))
+
+
 class TestPrayerRegression(TestCase):
     """Regression tests to ensure answered toggle text and aria attributes persist."""
 

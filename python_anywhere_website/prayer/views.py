@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
 # from logic.users_groups import is_group
-from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
+from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm, PublicSignupForm
 from prayer.models import Person, PrayerGroup, PrayerMessage
 
 try:
@@ -370,3 +370,34 @@ def delete_person(request, person_id: int) -> redirect:
 def permissions(request, id: int):
     context = {"form": PermissionsForm()}
     return render(request, "prayer/permissions.html", context)
+
+
+def public_signup(request) -> render:
+    """
+    Public signup form for people to opt-in to receive SMS messages.
+    Does not require login - anyone can sign up.
+    """
+    context = {
+        "signup_form": PublicSignupForm(),
+    }
+
+    if request.method == "POST":
+        form = PublicSignupForm(request.POST)
+        if form.is_valid():
+            person = form.save(commit=False)
+            # Automatically set SMS consent to True for public signups
+            person.sms_consent = True
+            person.sms_consent_date = timezone.now()
+            person.save()
+            messages.success(
+                request,
+                "Thank you for signing up! You'll now receive prayer updates via SMS. "
+                "Reply STOP at any time to unsubscribe."
+            )
+            # Redirect to prevent resubmission
+            return redirect("prayer:public_signup")
+        else:
+            context["signup_form"] = form
+            messages.warning(request, "There was a problem with your submission. Please check the form.")
+    
+    return render(request, "prayer/public_signup.html", context)
