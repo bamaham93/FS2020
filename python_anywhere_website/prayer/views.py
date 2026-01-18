@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 # from logic.users_groups import is_group
 from prayer.forms import NewGroupForm, NewPersonForm, NewMessageForm, PermissionsForm
-from prayer.models import Person, PrayerGroup
+from prayer.models import Person, PrayerGroup, PrayerMessage
 
 try:
     import logic.queries
@@ -254,8 +254,76 @@ def prayer_requests(request) -> render:
         else:
             messages.warning(request, "There was a problem with your submission.")
 
-    context = {"form": form}
+    # Determine which requests to show: staff see all, others see their own
+    if request.user.is_staff:
+        requests_qs = PrayerMessage.objects.all().order_by("-id")
+    else:
+        requests_qs = PrayerMessage.objects.filter(submitted_by=request.user).order_by("-id")
+
+    context = {"form": form, "prayer_requests": requests_qs}
     return render(request, "prayer/prayer_request.html", context)
+
+
+@login_required()
+def delete_prayer_request(request, id: int):
+    if not request.user.is_staff:
+        messages.error(request, "Not authorized.")
+        return redirect("prayer:prayer_requests")
+    try:
+        pm = PrayerMessage.objects.get(id=id)
+        pm.delete()
+        messages.success(request, "Prayer request deleted.")
+    except PrayerMessage.DoesNotExist:
+        messages.warning(request, "Prayer request not found.")
+    return redirect("prayer:prayer_requests")
+
+
+@login_required()
+def toggle_important(request, id: int):
+    if not request.user.is_staff:
+        messages.error(request, "Not authorized.")
+        return redirect("prayer:prayer_requests")
+    try:
+        pm = PrayerMessage.objects.get(id=id)
+        pm.is_important = not pm.is_important
+        pm.save()
+        messages.success(request, "Prayer request importance toggled.")
+    except PrayerMessage.DoesNotExist:
+        messages.warning(request, "Prayer request not found.")
+    return redirect("prayer:prayer_requests")
+
+
+@login_required()
+def toggle_complete(request, id: int):
+    if not request.user.is_staff:
+        messages.error(request, "Not authorized.")
+        return redirect("prayer:prayer_requests")
+    try:
+        pm = PrayerMessage.objects.get(id=id)
+        pm.is_completed = not pm.is_completed
+        pm.save()
+        messages.success(request, "Prayer request completion toggled.")
+    except PrayerMessage.DoesNotExist:
+        messages.warning(request, "Prayer request not found.")
+    return redirect("prayer:prayer_requests")
+
+
+@login_required()
+def answer_prayer_request(request, id: int):
+    if not request.user.is_staff:
+        messages.error(request, "Not authorized.")
+        return redirect("prayer:prayer_requests")
+    if request.method == "POST":
+        answer = request.POST.get("answer", "").strip()
+        try:
+            pm = PrayerMessage.objects.get(id=id)
+            pm.answer_text = answer
+            pm.answered_at = timezone.now()
+            pm.save()
+            messages.success(request, "Saved answer to prayer request.")
+        except PrayerMessage.DoesNotExist:
+            messages.warning(request, "Prayer request not found.")
+    return redirect("prayer:prayer_requests")
 
 
 @login_required()

@@ -332,6 +332,63 @@ class TestPrayerForms(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(PrayerMessage.objects.count(), initial_count)
 
+    def test_staff_sees_all_requests_but_user_sees_own(self):
+        """Create requests from two users and verify staff sees both while a regular user sees only their own."""
+        from django.contrib.auth.models import User as AuthUser
+        from prayer.models import PrayerMessage
+
+        # Create two users
+        user_a = User.objects.get(id=1)
+        user_b = AuthUser.objects.create_user(username="other", password="pw")
+
+        # Create messages for each user
+        pm_a = PrayerMessage.objects.create(subject="Subject A", message="from A", name=user_a.username, submitted_by=user_a)
+        pm_b = PrayerMessage.objects.create(subject="Subject B", message="from B", name=user_b.username, submitted_by=user_b)
+
+        client = TestPrayerForms.client
+
+        # Regular user (user_a) should see only their message
+        client.force_login(user_a)
+        resp = client.get("/prayer/prayer-requests")
+        self.assertContains(resp, "Subject A")
+        self.assertNotContains(resp, "Subject B")
+
+        # Staff user should see both
+        staff = AuthUser.objects.create_user(username="staff", password="pwstaff")
+        staff.is_staff = True
+        staff.save()
+        client.force_login(staff)
+        resp2 = client.get("/prayer/prayer-requests")
+        self.assertContains(resp2, "Subject A")
+        self.assertContains(resp2, "Subject B")
+
+    def test_staff_can_delete_and_answer_requests(self):
+        """Staff can delete a request and save an answer."""
+        from django.contrib.auth.models import User as AuthUser
+        from prayer.models import PrayerMessage
+
+        user_a = User.objects.get(id=1)
+        pm = PrayerMessage.objects.create(subject="ToDelete", message="Will be deleted", name=user_a.username, submitted_by=user_a)
+
+        # Create staff
+        staff = AuthUser.objects.create_user(username="staff2", password="pwstaff")
+        staff.is_staff = True
+        staff.save()
+
+        client = TestPrayerForms.client
+        client.force_login(staff)
+
+        # Answer the request
+        resp = client.post(f"/prayer/prayer-requests/answer/{pm.id}", {"answer": "Answered!"})
+        self.assertEqual(resp.status_code, 302)
+        pm.refresh_from_db()
+        self.assertEqual(pm.answer_text, "Answered!")
+
+        # Delete the request
+        resp2 = client.post(f"/prayer/prayer-requests/delete/{pm.id}")
+        self.assertEqual(resp2.status_code, 302)
+        self.assertFalse(PrayerMessage.objects.filter(id=pm.id).exists())
+
     def test_permissions_form(self):
         """ """
         user = User.objects.get(id=1)
