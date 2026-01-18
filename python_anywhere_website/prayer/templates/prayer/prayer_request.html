@@ -1,5 +1,62 @@
 {% extends 'prayer/prayer_base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block section1 %}
   <h1>Prayer Requests</h1>
-{% endblock %}
+  {% include 'messages.html' %}
+  <p class="lead">Share a request and our community will pray for you. Please be respectful and avoid sharing sensitive personal data. This information is moderated, but may be shared to this community at the discretion of the group staff.</p>
+
+  <div class="card shadow-sm my-3">
+    <div class="card-body">
+      <h2 class="card-title">Submit a Prayer Request</h2>
+      <form method="POST" action="#" aria-label="Submit a prayer request">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <div class="mt-3">
+          <button class="accessible-cta" type="submit">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+    <h2 class="mt-4">Submitted Requests</h2>
+    {% if prayer_requests and prayer_requests.count %}
+      <div class="list-group">
+        {% for req in prayer_requests %}
+          <div class="list-group-item mb-2">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{ req.subject }} {% if req.is_important %}<span class="badge bg-warning text-dark">Important</span>{% endif %} {% if req.is_completed %}<span class="badge bg-success">Answered</span>{% endif %}</h5>
+              <small class="text-muted">By {{ req.name }} &middot; {{ req.created_at|date:"M j, Y H:i" }}</small>
+            </div>
+            <p class="mb-1">{{ req.message|truncatechars:200 }}</p>
+            {% if user.is_staff %}
+              <div class="d-flex gap-2 mt-2">
+                <form method="POST" action="{% url 'prayer:toggle_important' req.id %}">{% csrf_token %}
+                  <button class="btn btn-outline-warning btn-sm" type="submit" aria-pressed="{{ req.is_important|yesno:'true,false' }}">{% if req.is_important %}Unmark Important{% else %}Mark Important{% endif %}</button>
+                </form>
+                <form method="POST" action="{% url 'prayer:toggle_complete' req.id %}">{% csrf_token %}
+                  <button class="btn btn-outline-success btn-sm" type="submit" aria-pressed="{{ req.is_completed|yesno:'true,false' }}">{% if req.is_completed %}Unmark Answered{% else %}Mark Answered{% endif %}</button>
+                </form>
+                <form method="POST" action="{% url 'prayer:delete_prayer_request' req.id %}" onsubmit="return confirm('Delete this request?');">{% csrf_token %}
+                  <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                </form>
+              </div>
+              <div class="mt-2">
+                <form method="POST" action="{% url 'prayer:answer_prayer_request' req.id %}">{% csrf_token %}
+                  <div class="mb-2">
+                    <label for="answer_{{ req.id }}" class="form-label">Answer / Notes</label>
+                    <textarea id="answer_{{ req.id }}" name="answer" class="form-control" rows="2">{{ req.answer_text }}</textarea>
+                  </div>
+                  <button class="btn btn-primary btn-sm" type="submit">Save Answer</button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">No prayer requests to display.</p>
+    {% endif %}
+
+  {% endblock %}

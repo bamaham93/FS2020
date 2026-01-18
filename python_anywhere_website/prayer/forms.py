@@ -40,6 +40,21 @@ class NewMessageForm(forms.ModelForm):
         ]
 
 
+class NewPrayerRequestForm(forms.ModelForm):
+    """Form used on the public Prayer Requests page to collect requests."""
+
+    class Meta:
+        model = PrayerMessage
+        fields = [
+            "subject",
+            "message",
+        ]
+        labels = {
+            "subject": "Subject",
+            "message": "Prayer request",
+        }
+
+
 class PermissionsForm(forms.ModelForm):
     """ """
 

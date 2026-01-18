@@ -1,40 +1,73 @@
 {% extends 'prayer/prayer_base.html' %}
 
 {% block section1 %}
-    <div class="container-fluid d-flex flex-column flex-lg-row">
+    <div class="container my-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
 
-        <div class="card shadow m-2" style="width: 18rem; min-width: 12rem;">
-            <img alt="..."
-                 class="card-img-top"
-                 src="https://images.unsplash.com/photo-1597415581463-4b7a5a87be62?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80">
-            <div class="card-body">
-                <h3 class="card-title">Text Messaging</h3>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                    content.</p>
+            <div class="col">
+                <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:new_message' %}" aria-label="Open message composer to create a new message">
+                    <div class="card h-100 shadow-sm home-card">
+                        <img alt="Create Message" class="card-img-top"
+                             src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=870&q=80">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Create Message</h5>
+                            <p class="card-text flex-grow-1">Compose a new message to share with one or more prayer groups.</p>
+                            <div class="mt-3">
+                                <div class="accessible-cta" role="button">Open Message Composer</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
-        </div>
 
-        <div class="card shadow m-2" style="width: 18rem; min-width: 12rem">
-            <img alt="..."
-                 class="card-img-top"
-                 src="https://images.unsplash.com/photo-1596526131083-e8c633c948d2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80">
-            <div class="card-body">
-                <h3 class="card-title">Email</h3>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                    content.</p>
+            <div class="col">
+                <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:groups' %}" aria-label="Manage prayer groups or create a new group">
+                    <div class="card h-100 shadow-sm home-card">
+                        <img alt="Create Group" class="card-img-top"
+                             src="https://images.unsplash.com/photo-1515165562835-c3d0d7b10d8b?auto=format&fit=crop&w=870&q=80">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Create Group</h5>
+                            <p class="card-text flex-grow-1">Create or manage prayer groups to organize recipients.</p>
+                            <div class="mt-3">
+                                <div class="accessible-cta" role="button">Manage Groups</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
-        </div>
 
-        <div class="card shadow m-2" style="width: 18rem; min-width: 12rem">
-            <img alt="..."
-                 class="card-img-top"
-                 src="https://images.unsplash.com/photo-1437603568260-1950d3ca6eab?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80">
-            <div class="card-body">
-                <h3 class="card-title">Submit Prayer Request</h3>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-                    content.</p>
-            </div>
-        </div>
+                <div class="col">
+                    <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:people' %}" aria-label="Sign up to join a prayer group and receive messages">
+                        <div class="card h-100 shadow-sm home-card">
+                            <img alt="Join Group" class="card-img-top"
+                                 src="https://images.unsplash.com/photo-1503342452485-86f7f69b23b1?auto=format&fit=crop&w=870&q=80">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">Join Group</h5>
+                                <p class="card-text flex-grow-1">Sign up as a person to receive messages or be listed in groups.</p>
+                                <div class="mt-3">
+                                    <div class="accessible-cta" role="button">Sign Up / Join</div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
 
+                <div class="col">
+                    <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:prayer_requests' %}" aria-label="Submit a prayer request to the community">
+                        <div class="card h-100 shadow-sm home-card">
+                            <img alt="Submit Prayer Request" class="card-img-top"
+                                 src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=870&q=80">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">Submit Prayer Request</h5>
+                                <p class="card-text flex-grow-1">Share a prayer request for the community to pray over.</p>
+                                <div class="mt-3">
+                                    <div class="accessible-cta" role="button">Submit Request</div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+        </div>
     </div>
 {% endblock %}

@@ -281,4 +281,58 @@ img{ width:100%; height:auto; }
 /* Optional: allow disabling animations by adding .no-card-animate to body */
 body.no-card-animate .card { animation: none !important; }
 
+/* Accessibility helpers for high-contrast, large-tap CTAs used in prayer index */
+.card-accessible { display: block; text-decoration: none; color: inherit; }
+.card-accessible:focus,
+.card-accessible:focus-visible { outline: 3px solid #ffd54f; outline-offset: 6px; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+.card-accessible .card-body { min-height: 10rem; }
+.accessible-cta { display: inline-block; background: #003366; color: #fff; padding: 0.65rem 0.9rem; border-radius: 8px; font-weight:700; font-size:1.05rem; border: 2px solid #ffd54f; }
+.accessible-cta:focus,
+.accessible-cta:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(255,213,79,0.18); }
+.card-accessible .card-title { font-size: 1.25rem; }
+.card-accessible .card-text { font-size: 1.05rem; color: #f1f5f9; }
+
+/* Larger images for better visibility on desktop, scaled down on mobile */
+.card-accessible .card-img-top{ height:260px; }
+@media (max-width:768px){ .card-accessible .card-img-top{ height:160px; } }
+
+/* Ensure strong contrast for CTA on hover */
+.card-accessible:hover .accessible-cta { background: #002244; color: #fff; }
+
+/* Accessible people table */
+.accessible-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 1.1rem; /* slightly larger text */
+}
+.accessible-table thead th {
+  background: #001f3f; /* deep blue header */
+  color: #fff;
+  padding: 0.85rem 0.9rem;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 3px solid #ffd54f;
+}
+.accessible-table tbody td {
+  background: rgba(255,255,255,0.02);
+  color: #f8fafc;
+  padding: 0.9rem 0.9rem;
+  vertical-align: middle;
+}
+.accessible-table tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); }
+.accessible-table tbody tr:focus,
+.accessible-table tbody tr:hover { outline: none; background: rgba(255,255,255,0.03); }
+.accessible-table tbody tr:focus-visible { box-shadow: 0 0 0 4px rgba(255,213,79,0.12); }
+.accessible-table .action-btn { padding: 0.5rem 0.8rem; font-weight:700; border-radius:8px; }
+.accessible-table .action-btn.delete { background:#b91c1c; color:#fff; border:2px solid #ffd54f; }
+.accessible-table .action-btn.delete:focus-visible { box-shadow: 0 0 0 4px rgba(255,213,79,0.18); }
+
+@media (max-width:576px) {
+  .accessible-table thead { display:none; }
+  .accessible-table tbody td { display:block; padding:0.6rem 0.8rem; }
+  .accessible-table tbody tr { margin-bottom:0.6rem; display:block; border-bottom:none; }
+}
+
+
 

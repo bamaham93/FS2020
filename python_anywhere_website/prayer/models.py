@@ -59,6 +59,18 @@ class PrayerMessage(models.Model):
     name = models.CharField(max_length=100)
     subject = models.CharField(max_length=100)
     message = models.TextField()
+    submitted_by = models.ForeignKey(
+        "auth.User",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="prayer_requests",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_important = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
+    answer_text = models.TextField(null=True, blank=True)
+    answered_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"
