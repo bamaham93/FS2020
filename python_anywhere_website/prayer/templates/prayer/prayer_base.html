@@ -12,9 +12,11 @@
       <li class="nav-item active">
         <a class="nav-link" href="{% url 'prayer:index'%}">Home</a>
       </li>
+      {% if user.is_staff %}
       <li class="nav-item">
         <a class="nav-link" href="{% url 'prayer:new_message' %}">Messages</a>
       </li>
+      {% endif %}
       <li class="nav-item">
         <a class="nav-link" href="{% url 'prayer:groups' %}">Groups</a>
       </li>
