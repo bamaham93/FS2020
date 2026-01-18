@@ -2,6 +2,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,28 +11,28 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='prayermessage',
-            name='created_at',
+            model_name="prayermessage",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AddField(
-            model_name='prayermessage',
-            name='is_important',
+            model_name="prayermessage",
+            name="is_important",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='prayermessage',
-            name='is_completed',
+            model_name="prayermessage",
+            name="is_completed",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='prayermessage',
-            name='answer_text',
+            model_name="prayermessage",
+            name="answer_text",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='prayermessage',
-            name='answered_at',
+            model_name="prayermessage",
+            name="answered_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

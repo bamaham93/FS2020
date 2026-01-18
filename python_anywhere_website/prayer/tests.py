@@ -277,7 +277,12 @@ class TestPrayerForms(TestCase):
         self.assertEqual(response.status_code, 302)
 
         from prayer.models import PrayerMessage
-        self.assertTrue(PrayerMessage.objects.filter(subject=data["subject"], message=data["message"]).exists())
+
+        self.assertTrue(
+            PrayerMessage.objects.filter(
+                subject=data["subject"], message=data["message"]
+            ).exists()
+        )
         pm = PrayerMessage.objects.get(subject=data["subject"])
         # User in setUpClass has no first/last name, so name should equal username
         self.assertEqual(pm.name, user.username)
@@ -295,6 +300,7 @@ class TestPrayerForms(TestCase):
         ]
 
         from prayer.models import PrayerMessage
+
         initial_count = PrayerMessage.objects.count()
 
         for data in bad_cases:
@@ -316,6 +322,7 @@ class TestPrayerForms(TestCase):
         self.assertEqual(response.status_code, 302)
 
         from prayer.models import PrayerMessage
+
         self.assertTrue(PrayerMessage.objects.filter(subject=data["subject"]).exists())
 
     def test_prayer_request_submission_anonymous_blocked(self):
@@ -325,6 +332,7 @@ class TestPrayerForms(TestCase):
         data = {"subject": "Anon test", "message": "Should not be saved"}
 
         from prayer.models import PrayerMessage
+
         initial_count = PrayerMessage.objects.count()
 
         response = client.post(endpoint, data)
@@ -342,8 +350,18 @@ class TestPrayerForms(TestCase):
         user_b = AuthUser.objects.create_user(username="other", password="pw")
 
         # Create messages for each user
-        pm_a = PrayerMessage.objects.create(subject="Subject A", message="from A", name=user_a.username, submitted_by=user_a)
-        pm_b = PrayerMessage.objects.create(subject="Subject B", message="from B", name=user_b.username, submitted_by=user_b)
+        pm_a = PrayerMessage.objects.create(
+            subject="Subject A",
+            message="from A",
+            name=user_a.username,
+            submitted_by=user_a,
+        )
+        pm_b = PrayerMessage.objects.create(
+            subject="Subject B",
+            message="from B",
+            name=user_b.username,
+            submitted_by=user_b,
+        )
 
         client = TestPrayerForms.client
 
@@ -368,7 +386,12 @@ class TestPrayerForms(TestCase):
         from prayer.models import PrayerMessage
 
         user_a = User.objects.get(id=1)
-        pm = PrayerMessage.objects.create(subject="ToDelete", message="Will be deleted", name=user_a.username, submitted_by=user_a)
+        pm = PrayerMessage.objects.create(
+            subject="ToDelete",
+            message="Will be deleted",
+            name=user_a.username,
+            submitted_by=user_a,
+        )
 
         # Create staff
         staff = AuthUser.objects.create_user(username="staff2", password="pwstaff")
@@ -379,7 +402,9 @@ class TestPrayerForms(TestCase):
         client.force_login(staff)
 
         # Answer the request
-        resp = client.post(f"/prayer/prayer-requests/answer/{pm.id}", {"answer": "Answered!"})
+        resp = client.post(
+            f"/prayer/prayer-requests/answer/{pm.id}", {"answer": "Answered!"}
+        )
         self.assertEqual(resp.status_code, 302)
         pm.refresh_from_db()
         self.assertEqual(pm.answer_text, "Answered!")
@@ -419,17 +444,17 @@ class TestPrayerForms(TestCase):
 
 class TestSMSConsent(TestCase):
     """Test SMS consent functionality."""
-    
+
     def setUp(self):
         """Set up test data."""
         from prayer.models import Person
-        
+
         User.objects.create_user(
             username="testuser",
             password="testpass123",
             email="test@example.com",
         )
-        
+
         # Create a person with SMS consent
         self.person_with_consent = Person.objects.create(
             first_name="John",
@@ -438,7 +463,7 @@ class TestSMSConsent(TestCase):
             email="john@example.com",
             sms_consent=True,
         )
-        
+
         # Create a person without SMS consent
         self.person_without_consent = Person.objects.create(
             first_name="Jane",
@@ -447,19 +472,18 @@ class TestSMSConsent(TestCase):
             email="jane@example.com",
             sms_consent=False,
         )
-    
+
     def test_person_has_sms_consent_field(self):
         """Test that Person model has sms_consent field."""
-        self.assertTrue(hasattr(self.person_with_consent, 'sms_consent'))
-        self.assertTrue(hasattr(self.person_with_consent, 'sms_consent_date'))
-    
+        self.assertTrue(hasattr(self.person_with_consent, "sms_consent"))
+        self.assertTrue(hasattr(self.person_with_consent, "sms_consent_date"))
+
     def test_person_form_includes_consent_field(self):
         """Test that NewPersonForm includes sms_consent field."""
         from prayer.forms import NewPersonForm
+
         form = NewPersonForm()
-        self.assertIn('sms_consent', form.fields)
-
-
+        self.assertIn("sms_consent", form.fields)
 
 
 class TestPublicSignup(TestCase):
@@ -542,7 +566,12 @@ class TestPublicSignup(TestCase):
         """Index page should link to public signup, not the staff people page."""
         response = self.client.get("/prayer/index")
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertContains(response, 'href="{% url \'prayer:public_signup\' %}"'.replace("{% url 'prayer:public_signup' %}", "/prayer/signup"))
+        self.assertContains(
+            response,
+            "href=\"{% url 'prayer:public_signup' %}\"".replace(
+                "{% url 'prayer:public_signup' %}", "/prayer/signup"
+            ),
+        )
 
 
 class TestPrayerRegression(TestCase):
@@ -553,9 +582,14 @@ class TestPrayerRegression(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create_user(username="reguser", password="pw", email="r@example.com")
+        cls.user = User.objects.create_user(
+            username="reguser", password="pw", email="r@example.com"
+        )
         from django.contrib.auth.models import User as AuthUser
-        cls.staff = AuthUser.objects.create_user(username="regstaff", password="pwstaff")
+
+        cls.staff = AuthUser.objects.create_user(
+            username="regstaff", password="pwstaff"
+        )
         cls.staff.is_staff = True
         cls.staff.save()
 
@@ -563,7 +597,13 @@ class TestPrayerRegression(TestCase):
         """Unanswered requests should show 'Mark Answered' and aria-pressed="false" for staff."""
         from prayer.models import PrayerMessage
 
-        PrayerMessage.objects.create(subject="R1", message="please", name=self.user.username, submitted_by=self.user, is_completed=False)
+        PrayerMessage.objects.create(
+            subject="R1",
+            message="please",
+            name=self.user.username,
+            submitted_by=self.user,
+            is_completed=False,
+        )
         client = TestPrayerRegression.client
         client.force_login(self.staff)
         resp = client.get("/prayer/prayer-requests")
@@ -574,7 +614,13 @@ class TestPrayerRegression(TestCase):
         """Answered requests should show 'Unmark Answered' and aria-pressed="true" for staff."""
         from prayer.models import PrayerMessage
 
-        PrayerMessage.objects.create(subject="R2", message="thanks", name=self.user.username, submitted_by=self.user, is_completed=True)
+        PrayerMessage.objects.create(
+            subject="R2",
+            message="thanks",
+            name=self.user.username,
+            submitted_by=self.user,
+            is_completed=True,
+        )
         client = TestPrayerRegression.client
         client.force_login(self.staff)
         resp = client.get("/prayer/prayer-requests")
@@ -585,7 +631,13 @@ class TestPrayerRegression(TestCase):
         """POSTing to the toggle_complete endpoint should flip `is_completed`."""
         from prayer.models import PrayerMessage
 
-        pm = PrayerMessage.objects.create(subject="TC1", message="tc", name=self.user.username, submitted_by=self.user, is_completed=False)
+        pm = PrayerMessage.objects.create(
+            subject="TC1",
+            message="tc",
+            name=self.user.username,
+            submitted_by=self.user,
+            is_completed=False,
+        )
         client = TestPrayerRegression.client
         client.force_login(self.staff)
 
@@ -604,7 +656,13 @@ class TestPrayerRegression(TestCase):
         """POSTing to the toggle_important endpoint should flip `is_important`."""
         from prayer.models import PrayerMessage
 
-        pm = PrayerMessage.objects.create(subject="TI1", message="ti", name=self.user.username, submitted_by=self.user, is_important=False)
+        pm = PrayerMessage.objects.create(
+            subject="TI1",
+            message="ti",
+            name=self.user.username,
+            submitted_by=self.user,
+            is_important=False,
+        )
         client = TestPrayerRegression.client
         client.force_login(self.staff)
 
@@ -623,13 +681,16 @@ class TestPrayerRegression(TestCase):
         from prayer.models import PrayerMessage
         import datetime
 
-        pm = PrayerMessage.objects.create(subject="A1", message="ans", name=self.user.username, submitted_by=self.user)
+        pm = PrayerMessage.objects.create(
+            subject="A1", message="ans", name=self.user.username, submitted_by=self.user
+        )
         client = TestPrayerRegression.client
         client.force_login(self.staff)
 
-        resp = client.post(f"/prayer/prayer-requests/answer/{pm.id}", {"answer": "Got it"})
+        resp = client.post(
+            f"/prayer/prayer-requests/answer/{pm.id}", {"answer": "Got it"}
+        )
         self.assertEqual(resp.status_code, 302)
         pm.refresh_from_db()
         self.assertEqual(pm.answer_text, "Got it")
         self.assertIsNotNone(pm.answered_at)
-
