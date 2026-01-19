@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -40,9 +41,11 @@ def index(request) -> render:
 
 
 @login_required()
+@staff_member_required
 def new_message(request) -> render:
     """
     Create a new message.
+    Staff-only view for composing messages to prayer groups.
     """
     # Check if logic.queries classes are available
     if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
@@ -77,6 +80,7 @@ def new_message(request) -> render:
     return render(request, "prayer/new_message.html", context)
 
 
+@login_required()
 def message_detail(request, id):
     """
     See message details, send to prayer groups.
@@ -189,9 +193,11 @@ def send_message(request, id: int):
 
 
 @login_required()
+@staff_member_required
 def groups(request) -> render:
     """
     List of groups.
+    Staff-only view for creating and managing prayer groups.
     """
     context = {"new_group_form": NewGroupForm(), "groups": PrayerGroup.objects.all()}
 

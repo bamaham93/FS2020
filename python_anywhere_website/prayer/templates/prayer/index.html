@@ -4,6 +4,7 @@
     <div class="container my-4">
         <div class="row row-cols-1 row-cols-md-3 g-4">
 
+            {% if user.is_staff %}
             <div class="col">
                 <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:new_message' %}" aria-label="Open message composer to create a new message">
                     <div class="card h-100 shadow-sm home-card">
@@ -35,6 +36,7 @@
                     </div>
                 </a>
             </div>
+            {% endif %}
 
                 <div class="col">
                     <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:public_signup' %}" aria-label="Sign up to join a prayer group and receive messages">
