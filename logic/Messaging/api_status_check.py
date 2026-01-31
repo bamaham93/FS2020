@@ -21,9 +21,9 @@ class APIStatus:
             "rest api",
         ]
 
-        data = json.loads(
-            requests.get("https://status.twilio.com/api/v2/components.json")
-        )
+        response = requests.get("https://status.twilio.com/api/v2/components.json")
+        response.raise_for_status()
+        data = response.json()
 
         other_than_operational_list = []
         data_list = []
