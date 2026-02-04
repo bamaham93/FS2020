@@ -53,9 +53,8 @@ This template provides camera-based barcode scanning for smartphones.
     </div>
 </div>
 
-<!-- Include html5-qrcode library from CDN with integrity check -->
+<!-- Include html5-qrcode library from CDN -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" 
-        integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" 
         crossorigin="anonymous"
         onerror="handleScriptLoadError()"></script>
 
@@ -202,9 +201,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Wait for library to load before starting scanner with retry logic
-    // This helps with iOS devices where script loading can be delayed
+    // This helps with devices where script loading can be delayed
     let retries = 0;
-    const maxRetries = 20; // Try for up to 2 seconds (20 * 100ms)
+    const maxRetries = 100; // Try for up to 10 seconds (100 * 100ms)
     
     function initializeScannerWhenReady() {
         // Check if library is loaded
