@@ -48,8 +48,10 @@ This template provides camera-based barcode scanning for smartphones.
     <p class="mt-3"><a href="{% url 'media:add_by_barcode' %}" class="btn btn-link">Enter barcode manually instead</a></p>
 </div>
 
-<!-- Include html5-qrcode library from CDN -->
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<!-- Include html5-qrcode library from CDN with integrity check -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" 
+        integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" 
+        crossorigin="anonymous"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
