@@ -12,6 +12,19 @@ My resume and work history. Would you like to hire me? Use the contact form foun
 My personal media library of movies, books, music, and other media. My take on a basic example of a database-drive web
 app, and also a tool for my wife's use.
 
+## Features
+
+* **Media Library Management**: Track movies, books, CDs, DVDs, and other media formats
+* **Barcode Scanning**: 
+  - **Camera Scanning** (NEW): Use your smartphone camera to scan barcodes directly in the browser
+    - Supports UPC, EAN, ISBN, and other barcode formats
+    - Requires HTTPS or localhost for camera access
+    - Uses the html5-qrcode library for barcode detection
+  - Manual entry: Type barcodes manually for UPC and ISBN codes
+* **Automatic Metadata Lookup**: Automatically fetch book information from Google Books API using ISBN
+* **Media Organization**: Organize media by format, type, and genre
+* **Storage Location Tracking**: Keep track of where physical media is stored
+
 # FS2020
 
 Displays the current status and location for each of the aircraft in my personal MSFS2020 fleet.

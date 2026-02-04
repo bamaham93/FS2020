@@ -16,7 +16,7 @@ def index(request):
     # Counts by type/format and latest items for a richer index page
     types = MediaType.objects.all()
     formats = MediaFormat.objects.all()
-    latest = Media.objects.order_by('-id')[:6]
+    latest = Media.objects.order_by("-id")[:6]
     total = Media.objects.count()
     context = {
         "types": types,
@@ -44,19 +44,23 @@ def add_media(request):
         else:
             initial["upc_code"] = barcode
 
-    lookup = request.session.pop('media_lookup', None)
+    lookup = request.session.pop("media_lookup", None)
     if lookup:
-        if lookup.get('title'):
-            initial['title'] = lookup.get('title')
-        if lookup.get('description'):
-            initial['description'] = lookup.get('description')
-        cats = lookup.get('categories') or []
+        if lookup.get("title"):
+            initial["title"] = lookup.get("title")
+        if lookup.get("description"):
+            initial["description"] = lookup.get("description")
+        cats = lookup.get("categories") or []
         genre_ids = []
         for cat in cats:
             parts = []
             if isinstance(cat, str):
-                for seg in [s.strip() for s in cat.replace('\u2013', '/').split('/') if s.strip()]:
-                    for sub in [p.strip() for p in seg.split(',') if p.strip()]:
+                for seg in [
+                    s.strip()
+                    for s in cat.replace("\u2013", "/").split("/")
+                    if s.strip()
+                ]:
+                    for sub in [p.strip() for p in seg.split(",") if p.strip()]:
                         parts.append(sub)
             for part in parts:
                 if not part:
@@ -65,7 +69,7 @@ def add_media(request):
                 genre_obj, _ = MediaGenre.objects.get_or_create(name=name)
                 genre_ids.append(genre_obj.id)
         if genre_ids:
-            initial['genre'] = genre_ids
+            initial["genre"] = genre_ids
 
     add_media_form = AddMediaForm(initial=initial)
     context = {"add_media_form": add_media_form}
@@ -91,43 +95,48 @@ def add_by_barcode(request):
             return redirect("media:movies")
         except Media.DoesNotExist:
             meta = None
-            if code_type == 'isbn':
+            if code_type == "isbn":
                 meta = fetch_google_books_metadata(barcode)
             if meta:
-                meta.update({'barcode': barcode, 'code_type': code_type})
+                meta.update({"barcode": barcode, "code_type": code_type})
                 return render(request, "media/lookup_result.html", {"meta": meta})
             return redirect(f"/media/add_media?barcode={barcode}&code_type={code_type}")
     return render(request, "media/add_by_barcode.html", context)
 
 
+def scan_barcode(request):
+    """View for camera-based barcode scanning on smartphones."""
+    return render(request, "media/scan_barcode.html")
+
+
 @login_required
 def save_lookup(request):
-    if request.method != 'POST':
-        return redirect('media:index')
+    if request.method != "POST":
+        return redirect("media:index")
 
-    title = request.POST.get('title')
-    description = request.POST.get('description')
-    barcode = request.POST.get('barcode')
-    code_type = request.POST.get('code_type')
-    categories = request.POST.get('categories', '')
+    title = request.POST.get("title")
+    description = request.POST.get("description")
+    barcode = request.POST.get("barcode")
+    code_type = request.POST.get("code_type")
+    categories = request.POST.get("categories", "")
 
     if not title:
-        messages.error(request, 'No title provided; cannot save.')
-        return redirect('media:add_media')
+        messages.error(request, "No title provided; cannot save.")
+        return redirect("media:add_media")
 
-    fmt, _ = MediaFormat.objects.get_or_create(name='Unknown')
+    fmt, _ = MediaFormat.objects.get_or_create(name="Unknown")
     mtype = None
-    if code_type == 'isbn':
-        mtype, _ = MediaType.objects.get_or_create(name='Book')
+    if code_type == "isbn":
+        mtype, _ = MediaType.objects.get_or_create(name="Book")
 
     media = Media.objects.create(
         title=title,
-        description=description or '',
+        description=description or "",
         format=fmt,
         type=mtype,
     )
 
-    if code_type == 'isbn':
+    if code_type == "isbn":
         media.isbn_code = barcode
     else:
         media.upc_code = barcode
@@ -135,16 +144,18 @@ def save_lookup(request):
 
     if categories:
         parts = []
-        for seg in [s.strip() for s in categories.split(',') if s.strip()]:
-            for sub in [p.strip() for p in seg.replace('\u2013', '/').split('/') if p.strip()]:
+        for seg in [s.strip() for s in categories.split(",") if s.strip()]:
+            for sub in [
+                p.strip() for p in seg.replace("\u2013", "/").split("/") if p.strip()
+            ]:
                 parts.append(sub)
         for part in parts:
             name = part.title()
             g, _ = MediaGenre.objects.get_or_create(name=name)
             media.genre.add(g)
 
-    messages.success(request, f'Saved media: {media.title}')
-    return redirect('media:movies')
+    messages.success(request, f"Saved media: {media.title}")
+    return redirect("media:movies")
 
 
 def remove_by_barcode(request):
@@ -168,25 +179,26 @@ def remove_by_barcode(request):
 
 def fetch_google_books_metadata(isbn):
     def normalize_isbn(s):
-        s = (s or '').strip()
+        s = (s or "").strip()
         s = s.upper()
-        if s.startswith('ISBN'):
+        if s.startswith("ISBN"):
             s = s[4:]
         import re
-        s = re.sub(r'[^0-9X]', '', s)
+
+        s = re.sub(r"[^0-9X]", "", s)
         return s
 
     def isbn13_to_isbn10(isbn13):
         if len(isbn13) != 13 or not isbn13.isdigit():
             return None
-        if not (isbn13.startswith('978') or isbn13.startswith('979')):
+        if not (isbn13.startswith("978") or isbn13.startswith("979")):
             return None
         core = isbn13[3:12]
         total = 0
         for i, ch in enumerate(core):
             total += (i + 1) * int(ch)
         check = total % 11
-        check_char = 'X' if check == 10 else str(check)
+        check_char = "X" if check == 10 else str(check)
         return core + check_char
 
     try:
@@ -206,16 +218,23 @@ def fetch_google_books_metadata(isbn):
             if resp.status_code != 200:
                 continue
             data = resp.json()
-            items = data.get('items')
+            items = data.get("items")
             if not items:
                 continue
-            vol = items[0].get('volumeInfo', {})
-            title = vol.get('title')
-            description = vol.get('description')
-            image_links = vol.get('imageLinks', {})
-            thumbnail = image_links.get('thumbnail')
-            categories = vol.get('categories') or []
-            return {'title': title, 'description': description, 'image_url': thumbnail, 'categories': categories, 'source': 'google_books', 'queried_isbn': cand}
+            vol = items[0].get("volumeInfo", {})
+            title = vol.get("title")
+            description = vol.get("description")
+            image_links = vol.get("imageLinks", {})
+            thumbnail = image_links.get("thumbnail")
+            categories = vol.get("categories") or []
+            return {
+                "title": title,
+                "description": description,
+                "image_url": thumbnail,
+                "categories": categories,
+                "source": "google_books",
+                "queried_isbn": cand,
+            }
         return None
     except Exception:
         return None
@@ -272,28 +291,33 @@ def media_detail(request, pk):
 def media_lookup(request, pk):
     media = get_object_or_404(Media, pk=pk)
     barcode = media.isbn_code or media.upc_code
-    code_type = 'isbn' if media.isbn_code else ('upc' if media.upc_code else None)
+    code_type = "isbn" if media.isbn_code else ("upc" if media.upc_code else None)
     meta = None
-    if code_type == 'isbn' and barcode:
+    if code_type == "isbn" and barcode:
         meta = fetch_google_books_metadata(barcode)
 
     candidates = []
     if not meta and media.title:
         title_q = media.title
         try:
-            q = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title_q}", timeout=5)
+            q = requests.get(
+                f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title_q}",
+                timeout=5,
+            )
             if q.status_code == 200:
-                items = q.json().get('items') or []
+                items = q.json().get("items") or []
                 for it in items[:4]:
-                    vol = it.get('volumeInfo', {})
-                    candidates.append({
-                        'title': vol.get('title'),
-                        'description': vol.get('description'),
-                        'image_url': vol.get('imageLinks', {}).get('thumbnail'),
-                        'categories': vol.get('categories') or [],
-                        'source': 'google_books',
-                        'type': 'Book',
-                    })
+                    vol = it.get("volumeInfo", {})
+                    candidates.append(
+                        {
+                            "title": vol.get("title"),
+                            "description": vol.get("description"),
+                            "image_url": vol.get("imageLinks", {}).get("thumbnail"),
+                            "categories": vol.get("categories") or [],
+                            "source": "google_books",
+                            "type": "Book",
+                        }
+                    )
         except Exception:
             pass
 
@@ -301,30 +325,50 @@ def media_lookup(request, pk):
             import urllib.parse
 
             qstr = urllib.parse.quote(title_q)
-            it_movie = requests.get(f"https://itunes.apple.com/search?term={qstr}&media=movie&limit=4", timeout=5)
+            it_movie = requests.get(
+                f"https://itunes.apple.com/search?term={qstr}&media=movie&limit=4",
+                timeout=5,
+            )
             if it_movie.status_code == 200:
-                res = it_movie.json().get('results') or []
+                res = it_movie.json().get("results") or []
                 for r in res[:3]:
-                    candidates.append({
-                        'title': r.get('trackName') or r.get('collectionName'),
-                        'description': r.get('longDescription') or r.get('shortDescription') or r.get('collectionName'),
-                        'image_url': r.get('artworkUrl100'),
-                        'categories': [r.get('primaryGenreName')] if r.get('primaryGenreName') else [],
-                        'source': 'itunes_movie',
-                        'type': 'Movie',
-                    })
-            it_music = requests.get(f"https://itunes.apple.com/search?term={qstr}&media=music&entity=album&limit=4", timeout=5)
+                    candidates.append(
+                        {
+                            "title": r.get("trackName") or r.get("collectionName"),
+                            "description": r.get("longDescription")
+                            or r.get("shortDescription")
+                            or r.get("collectionName"),
+                            "image_url": r.get("artworkUrl100"),
+                            "categories": (
+                                [r.get("primaryGenreName")]
+                                if r.get("primaryGenreName")
+                                else []
+                            ),
+                            "source": "itunes_movie",
+                            "type": "Movie",
+                        }
+                    )
+            it_music = requests.get(
+                f"https://itunes.apple.com/search?term={qstr}&media=music&entity=album&limit=4",
+                timeout=5,
+            )
             if it_music.status_code == 200:
-                res2 = it_music.json().get('results') or []
+                res2 = it_music.json().get("results") or []
                 for r in res2[:3]:
-                    candidates.append({
-                        'title': r.get('collectionName'),
-                        'description': r.get('artistName'),
-                        'image_url': r.get('artworkUrl100'),
-                        'categories': [r.get('primaryGenreName')] if r.get('primaryGenreName') else [],
-                        'source': 'itunes_album',
-                        'type': 'Album',
-                    })
+                    candidates.append(
+                        {
+                            "title": r.get("collectionName"),
+                            "description": r.get("artistName"),
+                            "image_url": r.get("artworkUrl100"),
+                            "categories": (
+                                [r.get("primaryGenreName")]
+                                if r.get("primaryGenreName")
+                                else []
+                            ),
+                            "source": "itunes_album",
+                            "type": "Album",
+                        }
+                    )
         except Exception:
             pass
 
@@ -334,69 +378,86 @@ def media_lookup(request, pk):
         candidates = [meta]
 
     if not meta:
-        return render(request, 'media/lookup_compare.html', {'media': media, 'meta': None})
+        return render(
+            request, "media/lookup_compare.html", {"media": media, "meta": None}
+        )
 
-    def choose_default(current, suggested, prefer_length_delta=10, prefer_descr_len=120):
+    def choose_default(
+        current, suggested, prefer_length_delta=10, prefer_descr_len=120
+    ):
         if not current and suggested:
-            return 'suggested'
+            return "suggested"
         if not suggested:
-            return 'current'
+            return "current"
         try:
-            if len(suggested) > len(current or '') + prefer_length_delta:
-                return 'suggested'
+            if len(suggested) > len(current or "") + prefer_length_delta:
+                return "suggested"
         except Exception:
             pass
-        return 'current'
+        return "current"
 
     default_candidate = 0
     if len(candidates) > 1 and media.type:
         for i, c in enumerate(candidates):
-            if c.get('type') and c.get('type').lower() == media.type.name.lower():
+            if c.get("type") and c.get("type").lower() == media.type.name.lower():
                 default_candidate = i
                 break
 
     chosen = candidates[default_candidate] if candidates else meta
 
-    default_title = choose_default(media.title, chosen.get('title') if chosen else None)
-    default_subtitle = choose_default(getattr(media, 'subtitle', None), chosen.get('subtitle') if chosen else None)
+    default_title = choose_default(media.title, chosen.get("title") if chosen else None)
+    default_subtitle = choose_default(
+        getattr(media, "subtitle", None), chosen.get("subtitle") if chosen else None
+    )
 
     def descr_default(cur, sug):
         if not cur and sug:
-            return 'suggested'
+            return "suggested"
         if not sug:
-            return 'current'
+            return "current"
         try:
-            if len(cur or '') < 80 and len(sug) > len(cur or '') + 30:
-                return 'suggested'
+            if len(cur or "") < 80 and len(sug) > len(cur or "") + 30:
+                return "suggested"
         except Exception:
             pass
-        return 'current'
+        return "current"
 
-    default_description = descr_default(media.description, meta.get('description'))
-    default_image = 'suggested' if (not getattr(media, 'image') and meta.get('image_url')) else 'current'
-    default_categories = 'suggested' if (media.genre.count() == 0 and meta.get('categories')) else 'current'
+    default_description = descr_default(media.description, meta.get("description"))
+    default_image = (
+        "suggested"
+        if (not getattr(media, "image") and meta.get("image_url"))
+        else "current"
+    )
+    default_categories = (
+        "suggested"
+        if (media.genre.count() == 0 and meta.get("categories"))
+        else "current"
+    )
 
     ctx = {
-        'media': media,
-        'meta': meta,
-        'candidates': candidates,
-        'default_candidate': default_candidate,
-        'default_title': default_title,
-        'default_subtitle': default_subtitle,
-        'default_description': default_description,
-        'default_image': default_image,
-        'default_categories': default_categories,
+        "media": media,
+        "meta": meta,
+        "candidates": candidates,
+        "default_candidate": default_candidate,
+        "default_title": default_title,
+        "default_subtitle": default_subtitle,
+        "default_description": default_description,
+        "default_image": default_image,
+        "default_categories": default_categories,
     }
-    return render(request, 'media/lookup_compare.html', ctx)
+    return render(request, "media/lookup_compare.html", ctx)
 
 
 @login_required
 def apply_lookup(request, pk):
-    if request.method != 'POST':
-        return redirect('media:detail', pk=pk)
+    if request.method != "POST":
+        return redirect("media:detail", pk=pk)
 
     try:
-        logging.getLogger(__name__).info('apply_lookup POST payload: %s', {k: request.POST.getlist(k) for k in request.POST.keys()})
+        logging.getLogger(__name__).info(
+            "apply_lookup POST payload: %s",
+            {k: request.POST.getlist(k) for k in request.POST.keys()},
+        )
     except Exception:
         pass
 
@@ -406,24 +467,24 @@ def apply_lookup(request, pk):
     orig_description = media.description
     had_image = bool(media.image)
 
-    if request.POST.get('choice_title') == 'suggested':
-        new_title = request.POST.get('suggested_title') or media.title
+    if request.POST.get("choice_title") == "suggested":
+        new_title = request.POST.get("suggested_title") or media.title
     else:
         new_title = media.title
 
-    if request.POST.get('choice_subtitle') == 'suggested':
-        new_subtitle = request.POST.get('suggested_subtitle') or media.subtitle
+    if request.POST.get("choice_subtitle") == "suggested":
+        new_subtitle = request.POST.get("suggested_subtitle") or media.subtitle
     else:
         new_subtitle = media.subtitle
 
-    if request.POST.get('choice_description') == 'suggested':
-        new_description = request.POST.get('suggested_description') or ''
+    if request.POST.get("choice_description") == "suggested":
+        new_description = request.POST.get("suggested_description") or ""
     else:
-        new_description = media.description or ''
+        new_description = media.description or ""
 
-    suggested_image = request.POST.get('suggested_image_url')
+    suggested_image = request.POST.get("suggested_image_url")
     image_saved = False
-    if request.POST.get('choice_image') == 'suggested' and suggested_image:
+    if request.POST.get("choice_image") == "suggested" and suggested_image:
         try:
             resp = requests.get(suggested_image, timeout=10)
             if resp.status_code == 200:
@@ -432,8 +493,8 @@ def apply_lookup(request, pk):
                     import imghdr
 
                     ext = imghdr.what(None, h=content)
-                    if ext == 'jpeg':
-                        ext = 'jpg'
+                    if ext == "jpeg":
+                        ext = "jpg"
                 except Exception:
                     ext = None
 
@@ -441,7 +502,7 @@ def apply_lookup(request, pk):
                     from urllib.parse import urlparse
 
                     path = urlparse(suggested_image).path
-                    ext = os.path.splitext(path)[1].lstrip('.') or 'jpg'
+                    ext = os.path.splitext(path)[1].lstrip(".") or "jpg"
 
                 filename = f"{slugify(media.title)[:50]}-{media.pk}.{ext}"
                 if media.image:
@@ -453,15 +514,17 @@ def apply_lookup(request, pk):
                 image_saved = True
         except Exception as e:
             image_saved = False
-            logging.getLogger(__name__).exception('Image download/save failed')
-            messages.warning(request, f'Image download/save failed: {e}')
+            logging.getLogger(__name__).exception("Image download/save failed")
+            messages.warning(request, f"Image download/save failed: {e}")
 
-    if request.POST.get('choice_categories') == 'suggested':
-        cats = request.POST.get('suggested_categories', '')
+    if request.POST.get("choice_categories") == "suggested":
+        cats = request.POST.get("suggested_categories", "")
         media.genre.clear()
         parts = []
-        for seg in [s.strip() for s in cats.split(',') if s.strip()]:
-            for sub in [p.strip() for p in seg.replace('\u2013', '/').split('/') if p.strip()]:
+        for seg in [s.strip() for s in cats.split(",") if s.strip()]:
+            for sub in [
+                p.strip() for p in seg.replace("\u2013", "/").split("/") if p.strip()
+            ]:
                 parts.append(sub)
         for part in parts:
             name = part.title()
@@ -475,16 +538,18 @@ def apply_lookup(request, pk):
 
     applied = []
     if orig_title != media.title:
-        applied.append('title')
-    if (orig_subtitle or '') != (media.subtitle or ''):
-        applied.append('subtitle')
-    if (orig_description or '') != (media.description or ''):
-        applied.append('description')
+        applied.append("title")
+    if (orig_subtitle or "") != (media.subtitle or ""):
+        applied.append("subtitle")
+    if (orig_description or "") != (media.description or ""):
+        applied.append("description")
     if image_saved:
-        applied.append('image')
+        applied.append("image")
 
     if applied:
-        messages.success(request, f"Updated media: {media.title} ({', '.join(applied)})")
+        messages.success(
+            request, f"Updated media: {media.title} ({', '.join(applied)})"
+        )
     else:
         messages.info(request, f"No changes applied to: {media.title}")
 
@@ -492,26 +557,32 @@ def apply_lookup(request, pk):
         try:
             exists = bool(media.image and os.path.exists(media.image.path))
             if exists:
-                messages.success(request, f'Image saved to {media.image.url}')
+                messages.success(request, f"Image saved to {media.image.url}")
             else:
-                messages.warning(request, 'Image save reported success but file not found on disk.')
+                messages.warning(
+                    request, "Image save reported success but file not found on disk."
+                )
         except Exception:
-            messages.info(request, 'Image saved but could not verify file path.')
-    elif not image_saved and request.POST.get('choice_image') == 'suggested' and suggested_image:
-        messages.warning(request, 'Suggested image could not be downloaded or saved.')
+            messages.info(request, "Image saved but could not verify file path.")
+    elif (
+        not image_saved
+        and request.POST.get("choice_image") == "suggested"
+        and suggested_image
+    ):
+        messages.warning(request, "Suggested image could not be downloaded or saved.")
 
-    return redirect('media:detail', pk=media.pk)
+    return redirect("media:detail", pk=media.pk)
 
 
 def sorted_by(request):
     media_qs = Media.objects.all()
-    fmt = request.GET.get('format')
-    typ = request.GET.get('type')
+    fmt = request.GET.get("format")
+    typ = request.GET.get("type")
     if fmt:
         media_qs = media_qs.filter(format__name=fmt)
     if typ:
         media_qs = media_qs.filter(type__name=typ)
-    genre_name = request.GET.get('genre')
+    genre_name = request.GET.get("genre")
     if genre_name:
         media_qs = media_qs.filter(genre__name=genre_name)
     context = {
@@ -519,22 +590,22 @@ def sorted_by(request):
         "filter_format": fmt,
         "filter_type": typ,
     }
-    return render(request, 'media/sorted_by.html', context)
+    return render(request, "media/sorted_by.html", context)
 
 
 def formats_list(request):
     formats = MediaFormat.objects.all()
     context = {"formats": formats}
-    return render(request, 'media/formats.html', context)
+    return render(request, "media/formats.html", context)
 
 
 def types_list(request):
     types = MediaType.objects.all()
     context = {"types": types}
-    return render(request, 'media/types.html', context)
+    return render(request, "media/types.html", context)
 
 
 def genres_list(request):
     genres = MediaGenre.objects.all()
     context = {"genres": genres}
-    return render(request, 'media/genres.html', context)
+    return render(request, "media/genres.html", context)
