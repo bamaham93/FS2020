@@ -105,13 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function startScanner() {
-        // Check if library is loaded
-        if (typeof Html5QrcodeScanner === 'undefined' || typeof Html5QrcodeSupportedFormats === 'undefined') {
-            statusDiv.innerHTML = '<p class="text-danger">Error: Scanner library failed to load. Please refresh the page.</p>';
-            console.error('Html5QrcodeScanner library not loaded');
-            return;
-        }
-
         // Configure scanner to support multiple barcode formats
         const config = {
             fps: 10,
@@ -166,11 +159,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Wait a moment for the library to load before starting scanner
+    // Wait for library to load before starting scanner with retry logic
     // This helps with iOS devices where script loading can be delayed
-    setTimeout(function() {
-        startScanner();
-    }, 100);
+    let retries = 0;
+    const maxRetries = 20; // Try for up to 2 seconds (20 * 100ms)
+    
+    function initializeScannerWhenReady() {
+        // Check if library is loaded
+        if (typeof Html5QrcodeScanner !== 'undefined' && typeof Html5QrcodeSupportedFormats !== 'undefined') {
+            startScanner();
+        } else if (retries < maxRetries) {
+            retries++;
+            setTimeout(initializeScannerWhenReady, 100);
+        } else {
+            statusDiv.innerHTML = '<p class="text-danger">Error: Scanner library failed to load. Please refresh the page.</p>';
+            console.error('Html5QrcodeScanner library not loaded after', maxRetries * 100, 'ms');
+        }
+    }
+    
+    initializeScannerWhenReady();
 });
 </script>
 
