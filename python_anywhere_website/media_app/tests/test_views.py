@@ -8,32 +8,36 @@ class TestMediaViews(TestCase):
         self.c = Client()
 
     def setup_login(self):
-        test_user1 = User.objects.create_user(username='testuser1', password='1X<ISRUkw+tuK')
+        test_user1 = User.objects.create_user(
+            username="testuser1", password="1X<ISRUkw+tuK"
+        )
         self.jim = Client(test_user1)
-        test_user2 = User.objects.create_user(username='testuser2', password='2HJ1vRV0Z&3iD')
+        test_user2 = User.objects.create_user(
+            username="testuser2", password="2HJ1vRV0Z&3iD"
+        )
         self.bob = Client()
         self.bob.force_login(test_user2)
 
     def test_media_index(self):
-        response = self.c.get('/media/')
+        response = self.c.get("/media/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "media/media_base.html")
         self.assertTemplateUsed(response, "media/index.html")
 
     def test_movies(self):
-        response = self.c.get('/media/movies')
+        response = self.c.get("/media/movies")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "media/media_base.html")
         self.assertTemplateUsed(response, "media/movies.html")
 
     def test_add_media(self):
         self.setup_login()
-        response = self.c.get('/media/add_media')
+        response = self.c.get("/media/add_media")
         self.assertEqual(response.status_code, 302)
-        response1 = self.bob.get('/media/add_media')
+        response1 = self.bob.get("/media/add_media")
         self.assertEqual(response1.status_code, 200)
-        self.assertTemplateUsed(response1, 'media/media_base.html')
-        self.assertTemplateUsed(response1, 'media/add_media.html')
+        self.assertTemplateUsed(response1, "media/media_base.html")
+        self.assertTemplateUsed(response1, "media/add_media.html")
 
     def test_add_media_form(self):
         self.setup_login()
@@ -42,7 +46,26 @@ class TestMediaViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_books(self):
-        response = self.c.get('/media/books')
+        response = self.c.get("/media/books")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "media/media_base.html")
         self.assertTemplateUsed(response, "media/books.html")
+
+    def test_scan_barcode(self):
+        """Test that the camera scanner page loads correctly."""
+        response = self.c.get("/media/scan-barcode")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "media/scan_barcode.html")
+        # Check that the page contains the scanner div
+        self.assertContains(response, 'id="reader"')
+        # Check that it includes the html5-qrcode library
+        self.assertContains(response, "html5-qrcode")
+
+    def test_add_by_barcode_has_scanner_link(self):
+        """Test that the manual barcode entry page links to camera scanner."""
+        response = self.c.get("/media/add-by-barcode")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "media/add_by_barcode.html")
+        # Check that it contains a link to the camera scanner
+        self.assertContains(response, "scan-barcode")
+        self.assertContains(response, "📷")
