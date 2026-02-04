@@ -105,6 +105,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function startScanner() {
+        // Check if library is loaded
+        if (typeof Html5QrcodeScanner === 'undefined' || typeof Html5QrcodeSupportedFormats === 'undefined') {
+            statusDiv.innerHTML = '<p class="text-danger">Error: Scanner library failed to load. Please refresh the page.</p>';
+            console.error('Html5QrcodeScanner library not loaded');
+            return;
+        }
+
         // Configure scanner to support multiple barcode formats
         const config = {
             fps: 10,
@@ -121,16 +128,28 @@ document.addEventListener('DOMContentLoaded', function() {
             ]
         };
 
-        html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader",
-            config,
-            /* verbose= */ false
-        );
+        try {
+            html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader",
+                config,
+                /* verbose= */ false
+            );
 
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-        isScanning = true;
-        stopBtn.style.display = 'inline-block';
-        statusDiv.innerHTML = '<p class="text-info">Scanner ready. Point camera at barcode.</p>';
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure)
+                .then(() => {
+                    isScanning = true;
+                    stopBtn.style.display = 'inline-block';
+                    statusDiv.innerHTML = '<p class="text-info">Scanner ready. Point camera at barcode.</p>';
+                })
+                .catch((err) => {
+                    console.error('Error starting scanner:', err);
+                    statusDiv.innerHTML = '<p class="text-danger">Camera access denied or unavailable. Please allow camera access in your browser settings.</p>';
+                    stopBtn.style.display = 'none';
+                });
+        } catch (err) {
+            console.error('Error initializing scanner:', err);
+            statusDiv.innerHTML = '<p class="text-danger">Error initializing scanner. Please try again.</p>';
+        }
     }
 
     // Stop scanner button handler
@@ -147,8 +166,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Start scanner on page load
-    startScanner();
+    // Wait a moment for the library to load before starting scanner
+    // This helps with iOS devices where script loading can be delayed
+    setTimeout(function() {
+        startScanner();
+    }, 100);
 });
 </script>
 
