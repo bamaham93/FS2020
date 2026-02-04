@@ -69,3 +69,13 @@ class TestMediaViews(TestCase):
         # Check that it contains a link to the camera scanner
         self.assertContains(response, "scan-barcode")
         self.assertContains(response, "📷")
+
+    def test_scan_barcode_form_submission(self):
+        """Test that scanned barcodes can be submitted to add_by_barcode."""
+        response = self.c.get("/media/scan-barcode")
+        self.assertEqual(response.status_code, 200)
+        # Check that the form action points to add_by_barcode URL
+        self.assertContains(response, 'action="/media/add-by-barcode"')
+        # Check that form has required fields
+        self.assertContains(response, 'name="barcode"')
+        self.assertContains(response, 'name="code_type"')
