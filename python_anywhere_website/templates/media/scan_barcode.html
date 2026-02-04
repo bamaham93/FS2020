@@ -49,7 +49,7 @@ This template provides camera-based barcode scanning for smartphones.
     <div class="mt-4 p-3 bg-light border rounded">
         <h5>Alternative Option</h5>
         <p class="mb-2">If the camera scanner isn't working, you can enter the barcode manually:</p>
-        <a href="{% url 'media:add_by_barcode' %}" class="btn btn-primary" aria-label="Enter Barcode Manually"><span aria-hidden="true">📝</span> Enter Barcode Manually</a>
+        <a href="{% url 'media:add_by_barcode' %}" class="btn btn-primary"><span aria-hidden="true">📝</span> Enter Barcode Manually</a>
     </div>
 </div>
 
@@ -61,6 +61,7 @@ This template provides camera-based barcode scanning for smartphones.
 
 <script>
 // Utility function to display error messages
+// Note: causes and solutions should only contain hardcoded, trusted strings
 function displayErrorMessage(title, causes, solutions) {
     const statusDiv = document.getElementById('scanner-status');
     if (!statusDiv) return;
