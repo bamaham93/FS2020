@@ -49,7 +49,7 @@ This template provides camera-based barcode scanning for smartphones.
     <div class="mt-4 p-3 bg-light border rounded">
         <h5>Alternative Option</h5>
         <p class="mb-2">If the camera scanner isn't working, you can enter the barcode manually:</p>
-        <a href="{% url 'media:add_by_barcode' %}" class="btn btn-primary">📝 Enter Barcode Manually</a>
+        <a href="{% url 'media:add_by_barcode' %}" class="btn btn-primary" aria-label="Enter Barcode Manually"><span aria-hidden="true">📝</span> Enter Barcode Manually</a>
     </div>
 </div>
 
@@ -60,26 +60,38 @@ This template provides camera-based barcode scanning for smartphones.
         onerror="handleScriptLoadError()"></script>
 
 <script>
+// Utility function to display error messages
+function displayErrorMessage(title, causes, solutions) {
+    const statusDiv = document.getElementById('scanner-status');
+    if (!statusDiv) return;
+    
+    let causesHTML = causes.map(cause => '<li>' + cause + '</li>').join('');
+    let solutionsHTML = solutions.map(solution => '<li>' + solution + '</li>').join('');
+    
+    statusDiv.innerHTML = '<div class="alert alert-danger">' +
+        '<h5>' + title + '</h5>' +
+        '<p>This may be due to:</p>' +
+        '<ul>' + causesHTML + '</ul>' +
+        '<p><strong>Please try:</strong></p>' +
+        '<ul>' + solutionsHTML + '</ul>' +
+        '</div>';
+}
+
 // Handle script load errors (network issues, blocked CDN, etc.)
 function handleScriptLoadError() {
-    const statusDiv = document.getElementById('scanner-status');
-    if (statusDiv) {
-        statusDiv.innerHTML = '<div class="alert alert-danger">' +
-            '<h5>Scanner Library Unavailable</h5>' +
-            '<p>The barcode scanner library could not be loaded. This may be due to:</p>' +
-            '<ul>' +
-            '<li>Network connectivity issues</li>' +
-            '<li>Corporate firewall or proxy blocking the CDN</li>' +
-            '<li>Ad blocker or privacy extension blocking external scripts</li>' +
-            '</ul>' +
-            '<p><strong>Solutions:</strong></p>' +
-            '<ul>' +
-            '<li>Check your internet connection</li>' +
-            '<li>Try disabling browser extensions temporarily</li>' +
-            '<li>Use the manual barcode entry option below</li>' +
-            '</ul>' +
-            '</div>';
-    }
+    displayErrorMessage(
+        'Scanner Library Unavailable',
+        [
+            'Network connectivity issues',
+            'Corporate firewall or proxy blocking the CDN',
+            'Ad blocker or privacy extension blocking external scripts'
+        ],
+        [
+            'Check your internet connection',
+            'Try disabling browser extensions temporarily',
+            'Use the manual barcode entry option below'
+        ]
+    );
 }
 </script>
 
@@ -201,21 +213,19 @@ document.addEventListener('DOMContentLoaded', function() {
             retries++;
             setTimeout(initializeScannerWhenReady, 100);
         } else {
-            statusDiv.innerHTML = '<div class="alert alert-danger">' +
-                '<h5>Scanner Library Load Timeout</h5>' +
-                '<p>The barcode scanner library is taking too long to load. This may be due to:</p>' +
-                '<ul>' +
-                '<li>Slow network connection</li>' +
-                '<li>CDN service issues</li>' +
-                '<li>Browser blocking the script</li>' +
-                '</ul>' +
-                '<p><strong>Please try:</strong></p>' +
-                '<ul>' +
-                '<li>Refreshing the page</li>' +
-                '<li>Checking your internet connection</li>' +
-                '<li>Using the manual barcode entry option below</li>' +
-                '</ul>' +
-                '</div>';
+            displayErrorMessage(
+                'Scanner Library Load Timeout',
+                [
+                    'Slow network connection',
+                    'CDN service issues',
+                    'Browser blocking the script'
+                ],
+                [
+                    'Refresh the page',
+                    'Check your internet connection',
+                    'Use the manual barcode entry option below'
+                ]
+            );
             console.error('Html5QrcodeScanner library not loaded after', maxRetries * 100, 'ms');
         }
     }
