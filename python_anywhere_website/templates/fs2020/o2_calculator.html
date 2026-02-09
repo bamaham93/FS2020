@@ -1,0 +1,20 @@
+{% extends "fs2020/fs2020_base.html" %}
+
+{% block content %}
+  <h1>O2 Bottle Pressure Calculator</h1>
+  <p>Ported from the original gist. Computes expected pressure after a temperature change.</p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+    </table>
+    <button type="submit">Calculate</button>
+  </form>
+
+  {% if result %}
+    <h2>Result</h2>
+    <p>Expected pressure: <strong>{{ result.p2 }} PSI</strong></p>
+  {% endif %}
+
+{% endblock %}

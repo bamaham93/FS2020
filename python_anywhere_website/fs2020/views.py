@@ -15,34 +15,63 @@ from django.contrib.auth.decorators import login_required
 from .models import Aircraft, Flight
 from .faa.notams import NOTAMS
 from .forms import AircraftForm
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+from .models import Aircraft, Flight
+from .faa.notams import NOTAMS
+from .forms import AircraftForm, O2CalculatorForm
 from .metar import fetch_metar
 from django.conf import settings
+import math
+
+
+# Helper functions ported from the original gist
+def convert_f_to_k(f: float) -> float:
+    """Convert degrees Fahrenheit to Kelvin."""
+    return ((f - 32) / 1.8) + 273.15
+
+
+def o2_calc(t1, t2, p1):
+    """Compute expected pressure P2 given T1, T2 (°F) and P1 (PSI).
+
+    Uses proportional relationship P2 = (T2_K / T1_K) * P1
+    """
+    t1_abs = convert_f_to_k(t1)
+    t2_abs = convert_f_to_k(t2)
+    p2 = t2_abs / t1_abs * p1
+    return float(format(p2, ".2f"))
+
+
+def metar_api(request):
+    """API endpoint: Return METAR as JSON for a given ICAO code."""
+    icao = request.GET.get("icao", "").strip().upper()
+    if not icao:
+        return JsonResponse({"error": "Missing ICAO code"}, status=400)
+    data = fetch_metar(icao)
+    if not data:
+        return JsonResponse({"error": f"No METAR found for {icao}"}, status=404)
+    return JsonResponse(data)
+
 
 # Create your views here.
 def index(request):
-    """
-    FS2020 app home page.
-    """
+    """FS2020 app home page."""
     context = {"title": "FS2020 Home"}
     aircraft_qs = Aircraft.objects.all()
-
-    # No server-side METAR fetching; handled client-side for speed.
-
     context["aircraft"] = aircraft_qs
     return render(request, "fs2020/index.html", context)
 
 
 def flights(request, n_number):
-    """ """
     context = {}
     context["flights"] = Flight.objects.filter(n_num__exact=n_number)
     return render(request, "fs2020/flights.html", context)
 
 
 def notams(request):
-    """
-    Search NOTAMS by airport.
-    """
     notams_ = NOTAMS()
     context = {"notams": notams_.get_airport_notams()}
     return render(request, "fs2020/notams.html", context)
@@ -75,3 +104,19 @@ def aircraft_edit(request, pk):
     else:
         form = AircraftForm(instance=plane)
     return render(request, "fs2020/aircraft_form.html", {"form": form, "title": "Edit Aircraft", "plane": plane})
+
+
+def o2_calculator(request):
+    """Web form for the O2/bottle-pressure calculator ported from the gist."""
+    result = None
+    if request.method == "POST":
+        form = O2CalculatorForm(request.POST)
+        if form.is_valid():
+            t1 = form.cleaned_data["t1"]
+            t2 = form.cleaned_data["t2"]
+            p1 = form.cleaned_data["p1"]
+            p2 = o2_calc(t1, t2, p1)
+            result = {"p2": p2}
+    else:
+        form = O2CalculatorForm()
+    return render(request, "fs2020/o2_calculator.html", {"form": form, "result": result})
