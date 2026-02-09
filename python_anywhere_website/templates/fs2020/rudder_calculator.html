@@ -1,0 +1,30 @@
+{% extends "fs2020/fs2020_base.html" %}
+
+{% block section1 %}
+  <div class="card p-3">
+    <h1 class="mb-2">Rudder Travel Calculator</h1>
+    <p class="text-muted">Compute linear travel (inches) required at the rudder trailing edge to achieve a specified angular travel.</p>
+
+    <div class="alert alert-info">
+      <h5 class="alert-heading">What this does</h5>
+      <p>Uses basic triangle/SAS trigonometry. Inputs are the rudder chord (distance from hinge to trailing edge) and the required angular travel in degrees.</p>
+      <ul>
+        <li><strong>Inputs:</strong> Rudder chord (inches), Required travel (degrees)</li>
+        <li><strong>Assumptions:</strong> Rigid geometry, no deformation.</li>
+      </ul>
+      <p class="mb-0"><strong>Output:</strong> Linear travel at the trailing edge in inches (rounded to 2 decimals).</p>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="mb-2">{{ form.as_p }}</div>
+      <button class="btn btn-primary" type="submit">Calculate</button>
+    </form>
+
+    {% if result %}
+      <hr />
+      <h2>Result</h2>
+      <p>Required linear travel: <strong>{{ result.travel_in }} in</strong></p>
+    {% endif %}
+  </div>
+{% endblock %}
