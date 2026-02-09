@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ essay.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <a href="{% url 'photography:essay_list' %}" class="btn btn-outline-secondary mb-3">← Back to Essays</a>
+            <h1>{{ essay.title }}</h1>
+            <p class="text-muted">Updated: {{ essay.updated_at|date:"F d, Y" }}</p>
+        </div>
+    </div>
+
+    {% if essay.description %}
+        <div class="row mb-5">
+            <div class="col-md-8">
+                <p class="lead">{{ essay.description }}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if essay.photos.all %}
+        <div class="row g-4">
+            {% for photo in essay.photos.all %}
+                {% if photo.has_image %}
+                    <div class="col-md-6">
+                        <figure class="figure w-100">
+                            <img src="{{ photo.get_image_url }}" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                            <figcaption class="figure-caption">
+                                {% if photo.title %}<strong>{{ photo.title }}</strong><br>{% endif %}
+                                {{ photo.description }}
+                                {% if photo.external_url %}
+                                    <br><small><a href="{{ photo.external_url }}" target="_blank" rel="noopener noreferrer">View original</a></small>
+                                {% endif %}
+                            </figcaption>
+                        </figure>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <p>No photos in this essay yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}All Photos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'photography:essay_list' %}" class="btn btn-outline-secondary mb-3">← Back to Essays</a>
+            <h1 class="mb-4">All Photos</h1>
+        </div>
+    </div>
+
+    {% if photos %}
+        <div class="row g-4">
+            {% for photo in photos %}
+                {% if photo.has_image %}
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <img src="{{ photo.get_image_url }}" class="card-img-top" alt="{{ photo.image_alt_text|default:photo.title }}">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ photo.title }}</h5>
+                                <p class="card-text text-muted">{{ photo.description|truncatewords:15 }}</p>
+                                <p class="card-text"><small class="text-muted">{{ photo.created_at|date:"F d, Y" }}</small></p>
+                                {% if photo.external_url %}
+                                    <a href="{{ photo.external_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary mt-auto">View on Host Site</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <p>No individual photos available yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
