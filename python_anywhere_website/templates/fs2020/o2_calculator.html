@@ -1,0 +1,35 @@
+{% extends "fs2020/fs2020_base.html" %}
+
+{% block section1 %}
+  <div class="card p-3">
+    <h1 class="mb-2">O2 Bottle Pressure Calculator</h1>
+    <p class="text-muted">Ported from the original gist. Computes expected pressure after a temperature change.</p>
+
+    <div class="alert alert-info">
+      <h5 class="alert-heading">What this does</h5>
+      <p>This calculator estimates the expected tank pressure after a temperature change using the relation P2 = (T2_K / T1_K) × P1.</p>
+      <ul>
+        <li><strong>Inputs:</strong> Initial temperature (°F), Final temperature (°F), Initial pressure (PSI).</li>
+        <li><strong>Units:</strong> Temperatures must be in degrees Fahrenheit; pressures in PSI.</li>
+        <li><strong>Assumptions:</strong> Ideal-gas-like proportional scaling with absolute temperature; no volume change or leaks.</li>
+      </ul>
+      <p class="mb-0"><strong>Example:</strong> If a bottle is charged to <code>2000 PSI</code> at <code>70 °F</code> then warmed to <code>100 °F</code>, expected pressure ≈ <code>2113.28 PSI</code>.</p>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Safety note:</strong> This tool is for estimation only. Do not rely on it for life-support or flight-critical decisions. Always follow equipment manuals and manufacturer guidance.
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="mb-2">{{ form.as_p }}</div>
+      <button class="btn btn-primary" type="submit">Calculate</button>
+    </form>
+
+    {% if result %}
+      <hr />
+      <h2>Result</h2>
+      <p>Expected pressure: <strong>{{ result.p2 }} PSI</strong></p>
+    {% endif %}
+  </div>
+{% endblock %}
