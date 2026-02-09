@@ -35,5 +35,6 @@ Thumbs.db
 
 # Logs
 *.log
+sms_logfile.txt
 
 # End of file
