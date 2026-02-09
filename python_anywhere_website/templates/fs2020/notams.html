@@ -1,8 +1,18 @@
 {% extends 'fs2020/fs2020_base.html' %}
 
 {% block section1 %}
+  {% include "fs2020/fs2020_actions.html" %}
   <h1>NOTAMS</h1>
-  {% for notam in notams %}
-    {{ notam }}
-  {% endfor %}
+  {% if notams_error %}
+    <div class="alert alert-warning">
+      <strong>{{ notams_error.message }}</strong>
+      {% if notams_error.status %}
+        <div class="small">Status: {{ notams_error.status }}</div>
+      {% endif %}
+    </div>
+  {% elif notams_data %}
+    <pre class="text-wrap">{{ notams_data|pprint }}</pre>
+  {% else %}
+    <p class="text-muted">No NOTAMS found.</p>
+  {% endif %}
 {% endblock %}

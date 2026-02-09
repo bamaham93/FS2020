@@ -112,10 +112,13 @@ html,body{
 
 /* Cards */
 .card{
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)), var(--card-bg);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius);
-  box-shadow: 0 6px 18px rgba(2,6,23,0.5);
+  box-shadow:
+    0 6px 18px rgba(2,6,23,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.25);
   overflow: hidden;
 }
 
@@ -172,14 +175,17 @@ img{ width:100%; height:auto; }
   position: relative;
   color: var(--text);
 }
+/* Disabled overlay to prevent darkening */
 .bg-img::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(7,10,14,0.45) 0%, rgba(7,10,14,0.65) 100%);
-  pointer-events: none;
-  z-index: 0;
+  content: none;
 }
+/* Ensure direct children of hero sit above the overlay */
+.bg-img > * {
+  position: relative;
+  z-index: 2;
+}
+/* Cards within a hero should be above the overlay and other content */
+.bg-img .card { z-index: 3; position: relative; }
 /* Ensure main content sits above the overlay when placed adjacent */
 .bg-img + * , .bg-img ~ * {
   position: relative;
@@ -332,6 +338,27 @@ body.no-card-animate .card { animation: none !important; }
   .accessible-table thead { display:none; }
   .accessible-table tbody td { display:block; padding:0.6rem 0.8rem; }
   .accessible-table tbody tr { margin-bottom:0.6rem; display:block; border-bottom:none; }
+}
+
+/* Navbar tweaks for a soft translucent bar */
+.site-navbar{
+  background: rgba(7,10,14,0.28);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.site-navbar .navbar-toggler{
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.site-navbar .nav-link{ color: var(--muted) !important; }
+.site-navbar .nav-link:hover{ color: var(--text) !important; }
+.site-navbar .navbar-brand { color: var(--text); font-weight:700; }
+
+/* Subtle liquid-glass edges for action buttons */
+.fs2020-actions .btn{
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
 
