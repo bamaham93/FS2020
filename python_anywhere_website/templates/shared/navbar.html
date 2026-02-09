@@ -25,6 +25,21 @@
         <li class="nav-item"><a class="nav-link" href="/photography/">Photography</a></li>
         <li class="nav-item"><a class="nav-link" href="/resume/">Resume</a></li>
         <li class="nav-item"><a class="nav-link" href="/prayer/">Prayer</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="accountsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Accounts</a>
+          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="accountsDropdown">
+            {% if user.is_authenticated %}
+              {% if user.is_staff %}
+                <li><a class="dropdown-item" href="/admin/">Admin</a></li>
+                <li><hr class="dropdown-divider"></li>
+              {% endif %}
+              <li><a class="dropdown-item" href="/core_app/logout/">Logout</a></li>
+            {% else %}
+              <li><a class="dropdown-item" href="/core_app/login/">Login</a></li>
+              <li><a class="dropdown-item" href="/core_app/signup/">Signup</a></li>
+            {% endif %}
+          </ul>
+        </li>
       </ul>
     </div>
   </div>
