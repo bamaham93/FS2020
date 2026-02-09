@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ photo.title }}{% endblock %}
+
+{% block section1 %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <a href="{% if primary_essay %}{% url 'photography:essay_detail' primary_essay.slug %}{% else %}{% url 'photography:photo_list' %}{% endif %}" class="btn btn-outline-secondary mb-3">← Back</a>
+            <h1>{{ photo.title }}</h1>
+            {% if photo.description %}
+                <p class="text-muted">{{ photo.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-10">
+            {% if photo.external_url %}
+                <img src="{{ photo.external_url }}" loading="lazy" decoding="async" class="img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+            {% elif photo.image %}
+                <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+            {% else %}
+                <div class="alert alert-warning">No image available for this photo</div>
+            {% endif %}
+
+            {% if photo.external_url %}
+                <div class="mt-3">
+                    <a href="{{ photo.external_url }}" target="_blank" rel="noopener noreferrer">View original</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

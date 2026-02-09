@@ -1,20 +1,12 @@
 from django.contrib import admin
-from .models import Photo, PhotoEssay
+from .models import Photo, PhotoEssay, PhotoEssayPhoto
 
 
-class PhotoInline(admin.TabularInline):
-    model = Photo
+class PhotoEssayPhotoInline(admin.TabularInline):
+    model = PhotoEssayPhoto
     extra = 1
-    fields = ('title', 'image', 'external_url', 'display_order', 'image_alt_text')
-    help_texts = {
-        'image': 'Upload a local image OR provide an external URL below (only one needed)',
-        'external_url': 'Link to photos hosted elsewhere (Flickr, Google Photos, etc.)',
-    }
-
-    def save_model(self, request, obj, form, change):
-        """Call clean() before saving to validate at least one image source."""
-        obj.full_clean()
-        super().save_model(request, obj, form, change)
+    fields = ("photo", "display_order")
+    autocomplete_fields = ("photo",)
 
 
 @admin.register(PhotoEssay)
@@ -23,14 +15,20 @@ class PhotoEssayAdmin(admin.ModelAdmin):
     list_filter = ('is_published', 'is_featured', 'layout', 'created_at')
     search_fields = ('title', 'description')
     prepopulated_fields = {'slug': ('title',)}
-    inlines = [PhotoInline]
+    inlines = [PhotoEssayPhotoInline]
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'slug', 'description', 'is_published')
         }),
         ('Display Settings', {
-            'fields': ('layout', 'cover_image', 'is_featured'),
-            'description': 'Choose a layout style, optionally add a cover image, and mark as featured for the dashboard'
+            'fields': (
+                'layout',
+                'cover_image',
+                'is_featured',
+                'show_essay_title',
+                'show_photo_titles',
+            ),
+            'description': 'Choose a layout style, optional cover image, and what to display for this essay'
         }),
         ('Metadata', {
             'fields': ('created_at', 'updated_at'),
@@ -47,13 +45,13 @@ class PhotoEssayAdmin(admin.ModelAdmin):
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'essay', 'display_order', 'has_image', 'created_at')
-    list_filter = ('essay', 'created_at')
+    list_display = ('title', 'has_image', 'created_at')
+    list_filter = ('created_at',)
     search_fields = ('title', 'description')
-    ordering = ('essay', 'display_order')
+    ordering = ('-created_at',)
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'description', 'essay', 'display_order')
+            'fields': ('title', 'description')
         }),
         ('Image (Choose One)', {
             'fields': ('image', 'external_url'),

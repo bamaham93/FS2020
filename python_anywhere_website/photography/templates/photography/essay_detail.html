@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block title %}{{ essay.title }}{% endblock %}
 
-{% block content %}
+{% block section1 %}
 <div class="container mt-5">
     <div class="row mb-4">
         <div class="col-md-12">
             <a href="{% url 'photography:dashboard' %}" class="btn btn-outline-secondary mb-3">← Back to Dashboard</a>
-            <h1>{{ essay.title }}</h1>
-            <p class="text-muted">Updated: {{ essay.updated_at|date:"F d, Y" }}</p>
+            {% if essay.show_essay_title %}
+                <h1>{{ essay.title }}</h1>
+                <p class="text-muted">Updated: {{ essay.updated_at|date:"F d, Y" }}</p>
+            {% endif %}
         </div>
     </div>
 
@@ -19,28 +21,38 @@
         </div>
     {% endif %}
 
-    {% if essay.photos.all %}
-        <div class="row g-4">
-            {% for photo in essay.photos.all %}
-                <div class="col-md-6">
-                    {% if photo.image or photo.external_url %}
-                        <figure class="figure w-100">
-                            {% if photo.external_url %}
-                                <img src="{{ photo.external_url }}" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
-                            {% elif photo.image %}
-                                <img src="{{ photo.image.url }}" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
-                            {% endif %}
-                            <figcaption class="figure-caption">
-                                {% if photo.title %}<strong>{{ photo.title }}</strong><br>{% endif %}
-                                {{ photo.description }}
-                                {% if photo.external_url %}
-                                    <br><small><a href="{{ photo.external_url }}" target="_blank" rel="noopener noreferrer">View original</a></small>
+    {% if photos_for_display %}
+        <div class="essay-grid essay-grid--{{ essay.layout }}">
+            {% for photo in photos_for_display %}
+                <div class="essay-item">
+                    <div class="essay-item__content">
+                        {% if photo.image or photo.external_url %}
+                            <figure class="figure w-100">
+                                <a href="{% url 'photography:photo_detail' photo.pk %}" class="text-decoration-none">
+                                    {% if photo.external_url %}
+                                        <img src="{{ photo.external_url }}" loading="lazy" decoding="async" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                                    {% elif photo.image %}
+                                        <img src="{{ photo.image.url }}" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                                    {% endif %}
+                                </a>
+                                {% if essay.show_photo_titles %}
+                                    <figcaption class="figure-caption">
+                                        {% if photo.title %}
+                                            <strong>
+                                                <a href="{% url 'photography:photo_detail' photo.pk %}" class="text-decoration-none">{{ photo.title }}</a>
+                                            </strong><br>
+                                        {% endif %}
+                                        {{ photo.description }}
+                                        {% if photo.external_url %}
+                                            <br><small><a href="{{ photo.external_url }}" target="_blank" rel="noopener noreferrer">View original</a></small>
+                                        {% endif %}
+                                    </figcaption>
                                 {% endif %}
-                            </figcaption>
-                        </figure>
-                    {% else %}
-                        <div class="alert alert-warning">No image available for this photo</div>
-                    {% endif %}
+                            </figure>
+                        {% else %}
+                            <div class="alert alert-warning">No image available for this photo</div>
+                        {% endif %}
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -50,4 +62,114 @@
         </div>
     {% endif %}
 </div>
+
+<style>
+    .essay-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-auto-flow: dense;
+        grid-auto-rows: 10px;
+    }
+
+    .essay-grid--sequential_large {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .essay-grid--sequential_medium {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .essay-grid--sequential_small {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .essay-grid--masonry,
+    .essay-grid--collage_mixed {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .essay-item {
+        break-inside: avoid;
+    }
+
+    .essay-item__content .figure {
+        margin: 0;
+    }
+
+    @media (max-width: 992px) {
+        .essay-grid--sequential_medium,
+        .essay-grid--sequential_small,
+        .essay-grid--masonry,
+        .essay-grid--collage_mixed {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 576px) {
+        .essay-grid--sequential_medium,
+        .essay-grid--sequential_small,
+        .essay-grid--masonry,
+        .essay-grid--collage_mixed {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (function () {
+        var grid = document.querySelector('.essay-grid');
+        if (!grid) {
+            return;
+        }
+
+        function resizeAllItems() {
+            var rowHeight = parseInt(getComputedStyle(grid).getPropertyValue('grid-auto-rows'), 10);
+            var gap = parseInt(getComputedStyle(grid).getPropertyValue('gap'), 10);
+            var items = grid.querySelectorAll('.essay-item');
+
+            items.forEach(function (item) {
+                var content = item.querySelector('.essay-item__content');
+                if (!content) {
+                    return;
+                }
+                var height = content.getBoundingClientRect().height;
+                var rowSpan = Math.ceil((height + gap) / (rowHeight + gap));
+                item.style.gridRowEnd = 'span ' + rowSpan;
+            });
+        }
+
+        function waitForImages() {
+            var images = grid.querySelectorAll('img');
+            if (!images.length) {
+                resizeAllItems();
+                return;
+            }
+
+            var loaded = 0;
+            function onDone() {
+                loaded += 1;
+                if (loaded === images.length) {
+                    resizeAllItems();
+                }
+            }
+
+            images.forEach(function (img) {
+                if (img.complete) {
+                    onDone();
+                } else {
+                    img.addEventListener('load', onDone, { once: true });
+                    img.addEventListener('error', onDone, { once: true });
+                }
+            });
+        }
+
+        window.addEventListener('resize', function () {
+            resizeAllItems();
+        });
+
+        waitForImages();
+    })();
+</script>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Photography Debug{% endblock %}
 
-{% block content %}
+{% block section1 %}
 <div class="container mt-5">
     <h1>🐛 Photography Debug</h1>
     
@@ -66,7 +66,7 @@
                     </td>
                     <td>
                         {% if photo.external_url %}
-                            <img src="{{ photo.external_url }}" style="max-width: 100px; max-height: 100px;">
+                            <img src="{{ photo.external_url }}" loading="lazy" decoding="async" style="max-width: 100px; max-height: 100px;">
                         {% endif %}
                     </td>
                 </tr>

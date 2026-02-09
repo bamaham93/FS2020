@@ -28,9 +28,23 @@ class PhotoEssay(models.Model):
         default=False,
         help_text="Featured essays appear on the photography dashboard"
     )
+    show_essay_title = models.BooleanField(
+        default=True,
+        help_text="Show the essay title header on the detail page"
+    )
+    show_photo_titles = models.BooleanField(
+        default=True,
+        help_text="Show photo titles and captions inside the essay"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)
+    photos = models.ManyToManyField(
+        "Photo",
+        through="PhotoEssayPhoto",
+        related_name="essays",
+        blank=True,
+    )
 
     class Meta:
         ordering = ['-created_at']
@@ -47,13 +61,6 @@ class PhotoEssay(models.Model):
 
 class Photo(models.Model):
     """A single photograph."""
-    essay = models.ForeignKey(
-        PhotoEssay, 
-        on_delete=models.CASCADE, 
-        related_name='photos',
-        null=True,
-        blank=True
-    )
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = models.ImageField(
@@ -69,10 +76,9 @@ class Photo(models.Model):
     image_alt_text = models.CharField(max_length=255, blank=True, help_text="Alternative text for accessibility")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    display_order = models.IntegerField(default=0, help_text="Order to display photos within an essay")
 
     class Meta:
-        ordering = ['display_order', '-created_at']
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title
@@ -95,3 +101,28 @@ class Photo(models.Model):
             raise ValidationError(
                 'Please provide either a local image or an external URL.'
             )
+
+
+class PhotoEssayPhoto(models.Model):
+    """Join table for photos in essays with per-essay ordering."""
+    essay = models.ForeignKey(
+        PhotoEssay,
+        on_delete=models.CASCADE,
+        related_name="photo_links",
+    )
+    photo = models.ForeignKey(
+        Photo,
+        on_delete=models.CASCADE,
+        related_name="essay_links",
+    )
+    display_order = models.IntegerField(
+        default=0,
+        help_text="Order to display photos within this essay",
+    )
+
+    class Meta:
+        ordering = ["display_order", "photo__created_at"]
+        unique_together = ("essay", "photo")
+
+    def __str__(self):
+        return f"{self.essay} - {self.photo}"

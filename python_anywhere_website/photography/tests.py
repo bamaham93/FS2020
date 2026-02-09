@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from .models import PhotoEssay, Photo
+from .models import PhotoEssay, Photo, PhotoEssayPhoto
 
 
 class PhotoEssayTestCase(TestCase):
@@ -68,9 +68,9 @@ class PhotoTestCase(TestCase):
         """Test that photo can use local image URL."""
         photo = Photo.objects.create(
             title="Local Photo",
-            essay=self.essay,
             image="test_image.jpg"
         )
+        PhotoEssayPhoto.objects.create(essay=self.essay, photo=photo)
         self.assertEqual(photo.get_image_url(), photo.image.url)
         self.assertTrue(photo.has_image())
 
@@ -79,9 +79,9 @@ class PhotoTestCase(TestCase):
         external_url = "https://example.com/photo.jpg"
         photo = Photo.objects.create(
             title="External Photo",
-            essay=self.essay,
             external_url=external_url
         )
+        PhotoEssayPhoto.objects.create(essay=self.essay, photo=photo)
         self.assertEqual(photo.get_image_url(), external_url)
         self.assertTrue(photo.has_image())
 
@@ -90,17 +90,16 @@ class PhotoTestCase(TestCase):
         external_url = "https://example.com/photo.jpg"
         photo = Photo.objects.create(
             title="Both Photos",
-            essay=self.essay,
             image="test_image.jpg",
             external_url=external_url
         )
+        PhotoEssayPhoto.objects.create(essay=self.essay, photo=photo)
         self.assertEqual(photo.get_image_url(), external_url)
 
     def test_photo_without_image_fails_validation(self):
         """Test that photo without image or external_url fails validation."""
         photo = Photo(
-            title="No Image Photo",
-            essay=self.essay
+            title="No Image Photo"
         )
         with self.assertRaises(ValidationError):
             photo.full_clean()
@@ -109,29 +108,27 @@ class PhotoTestCase(TestCase):
         """Test that alt text can be set for accessibility."""
         photo = Photo.objects.create(
             title="Accessible Photo",
-            essay=self.essay,
             external_url="https://example.com/photo.jpg",
             image_alt_text="A descriptive alt text"
         )
+        PhotoEssayPhoto.objects.create(essay=self.essay, photo=photo)
         self.assertEqual(photo.image_alt_text, "A descriptive alt text")
 
     def test_photo_display_order(self):
         """Test that photos are ordered by display_order."""
         photo1 = Photo.objects.create(
             title="First Photo",
-            essay=self.essay,
-            external_url="https://example.com/1.jpg",
-            display_order=1
+            external_url="https://example.com/1.jpg"
         )
         photo2 = Photo.objects.create(
             title="Second Photo",
-            essay=self.essay,
-            external_url="https://example.com/2.jpg",
-            display_order=2
+            external_url="https://example.com/2.jpg"
         )
-        photos = Photo.objects.filter(essay=self.essay)
-        self.assertEqual(photos[0], photo1)
-        self.assertEqual(photos[1], photo2)
+        PhotoEssayPhoto.objects.create(essay=self.essay, photo=photo1, display_order=1)
+        PhotoEssayPhoto.objects.create(essay=self.essay, photo=photo2, display_order=2)
+        links = PhotoEssayPhoto.objects.filter(essay=self.essay).order_by('display_order')
+        self.assertEqual(links[0].photo, photo1)
+        self.assertEqual(links[1].photo, photo2)
 
     def test_standalone_photo(self):
         """Test that photo can exist without an essay."""
@@ -139,7 +136,7 @@ class PhotoTestCase(TestCase):
             title="Standalone Photo",
             external_url="https://example.com/standalone.jpg"
         )
-        self.assertIsNone(photo.essay)
+        self.assertEqual(photo.essays.count(), 0)
         self.assertTrue(photo.has_image())
 
 
@@ -228,5 +225,17 @@ class PhotographyViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         photos = response.context['photos']
         self.assertIn(standalone_photo, photos)
+
+    def test_photo_detail_view(self):
+        """Test viewing a specific photo detail page."""
+        photo = Photo.objects.create(
+            title="Detail Photo",
+            external_url="https://example.com/detail.jpg"
+        )
+        response = self.client.get(
+            reverse('photography:photo_detail', args=[photo.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['photo'], photo)
 
 
