@@ -8,15 +8,7 @@ except ModuleNotFoundError:
     client_id = ""
     client_secret = ""
 
-example_request_mock = f"""
-https://anypoint.mulesoft.com/mocking/api/v1/sources/exchange/assets/0a116119-6959-40fa-99a9-3fb00de324a5/notam-api/1.0.4/m/notams?responseFormat=geoJson&icaoLocation=KCNI&pageNum=1%client_id={client_id}%client_secret={client_secret}
-"""
-
-example_request_prod = """
-https://external-api.faa.gov/notamapi/v1/notams?
-icaoLocation=KCNI
-&pageNum=1
-"""
+NOTAMS_API_URL = "https://external-api.faa.gov/notamapi/v1/notams"
 
 
 class NOTAMS:
@@ -29,13 +21,20 @@ class NOTAMS:
         self.client_id = client_id
         self.client_secret = client_secret
 
-    def _get(self, url: str):
-        """ """
-        return requests.get(url)
+    def _get(self, url: str, params: dict | None = None):
+        """Issue a GET request with optional query params."""
+        return requests.get(url, params=params, timeout=15)
 
-    def get_airport_notams(self):
-        """
-        Gets NOTAMs that apply to, or are listed by, airport.
-        """
-        result = self._get(example_request_mock)
-        return result
+    def get_airport_notams(self, icao: str = "KCNI", page_num: int = 1):
+        """Get NOTAMs for a single airport ICAO code."""
+        params = {
+            "icaoLocation": icao.strip().upper(),
+            "pageNum": int(page_num),
+        }
+        result = self._get(NOTAMS_API_URL, params=params)
+        if not result.ok:
+            return {"error": result.text, "status": result.status_code}
+        try:
+            return result.json()
+        except ValueError:
+            return {"error": "Invalid JSON response", "raw": result.text}

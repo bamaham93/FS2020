@@ -65,15 +65,31 @@ def index(request):
     return render(request, "fs2020/index.html", context)
 
 
-def flights(request, n_number):
-    context = {}
-    context["flights"] = Flight.objects.filter(n_num__exact=n_number)
-    return render(request, "fs2020/flights.html", context)
+def flights(request, n_number=None):
+    """Display flight history for a specific aircraft or all flights."""
+    if n_number:
+        flights_qs = Flight.objects.filter(n_num__exact=n_number)
+    else:
+        flights_qs = Flight.objects.all()
+    return render(request, "fs2020/flights.html", {"flights": flights_qs})
 
 
 def notams(request):
-    notams_ = NOTAMS()
-    context = {"notams": notams_.get_airport_notams()}
+    notams_client = NOTAMS()
+    result = notams_client.get_airport_notams()
+    context = {}
+    if isinstance(result, dict) and result.get("error"):
+        status = result.get("status")
+        if status == 401:
+            message = "NOTAMS are unavailable. The FAA API credentials are invalid or missing."
+        else:
+            message = "NOTAMS are unavailable right now. Please try again later."
+        context["notams_error"] = {
+            "message": message,
+            "status": status,
+        }
+    else:
+        context["notams_data"] = result
     return render(request, "fs2020/notams.html", context)
 
 

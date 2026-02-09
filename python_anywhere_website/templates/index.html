@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 
+{% block background %}
+    <div class="bg-img" id="site-hero" style="background-image: url('https://images.unsplash.com/photo-1520437358207-323b43b50729?ixlib=rb-1.2.1&auto=format&fit=crop&w=1470&q=80'); border-radius: 10px; overflow:hidden;">
+        <div class="container py-5" style="position:relative; z-index:2;">
+            <h1 id="index-header">Welcome to FS2020</h1>
+            <p class="lead text-muted">Clean, modern tools for pilots and flight-minded people.</p>
+        </div>
+    </div>
+{% endblock %}
+
 {% block section1 %}
-    <h1> Web Site Home</h1>
+        <h1> Web Site Home</h1>
 {% endblock %}
