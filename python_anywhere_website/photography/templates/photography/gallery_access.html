@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Gallery Access{% endblock %}
+
+{% block section1 %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="h4 mb-3">Enter Gallery Password</h1>
+                    <p class="text-muted">This gallery is private. Enter the password to continue.</p>
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Access Gallery</button>
+                        <a href="{% url 'photography:gallery_list' %}" class="btn btn-link">Back to galleries</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

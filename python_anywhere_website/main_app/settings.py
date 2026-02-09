@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "media_app",
     "finance",
+    "photography",
 ]
 
 MIDDLEWARE = [

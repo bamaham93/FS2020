@@ -35,6 +35,7 @@ urlpatterns = [
     path("core_app/", include("core_app.urls", namespace="core_app")),
     path("media/", include("media_app.urls", namespace="media")),
     path("finance/", include("finance.urls", namespace="finance")),
+    path("photography/", include("photography.urls", namespace="photography")),
 ]
 
 # Add Bible API URLs (not under /bible/ prefix)

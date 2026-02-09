@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Photography Debug{% endblock %}
+
+{% block section1 %}
+<div class="container mt-5">
+    <h1>🐛 Photography Debug</h1>
+    
+    <h2>Database Summary</h2>
+    <table class="table">
+        <tr>
+            <td><strong>Featured Essays:</strong></td>
+            <td>{{ featured_essays.count }}</td>
+        </tr>
+        {% if featured_essays %}
+            {% with essay=featured_essays.0 %}
+            <tr>
+                <td><strong>First Essay:</strong></td>
+                <td>{{ essay.title }}</td>
+            </tr>
+            <tr>
+                <td><strong>Total Photos:</strong></td>
+                <td>{{ essay.photos.count }}</td>
+            </tr>
+            {% endwith %}
+        {% endif %}
+    </table>
+
+    {% if featured_essays %}
+        {% with essay=featured_essays.0 %}
+        <h2>{{ essay.title }} - Photos Detail</h2>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>External URL</th>
+                    <th>Image Field</th>
+                    <th>Has Image</th>
+                    <th>Preview HTML</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for photo in essay.photos.all %}
+                <tr>
+                    <td>{{ photo.title }}</td>
+                    <td>
+                        {% if photo.external_url %}
+                            <code>{{ photo.external_url }}</code>
+                        {% else %}
+                            <em>Empty</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if photo.image %}
+                            <code>{{ photo.image }}</code>
+                        {% else %}
+                            <em>Empty</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if photo.image or photo.external_url %}
+                            ✓ Yes
+                        {% else %}
+                            ✗ No
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if photo.external_url %}
+                            <img src="{{ photo.external_url }}" loading="lazy" decoding="async" style="max-width: 100px; max-height: 100px;">
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>What the Essay Detail Page Should Show</h2>
+        <div class="alert alert-info">
+            <p><a href="{% url 'photography:essay_detail' essay.slug %}">View "{{ essay.title }}" Essay Detail</a></p>
+            <p>If you see images above in the preview, they should appear on the detail page too.</p>
+        </div>
+        {% endwith %}
+    {% else %}
+        <div class="alert alert-danger">
+            No featured published essays found in the database!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

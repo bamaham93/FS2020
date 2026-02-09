@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}{{ gallery.title }}{% endblock %}
+
+{% block section1 %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <a href="{% url 'photography:gallery_list' %}" class="btn btn-outline-secondary mb-3">← Back to Galleries</a>
+            <h1>{{ gallery.title }}</h1>
+            {% if gallery.description %}
+                <p class="text-muted">{{ gallery.description }}</p>
+            {% endif %}
+            {% if download_url %}
+                <a href="{{ download_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">Download Files</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if photos_for_display %}
+        <div class="gallery-grid">
+            {% for photo in photos_for_display %}
+                <div class="gallery-item" data-photo-id="{{ photo.id }}">
+                    <div class="gallery-item__content">
+                        {% if photo.external_url %}
+                            <img src="{{ photo.external_url }}" loading="lazy" decoding="async" class="img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                        {% elif photo.image %}
+                            <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="text-muted">{{ photo.title }}</span>
+                            <button type="button" class="btn btn-sm favorite-toggle{% if photo.id in favorite_photo_ids %} active{% endif %}">
+                                {% if photo.id in favorite_photo_ids %}★ Selected{% else %}☆ Select{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <p>No photos in this gallery yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .gallery-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .gallery-item__content img {
+        width: 100%;
+        height: auto;
+    }
+
+    .favorite-toggle.active {
+        color: #b00020;
+        border-color: #b00020;
+    }
+
+    @media (max-width: 992px) {
+        .gallery-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 576px) {
+        .gallery-grid {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (function () {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        var csrfToken = getCookie('csrftoken');
+        var buttons = document.querySelectorAll('.favorite-toggle');
+
+        buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var item = button.closest('.gallery-item');
+                if (!item) {
+                    return;
+                }
+
+                var photoId = item.getAttribute('data-photo-id');
+                var url = "{% url 'photography:gallery_toggle_favorite' gallery.slug 0 %}".replace('/0/', '/' + photoId + '/');
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Failed to update selection');
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.selected) {
+                        button.classList.add('active');
+                        button.textContent = '★ Selected';
+                    } else {
+                        button.classList.remove('active');
+                        button.textContent = '☆ Select';
+                    }
+                })
+                .catch(function () {
+                    button.classList.remove('active');
+                });
+            });
+        });
+    })();
+</script>
+{% endblock %}
