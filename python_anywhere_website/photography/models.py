@@ -24,6 +24,10 @@ class PhotoEssay(models.Model):
         default='sequential_medium',
         help_text="Choose how photos are displayed in this essay"
     )
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Featured essays appear on the photography dashboard"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)

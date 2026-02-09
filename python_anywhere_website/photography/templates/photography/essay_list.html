@@ -1,12 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Photo Essays{% endblock %}
+{% block title %}All Photo Essays{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="mb-4">Photo Essays</h1>
-            <p class="lead">A collection of photos and photo essays.</p>
+            <a href="{% url 'photography:dashboard' %}" class="btn btn-outline-secondary mb-3">← Back to Dashboard</a>
+            <h1 class="mb-4">All Photo Essays</h1>
+            <p class="lead">Explore the complete collection of photo essays.</p>
         </div>
     </div>
 

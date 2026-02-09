@@ -19,8 +19,8 @@ class PhotoInline(admin.TabularInline):
 
 @admin.register(PhotoEssay)
 class PhotoEssayAdmin(admin.ModelAdmin):
-    list_display = ('title', 'layout', 'is_published', 'created_at', 'photo_count')
-    list_filter = ('is_published', 'layout', 'created_at')
+    list_display = ('title', 'layout', 'is_featured', 'is_published', 'created_at', 'photo_count')
+    list_filter = ('is_published', 'is_featured', 'layout', 'created_at')
     search_fields = ('title', 'description')
     prepopulated_fields = {'slug': ('title',)}
     inlines = [PhotoInline]
@@ -29,8 +29,8 @@ class PhotoEssayAdmin(admin.ModelAdmin):
             'fields': ('title', 'slug', 'description', 'is_published')
         }),
         ('Display Settings', {
-            'fields': ('layout', 'cover_image'),
-            'description': 'Choose a layout style and optionally add a cover image'
+            'fields': ('layout', 'cover_image', 'is_featured'),
+            'description': 'Choose a layout style, optionally add a cover image, and mark as featured for the dashboard'
         }),
         ('Metadata', {
             'fields': ('created_at', 'updated_at'),

@@ -1,6 +1,21 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from .models import Photo, PhotoEssay
+
+
+class PhotographyDashboardView(TemplateView):
+    """Display featured photography essays on the dashboard."""
+    template_name = 'photography/dashboard.html'
+    context_object_name = 'featured_essays'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['featured_essays'] = PhotoEssay.objects.filter(
+            is_published=True,
+            is_featured=True
+        ).prefetch_related('photos')
+        context['all_essays_count'] = PhotoEssay.objects.filter(is_published=True).count()
+        return context
 
 
 class PhotoEssayListView(ListView):
