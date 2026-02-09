@@ -17,10 +17,12 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100">
                         {% if essay.cover_image %}
-                            <img src="{{ essay.cover_image.url }}" class="card-img-top" alt="{{ essay.title }}">
+                            <img src="{{ essay.cover_image.url }}" class="card-img-top" alt="{{ essay.title }}" style="height: 200px; object-fit: cover;">
                         {% else %}
-                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <span class="text-white">No Image</span>
+                            <div class="card-img-top bg-gradient text-white d-flex align-items-center justify-content-center" style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div class="text-center">
+                                    <h5>{{ essay.title }}</h5>
+                                </div>
                             </div>
                         {% endif %}
                         <div class="card-body d-flex flex-column">

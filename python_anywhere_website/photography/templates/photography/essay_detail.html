@@ -5,7 +5,7 @@
 <div class="container mt-5">
     <div class="row mb-4">
         <div class="col-md-12">
-            <a href="{% url 'photography:essay_list' %}" class="btn btn-outline-secondary mb-3">← Back to Essays</a>
+            <a href="{% url 'photography:dashboard' %}" class="btn btn-outline-secondary mb-3">← Back to Dashboard</a>
             <h1>{{ essay.title }}</h1>
             <p class="text-muted">Updated: {{ essay.updated_at|date:"F d, Y" }}</p>
         </div>
@@ -22,10 +22,14 @@
     {% if essay.photos.all %}
         <div class="row g-4">
             {% for photo in essay.photos.all %}
-                {% if photo.has_image %}
-                    <div class="col-md-6">
+                <div class="col-md-6">
+                    {% if photo.image or photo.external_url %}
                         <figure class="figure w-100">
-                            <img src="{{ photo.get_image_url }}" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                            {% if photo.external_url %}
+                                <img src="{{ photo.external_url }}" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                            {% elif photo.image %}
+                                <img src="{{ photo.image.url }}" class="figure-img img-fluid rounded" alt="{{ photo.image_alt_text|default:photo.title }}">
+                            {% endif %}
                             <figcaption class="figure-caption">
                                 {% if photo.title %}<strong>{{ photo.title }}</strong><br>{% endif %}
                                 {{ photo.description }}
@@ -34,8 +38,10 @@
                                 {% endif %}
                             </figcaption>
                         </figure>
-                    </div>
-                {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning">No image available for this photo</div>
+                    {% endif %}
+                </div>
             {% endfor %}
         </div>
     {% else %}
