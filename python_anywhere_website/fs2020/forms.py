@@ -33,3 +33,16 @@ class O2CalculatorForm(forms.Form):
         if t1 is None or t2 is None or p1 is None:
             return cleaned
         return cleaned
+
+
+class RudderCalculatorForm(forms.Form):
+    rudder_chord = forms.DecimalField(label="Rudder chord (in)", min_value=0, max_digits=8, decimal_places=4)
+    travel_deg = forms.DecimalField(label="Required travel (°)", min_value=0, max_digits=7, decimal_places=4)
+
+    def clean(self):
+        cleaned = super().clean()
+        chord = cleaned.get("rudder_chord")
+        travel = cleaned.get("travel_deg")
+        if chord is None or travel is None:
+            return cleaned
+        return cleaned

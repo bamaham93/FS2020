@@ -14,4 +14,5 @@ urlpatterns = [
     path("aircraft/<int:pk>/edit/", views.aircraft_edit, name="aircraft_edit"),
     path("api/metar/", views.metar_api, name="metar_api"),
     path("o2-calculator/", views.o2_calculator, name="o2_calculator"),
+    path("rudder-calculator/", views.rudder_calculator, name="rudder_calculator"),
 ]
