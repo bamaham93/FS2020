@@ -23,6 +23,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Aircraft, Flight
 from .faa.notams import NOTAMS
 from .forms import AircraftForm, O2CalculatorForm
+from .forms import RudderCalculatorForm
 from .metar import fetch_metar
 from django.conf import settings
 import math
@@ -136,3 +137,52 @@ def o2_calculator(request):
     else:
         form = O2CalculatorForm()
     return render(request, "fs2020/o2_calculator.html", {"form": form, "result": result})
+
+
+def sas_solver(r_length, travel_req):
+    """Solve SAS triangle for linear travel B given rudder chord and required angle.
+
+    r_length: Decimal or float, chord in inches
+    travel_req: Decimal or float, degrees
+    Returns: Decimal linear travel (same units as r_length)
+    """
+    from decimal import Decimal
+
+    A = Decimal(r_length)
+    C = Decimal(r_length)
+    a = Decimal(travel_req)
+
+    # convert to radians for math.cos (use float for trig)
+    a_rad = float(a) * (math.pi / 180.0)
+    a_cos = Decimal(math.cos(a_rad))
+
+    e_1 = A * A + C * C
+    e_2 = (2 * A) * C * a_cos
+    e_3 = e_1 - e_2
+    # e_3 should be non-negative; guard small negative due to rounding
+    if e_3 < 0:
+        e_3 = Decimal(0)
+    e_4 = Decimal(math.sqrt(float(e_3)))
+    B = e_4
+    return B.quantize(Decimal("0.01"))
+
+
+def rudder_calculator(request):
+    """Web form for the Rudder Travel Calculator ported from the gist."""
+    result = None
+    chord_val = None
+    if request.method == "POST":
+        form = RudderCalculatorForm(request.POST)
+        if form.is_valid():
+            chord = form.cleaned_data["rudder_chord"]
+            travel = form.cleaned_data["travel_deg"]
+            solution = sas_solver(chord, travel)
+            result = {"travel_in": solution}
+            chord_val = chord
+    else:
+        form = RudderCalculatorForm()
+    return render(
+        request,
+        "fs2020/rudder_calculator.html",
+        {"form": form, "result": result, "chord_val": chord_val},
+    )

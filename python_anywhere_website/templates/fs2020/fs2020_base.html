@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
-<button class="primary-btn" href="{% url 'fs2020:index' %}"></button>
+{% load static %}
+
+{% comment %} Do not override `navbar` here — use the site's main navbar (shared/navbar.html). {% endcomment %}
 
 {% block background %}
-{% load static %}
 {% endblock %}
 
 {% block section1 %}
