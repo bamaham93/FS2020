@@ -1,7 +1,14 @@
 from django.test import TestCase, Client
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from .models import Gallery, GalleryPhoto, GallerySelection, PhotoEssay, Photo, PhotoEssayPhoto
+from photography.models import (
+    Gallery,
+    GalleryPhoto,
+    GallerySelection,
+    Photo,
+    PhotoEssay,
+    PhotoEssayPhoto,
+)
 
 
 class PhotoEssayTestCase(TestCase):
