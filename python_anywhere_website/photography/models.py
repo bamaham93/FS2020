@@ -1,6 +1,9 @@
+import uuid
+
+from django.contrib.auth.hashers import check_password, make_password
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
-from django.core.exceptions import ValidationError
 
 
 class PhotoEssay(models.Model):
@@ -126,3 +129,96 @@ class PhotoEssayPhoto(models.Model):
 
     def __str__(self):
         return f"{self.essay} - {self.photo}"
+
+
+class Gallery(models.Model):
+    """Client gallery with optional password protection."""
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, blank=True)
+    description = models.TextField(blank=True)
+    cover_image = models.ImageField(upload_to="gallery_covers/", null=True, blank=True)
+    is_public = models.BooleanField(
+        default=False,
+        help_text="Allow public access without a password",
+    )
+    password = models.CharField(max_length=128, blank=True)
+    access_key = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    download_url = models.URLField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    photos = models.ManyToManyField(
+        "Photo",
+        through="GalleryPhoto",
+        related_name="galleries",
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    def set_password(self, raw_password):
+        if raw_password:
+            self.password = make_password(raw_password)
+        else:
+            self.password = ""
+
+    def check_password(self, raw_password):
+        if not self.password:
+            return False
+        return check_password(raw_password, self.password)
+
+
+class GalleryPhoto(models.Model):
+    """Join table for photos in galleries with per-gallery ordering."""
+    gallery = models.ForeignKey(
+        Gallery,
+        on_delete=models.CASCADE,
+        related_name="photo_links",
+    )
+    photo = models.ForeignKey(
+        Photo,
+        on_delete=models.CASCADE,
+        related_name="gallery_links",
+    )
+    display_order = models.IntegerField(
+        default=0,
+        help_text="Order to display photos within this gallery",
+    )
+
+    class Meta:
+        ordering = ["display_order", "photo__created_at"]
+        unique_together = ("gallery", "photo")
+
+    def __str__(self):
+        return f"{self.gallery} - {self.photo}"
+
+
+class GallerySelection(models.Model):
+    """Stores per-session favorites for proofing."""
+    gallery = models.ForeignKey(
+        Gallery,
+        on_delete=models.CASCADE,
+        related_name="selections",
+    )
+    photo = models.ForeignKey(
+        Photo,
+        on_delete=models.CASCADE,
+        related_name="gallery_selections",
+    )
+    session_key = models.CharField(max_length=40)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("gallery", "photo", "session_key")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.gallery} - {self.photo}"

@@ -33,6 +33,9 @@ A portfolio gallery for displaying my photos and photo essays with flexible arti
 
 * **Photo Essays**: Organize photos into themed collections or narratives
 * **Multi-Essay Photos**: Use the same photo in multiple essays with per-essay ordering
+* **Client Galleries (MVP)**: Public or password-protected galleries with proofing selections
+* **Proofing Selections**: Favorite photos per gallery session for client feedback
+* **External Downloads**: Optional download link per gallery
 * **Multiple Layout Styles**: 
   - Sequential layouts (Large, Medium, Small) for storytelling
   - Masonry grid for visual impact

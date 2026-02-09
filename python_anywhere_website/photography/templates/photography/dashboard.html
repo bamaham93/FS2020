@@ -49,19 +49,17 @@
 
     <div class="row mt-5 pt-5 border-top">
         <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
                 <div>
-                    <h5>Explore All Essays</h5>
-                    <p class="text-muted">Browse all {{ all_essays_count }} published photo essays</p>
+                    <h5 class="mb-1">Explore More</h5>
+                    <p class="text-muted mb-0">Browse all {{ all_essays_count }} published essays and client galleries.</p>
                 </div>
-                <a href="{% url 'photography:essay_list' %}" class="btn btn-outline-primary">View Gallery</a>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'photography:essay_list' %}" class="btn btn-outline-primary">View Essays</a>
+                    <a href="{% url 'photography:gallery_list' %}" class="btn btn-outline-primary">View Galleries</a>
+                    <a href="{% url 'photography:photo_list' %}" class="btn btn-outline-secondary">View Standalone Photos</a>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <a href="{% url 'photography:photo_list' %}" class="btn btn-outline-secondary">View Standalone Photos</a>
         </div>
     </div>
 </div>

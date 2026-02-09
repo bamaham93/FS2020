@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.core.exceptions import ValidationError
 from django.urls import reverse
-from .models import PhotoEssay, Photo, PhotoEssayPhoto
+from .models import Gallery, GalleryPhoto, GallerySelection, PhotoEssay, Photo, PhotoEssayPhoto
 
 
 class PhotoEssayTestCase(TestCase):
@@ -237,5 +237,80 @@ class PhotographyViewsTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['photo'], photo)
+
+
+class GalleryViewsTestCase(TestCase):
+    """Test cases for gallery views and access control."""
+
+    def setUp(self):
+        self.client = Client()
+        self.photo = Photo.objects.create(
+            title="Gallery Photo",
+            external_url="https://example.com/gallery.jpg",
+        )
+        self.public_gallery = Gallery.objects.create(
+            title="Public Gallery",
+            is_public=True,
+        )
+        self.private_gallery = Gallery.objects.create(
+            title="Private Gallery",
+            is_public=False,
+        )
+        self.private_gallery.set_password("secret")
+        self.private_gallery.save()
+
+        GalleryPhoto.objects.create(
+            gallery=self.public_gallery,
+            photo=self.photo,
+            display_order=1,
+        )
+        GalleryPhoto.objects.create(
+            gallery=self.private_gallery,
+            photo=self.photo,
+            display_order=1,
+        )
+
+    def test_gallery_list_shows_public_only(self):
+        response = self.client.get(reverse('photography:gallery_list'))
+        self.assertEqual(response.status_code, 200)
+        galleries = response.context['galleries']
+        self.assertIn(self.public_gallery, galleries)
+        self.assertNotIn(self.private_gallery, galleries)
+
+    def test_gallery_detail_requires_password(self):
+        response = self.client.get(
+            reverse('photography:gallery_detail', args=[self.private_gallery.slug])
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(
+            reverse('photography:gallery_access', args=[self.private_gallery.slug]),
+            response.url
+        )
+
+    def test_gallery_access_with_password(self):
+        access_url = reverse('photography:gallery_access', args=[self.private_gallery.slug])
+        response = self.client.post(access_url, {'password': 'secret'})
+        self.assertEqual(response.status_code, 302)
+
+        detail_url = reverse('photography:gallery_detail', args=[self.private_gallery.slug])
+        response = self.client.get(detail_url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_gallery_toggle_favorite(self):
+        detail_url = reverse('photography:gallery_detail', args=[self.public_gallery.slug])
+        self.client.get(detail_url)
+
+        toggle_url = reverse(
+            'photography:gallery_toggle_favorite',
+            args=[self.public_gallery.slug, self.photo.pk]
+        )
+        response = self.client.post(toggle_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            GallerySelection.objects.filter(
+                gallery=self.public_gallery,
+                photo=self.photo,
+            ).exists()
+        )
 
 
