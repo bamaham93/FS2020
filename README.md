@@ -25,6 +25,22 @@ app, and also a tool for my wife's use.
 * **Media Organization**: Organize media by format, type, and genre
 * **Storage Location Tracking**: Keep track of where physical media is stored
 
+# Photography
+
+A portfolio gallery for displaying my photos and photo essays with flexible artistic layouts.
+
+## Features
+
+* **Photo Essays**: Organize photos into themed collections or narratives
+* **Multiple Layout Styles**: 
+  - Sequential layouts (Large, Medium, Small) for storytelling
+  - Masonry grid for visual impact
+  - Collage layouts for mixed-size displays
+* **Local & External Hosting**: Upload photos locally or link to photos hosted elsewhere (Flickr, Google Photos, etc.) to save storage
+* **Standalone Photos**: Add individual photos not part of an essay
+* **Accessibility**: Alt text support for all photos
+* **Rich Descriptions**: Add titles and descriptions to essays and photos
+
 # FS2020
 
 Displays the current status and location for each of the aircraft in my personal MSFS2020 fleet.
