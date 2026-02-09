@@ -45,10 +45,13 @@ The messaging system uses Twilio for SMS delivery and complies with A2P (Applica
 - Opt-out instructions (reply STOP)
 - Help instructions (reply HELP)
 
-# Pre-Deployment Checklist
 
-* Check TODOs in PyCharm
-* Run Django testing locally
-* Git Commit and Push
-* Check Build Passing
+# Contributing
+Contributions should be tested and include automatic testing using the Django test suite. New features must include tests to ensure that the feature continues to work as intended over time. 
+
+## AI Usage
+For rules regarding AI, see AI_Rules.md.
+
+# CI/CD
+This app is deployed using a CI/CD workflow, dependant on tests passing. As such, tests are very important to this web app.
 

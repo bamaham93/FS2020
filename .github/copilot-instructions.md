@@ -15,14 +15,13 @@
 
 ## Branching and Version Control
 - Feature branches are a good thing - create them for new features or significant changes
-- Branch naming convention: use descriptive names (e.g., `feature/add-user-auth`, `fix/login-bug`)
+- Branch naming convention: use descriptive names (e.g., `feature/add-user-auth`, `docs/update-readme`)
 - Commits should encompass one thing, feature, or area of the app
 - Write clear, descriptive commit messages
 
 ## Code Style and Formatting
 - **Black** is the linter of choice; comply with Black's formatting whenever possible
-- Comply with Python's **PEP8** unless it conflicts with Black
-- When in doubt, Black takes precedence over PEP8
+- Comply with Python's **PEP8** unless it conflicts with Black. When in doubt, Black takes precedence over PEP8
 - Run Black before committing: `black .` from the root directory
 
 ## Dependencies
@@ -34,6 +33,8 @@
 ## Testing
 - **Test-Driven Development (TDD)** is a good thing
 - At the least, we should try for reasonable test coverage on any new features
+- If there's any doubt as to whether a test is failing because of bad code vs a bad test, always ask!
+- Never just skip a failing test! If it was working before, it should be working now, and we need to find out if it's a out of date test or bad code.
 - Run tests with: `python python_anywhere_website/manage.py test`
 - Write tests for:
   - New features
@@ -68,3 +69,5 @@ A PR is merge-ready when ALL of the following criteria are met:
 - SQLite is used for the database
 - The project is deployed to PythonAnywhere
 - CI/CD runs on GitHub Actions (see `.github/workflows/django.yml`)
+
+For more information, see the project README.md and the AI Code Rules in AI_Code_Rules.md.
