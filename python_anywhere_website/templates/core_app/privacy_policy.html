@@ -17,7 +17,7 @@
       <ul>
         <li>Name, email address, and username (if you create an account)</li>
         <li>Phone number (only if you choose to provide it)</li>
-        <li>SMS consent status and timestamp</li>
+        <li>SMS opt-in consent status and timestamp</li>
         <li>Messages or form content you submit to us</li>
         <li>Basic technical data such as IP address and browser type</li>
       </ul>
@@ -32,11 +32,10 @@
         <li>Comply with legal requirements</li>
       </ul>
 
-      <h2 class="mt-4">4. SMS Messaging Terms</h2>
+      <h2 class="mt-4">4. SMS Program Disclosures</h2>
       <p>
-        By providing your phone number, you agree to receive text messages from Jacob McGowin.
-        Message and data rates may apply. Message frequency varies. Reply <strong>STOP</strong> to opt out,
-        and reply <strong>HELP</strong> for support.
+        Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to cancel
+        and reply <strong>HELP</strong> for customer support.
       </p>
 
       <h2 class="mt-4">5. Information Sharing</h2>
@@ -47,7 +46,7 @@
       </p>
       <p>
         We only share information when necessary to operate the service (for example, with our SMS delivery
-        provider Twilio), or when legally required.
+        provider), or when legally required.
       </p>
 
       <h2 class="mt-4">6. Data Retention and Security</h2>
@@ -61,16 +60,6 @@
         If you have questions about this policy, please contact us through the website contact form on the
         <a href="{% url 'resume:index' %}">Resume page</a>.
       </p>
-
-      <div class="alert alert-info mt-4 mb-0">
-        <h4>Twilio/A2P Compliance Summary</h4>
-        <ul class="mb-0">
-          <li>This policy explains what data is collected and how it is used</li>
-          <li>SMS opt-in and message data are not shared for marketing purposes</li>
-          <li>Users can opt out anytime by replying STOP</li>
-          <li>Users can get help anytime by replying HELP</li>
-        </ul>
-      </div>
     </div>
   </div>
 {% endblock %}

@@ -2,23 +2,46 @@
 
 {% block section1 %}
   <div class="container py-4">
-    <h1>Terms of Service</h1>
+    <h1>FS2020 Alerts SMS Terms of Service</h1>
     <p class="text-muted">Last Updated: February 17, 2026</p>
 
     <p>
-      By using this website and opting in to SMS messaging, you agree to use the service lawfully and
-      responsibly.
+      These Mobile Terms of Service apply to the FS2020 Alerts messaging program operated by Jacob McGowin.
+      By opting in, you agree to receive recurring service-related SMS messages about website activity and
+      requested notifications.
     </p>
-    <ul>
-      <li>Messaging is for service-related communication only.</li>
-      <li>Message and data rates may apply.</li>
-      <li>Message frequency varies.</li>
-      <li>Reply STOP to opt out and HELP for help.</li>
-    </ul>
 
-    <p>
-      Continued use of the service means you accept these terms and our
-      <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>.
-    </p>
+    <ol>
+      <li>
+        <strong>Program Description.</strong>
+        FS2020 Alerts sends account and service messages for users who provide an SMS-capable phone number
+        and consent during signup.
+      </li>
+      <li class="mt-2">
+        <strong>Cancellation / Opt-Out.</strong>
+        You can cancel the SMS service at any time. Text <strong>STOP</strong> to our sending number.
+        After you send STOP, we will send one confirmation message and you will no longer receive SMS
+        messages unless you opt in again.
+      </li>
+      <li class="mt-2">
+        <strong>Support.</strong>
+        If you experience issues with this messaging program, reply <strong>HELP</strong> for more
+        assistance, or contact us through the website contact form.
+      </li>
+      <li class="mt-2">
+        <strong>Carrier Liability.</strong>
+        Carriers are not liable for delayed or undelivered messages.
+      </li>
+      <li class="mt-2">
+        <strong>Message Frequency and Rates.</strong>
+        Message frequency varies. Message and data rates may apply for messages sent to you and from you.
+        For plan details, contact your wireless provider.
+      </li>
+      <li class="mt-2">
+        <strong>Privacy.</strong>
+        For details on how we collect, use, and protect your information, please review our
+        <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>.
+      </li>
+    </ol>
   </div>
 {% endblock %}

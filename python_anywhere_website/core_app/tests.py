@@ -196,5 +196,10 @@ class CompliancePolicyTests(TestCase):
     def test_terms_of_service_page_available(self):
         resp = self.client.get("/core_app/terms-of-service/")
         self.assertEqual(resp.status_code, 200)
-        self.assertContains(resp, "Terms of Service")
-        self.assertContains(resp, "Reply STOP")
+        self.assertContains(resp, "FS2020 Alerts SMS Terms of Service")
+        self.assertContains(resp, "Program Description")
+        self.assertContains(resp, "Cancellation / Opt-Out")
+        self.assertContains(resp, "text <strong>STOP</strong>", html=True)
+        self.assertContains(resp, "reply <strong>HELP</strong>", html=True)
+        self.assertContains(resp, "Carriers are not liable for delayed or undelivered messages")
+        self.assertContains(resp, "Message frequency varies")
