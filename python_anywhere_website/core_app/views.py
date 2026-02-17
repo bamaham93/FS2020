@@ -2,11 +2,19 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
+from django.utils.decorators import method_decorator
 from django.utils import timezone
 from .forms import SignUpForm
 from prayer.models import Person
 
+
+def public_view(view):
+    """Mark a view as publicly accessible for LoginRequiredMiddleware setups."""
+    view.login_required = False
+    return view
+
 # Create your views here.
+@public_view
 def index(request):
     """
     Website home page.
@@ -20,6 +28,7 @@ def profile(request):
     return render(request, "Hello.")
 
 
+@public_view
 def privacy_policy(request):
     """
     Display the privacy policy page.
@@ -27,6 +36,7 @@ def privacy_policy(request):
     return render(request, "core_app/privacy_policy.html")
 
 
+@public_view
 def terms_of_service(request):
     """
     Display the terms of service page.
@@ -34,6 +44,7 @@ def terms_of_service(request):
     return render(request, "core_app/terms_of_service.html")
 
 
+@method_decorator(public_view, name="dispatch")
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy("login")

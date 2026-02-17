@@ -715,15 +715,44 @@ class TestPublicSignup(TestCase):
     client = Client()
 
     def test_public_signup_accessible_without_login(self):
-        """Public signup page should be accessible without authentication."""
+        """Public signup page should be visible without authentication."""
         response = self.client.get("/prayer/signup")
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertContains(response, "Join Our Prayer Group")
-        self.assertContains(response, "Sign Up for SMS Updates")
+        self.assertContains(response, "Please")
+        self.assertContains(response, "create an account")
+        self.assertContains(response, "log in")
+        self.assertContains(response, "disabled")
 
-    def test_public_signup_form_valid_submission(self):
-        """Valid form submission should create a Person with SMS consent."""
+
+    def test_public_signup_post_blocked_for_anonymous_user(self):
+        """Anonymous users cannot submit signup form data."""
         from prayer.models import Person
+
+        initial_count = Person.objects.count()
+        data = {
+            "first_name": "Anon",
+            "last_name": "User",
+            "phone_number": "+15555550123",
+            "email": "anon@example.com",
+        }
+
+        response = self.client.post("/prayer/signup", data, follow=True)
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(Person.objects.count(), initial_count)
+        self.assertContains(
+            response,
+            "Please sign up for an account and log in before joining SMS prayer updates.",
+        )
+
+    def test_public_signup_form_valid_submission_requires_login(self):
+        """Authenticated users can submit and create a Person with SMS consent."""
+        from prayer.models import Person
+
+        self.client.force_login(
+            User.objects.create_user("signupuser", "signup@example.com", "StrongPass123!")
+        )
 
         initial_count = Person.objects.count()
 
@@ -735,10 +764,8 @@ class TestPublicSignup(TestCase):
         }
 
         response = self.client.post("/prayer/signup", data)
-        # Should redirect on success
         self.assertEqual(response.status_code, 302)
 
-        # Check that person was created with SMS consent
         self.assertEqual(Person.objects.count(), initial_count + 1)
         person = Person.objects.latest("id")
         self.assertEqual(person.first_name, "John")
@@ -748,12 +775,15 @@ class TestPublicSignup(TestCase):
         self.assertIsNotNone(person.sms_consent_date)
 
     def test_public_signup_form_missing_required_fields(self):
-        """Form submission with missing required fields should not create Person."""
+        """Authenticated submissions with missing fields should not create Person."""
         from prayer.models import Person
+
+        self.client.force_login(
+            User.objects.create_user("signupuser2", "signup2@example.com", "StrongPass123!")
+        )
 
         initial_count = Person.objects.count()
 
-        # Missing last name
         data = {
             "first_name": "Jane",
             "last_name": "",
@@ -761,18 +791,20 @@ class TestPublicSignup(TestCase):
         }
 
         response = self.client.post("/prayer/signup", data)
-        # Should re-render form with errors
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Person.objects.count(), initial_count)
         self.assertContains(response, "There was a problem with your submission")
 
     def test_public_signup_requires_phone_number(self):
-        """Form submission without phone number should not create Person."""
+        """Authenticated submissions without phone should not create Person."""
         from prayer.models import Person
+
+        self.client.force_login(
+            User.objects.create_user("signupuser3", "signup3@example.com", "StrongPass123!")
+        )
 
         initial_count = Person.objects.count()
 
-        # Missing phone number
         data = {
             "first_name": "Jane",
             "last_name": "Doe",
@@ -781,20 +813,22 @@ class TestPublicSignup(TestCase):
         }
 
         response = self.client.post("/prayer/signup", data)
-        # Should re-render form with errors
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Person.objects.count(), initial_count)
         self.assertContains(response, "There was a problem with your submission")
 
     def test_public_signup_allows_optional_email(self):
-        """Email field should be optional during signup."""
+        """Email field should be optional during authenticated signup."""
         from prayer.models import Person
+
+        self.client.force_login(
+            User.objects.create_user("signupuser4", "signup4@example.com", "StrongPass123!")
+        )
 
         data = {
             "first_name": "Jane",
             "last_name": "Smith",
             "phone_number": "+12345678901",
-            # No email provided
         }
 
         response = self.client.post("/prayer/signup", data)
@@ -802,7 +836,6 @@ class TestPublicSignup(TestCase):
 
         person = Person.objects.latest("id")
         self.assertEqual(person.first_name, "Jane")
-        # Email can be None or empty string
         self.assertTrue(person.email is None or person.email == "")
 
     def test_index_links_to_public_signup(self):
