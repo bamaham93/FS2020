@@ -163,3 +163,38 @@ class NavbarAccountsTests(TestCase):
         content = resp.content.decode("utf-8")
         # Make sure there's no dropdown-item with href="/admin/"
         self.assertNotIn('dropdown-item" href="/admin/"', content)
+
+
+class CompliancePolicyTests(TestCase):
+    """Tests for Twilio/A2P privacy and opt-in compliance copy."""
+
+    def test_privacy_policy_page_available(self):
+        resp = self.client.get("/core_app/privacy-policy/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Privacy Policy")
+
+    def test_privacy_policy_includes_required_twilio_disclosures(self):
+        resp = self.client.get("/core_app/privacy-policy/")
+        self.assertContains(resp, "what information")
+        self.assertContains(resp, "How We Use Information")
+        self.assertContains(
+            resp,
+            "We do not share your phone number, SMS consent, or messaging data with third parties for"
+        )
+        self.assertContains(resp, "marketing or promotional purposes")
+        self.assertContains(resp, "Reply STOP")
+
+    def test_signup_page_has_compliant_web_opt_in_statement(self):
+        resp = self.client.get("/core_app/signup/")
+        self.assertContains(resp, "By providing your phone number, you agree to receive text messages")
+        self.assertContains(resp, "Message and data")
+        self.assertContains(resp, "Message frequency varies")
+        self.assertContains(resp, "Reply")
+        self.assertContains(resp, "Privacy Policy")
+        self.assertContains(resp, "Terms of Service")
+
+    def test_terms_of_service_page_available(self):
+        resp = self.client.get("/core_app/terms-of-service/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Terms of Service")
+        self.assertContains(resp, "Reply STOP")
