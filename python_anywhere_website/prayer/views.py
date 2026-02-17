@@ -406,6 +406,14 @@ def public_signup(request) -> render:
         "signup_form": PublicSignupForm(),
     }
 
+    if not request.user.is_authenticated:
+        if request.method == "POST":
+            messages.warning(
+                request,
+                "Please sign up for an account and log in before joining SMS prayer updates.",
+            )
+        return render(request, "prayer/public_signup.html", context)
+
     if request.method == "POST":
         form = PublicSignupForm(request.POST)
         if form.is_valid():

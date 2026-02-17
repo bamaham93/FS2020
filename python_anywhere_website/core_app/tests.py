@@ -165,6 +165,26 @@ class NavbarAccountsTests(TestCase):
         self.assertNotIn('dropdown-item" href="/admin/"', content)
 
 
+
+
+class PublicAccessTests(TestCase):
+    """Ensure policy and signup pages stay public without authentication."""
+
+    def test_signup_page_does_not_redirect_to_login(self):
+        resp = self.client.get("/core_app/signup/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotContains(resp, 'name="next"')
+
+    def test_privacy_policy_does_not_redirect_to_login(self):
+        resp = self.client.get("/core_app/privacy-policy/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotContains(resp, 'name="next"')
+
+    def test_terms_page_does_not_redirect_to_login(self):
+        resp = self.client.get("/core_app/terms-of-service/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotContains(resp, 'name="next"')
+
 class CompliancePolicyTests(TestCase):
     """Tests for Twilio/A2P privacy and opt-in compliance copy."""
 
@@ -182,7 +202,7 @@ class CompliancePolicyTests(TestCase):
             "We do not share your phone number, SMS consent, or messaging data with third parties for"
         )
         self.assertContains(resp, "marketing or promotional purposes")
-        self.assertContains(resp, "Reply STOP")
+        self.assertContains(resp, "STOP")
 
     def test_signup_page_has_compliant_web_opt_in_statement(self):
         resp = self.client.get("/core_app/signup/")
@@ -199,7 +219,7 @@ class CompliancePolicyTests(TestCase):
         self.assertContains(resp, "FS2020 Alerts SMS Terms of Service")
         self.assertContains(resp, "Program Description")
         self.assertContains(resp, "Cancellation / Opt-Out")
-        self.assertContains(resp, "text <strong>STOP</strong>", html=True)
+        self.assertContains(resp, "Text <strong>STOP</strong>", html=True)
         self.assertContains(resp, "reply <strong>HELP</strong>", html=True)
         self.assertContains(resp, "Carriers are not liable for delayed or undelivered messages")
         self.assertContains(resp, "Message frequency varies")

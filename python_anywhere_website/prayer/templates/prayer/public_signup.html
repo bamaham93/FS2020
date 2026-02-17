@@ -35,20 +35,37 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h3 class="card-title mb-4">Sign Up</h3>
-                        <form action="#" method="POST">
-                            {% csrf_token %}
-                            {{ signup_form | crispy }}
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="consent_checkbox" required>
-                                <label class="form-check-label" for="consent_checkbox">
-                                    I consent to receive SMS messages from the prayer group. I understand I can reply STOP to unsubscribe at any time, and that this consent is governed by the
-                                    <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>
-                                    and
-                                    <a href="{% url 'core_app:terms_of_service' %}">Terms and Conditions</a>.
-                                </label>
+
+                        {% if user.is_authenticated %}
+                            <form action="#" method="POST">
+                                {% csrf_token %}
+                                {{ signup_form | crispy }}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="consent_checkbox" required>
+                                    <label class="form-check-label" for="consent_checkbox">
+                                        I consent to receive SMS messages from the prayer group. I understand I can reply STOP to unsubscribe at any time, and that this consent is governed by the
+                                        <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>
+                                        and
+                                        <a href="{% url 'core_app:terms_of_service' %}">Terms and Conditions</a>.
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">Sign Up for SMS Updates</button>
+                            </form>
+                        {% else %}
+                            <div class="opacity-50" aria-disabled="true">
+                                {{ signup_form | crispy }}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="consent_checkbox" disabled>
+                                    <label class="form-check-label" for="consent_checkbox">
+                                        I consent to receive SMS messages from the prayer group.
+                                    </label>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-lg w-100" disabled>Sign Up for SMS Updates</button>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100">Sign Up for SMS Updates</button>
-                        </form>
+                            <div class="alert alert-warning mt-3 mb-0" role="alert">
+                                Please <a href="{% url 'core_app:signup' %}">create an account</a> and <a href="{% url 'login' %}">log in</a> to submit this form.
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
