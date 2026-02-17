@@ -35,6 +35,12 @@
     {% endif %}
 
     <h3>Add New Person</h3>
+    <p>
+        By adding yourself, you agree to our
+        <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>
+        and
+        <a href="{% url 'core_app:terms_of_service' %}">Terms and Conditions</a>.
+    </p>
     <form action="#" method="POST">
         {% csrf_token %}
         {{ new_person_form | crispy }}
