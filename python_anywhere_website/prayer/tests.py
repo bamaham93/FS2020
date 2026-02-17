@@ -917,3 +917,18 @@ class TestPrayerRegression(TestCase):
         pm.refresh_from_db()
         self.assertEqual(pm.answer_text, "Got it")
         self.assertIsNotNone(pm.answered_at)
+
+
+class TestPrayerLegalLinks(TestCase):
+    """Tests for privacy policy and terms links in prayer app UI."""
+
+    def test_public_signup_includes_privacy_and_terms_links(self):
+        client = Client()
+        response = client.get('/prayer/signup')
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, 'Privacy Policy')
+        self.assertContains(response, 'Terms and Conditions')
+        self.assertContains(response, '/core_app/privacy-policy/')
+        self.assertContains(response, '/core_app/terms-of-service/')
+
