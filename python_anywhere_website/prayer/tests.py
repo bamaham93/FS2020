@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.contrib.auth.models import User
 from django.test import Client
 from django.test import TestCase
+from django.urls import reverse
 
 
 # Create your tests here.
@@ -265,6 +266,25 @@ class TestAccessControl(TestCase):
                     HTTPStatus.OK,
                     f"{url} should be accessible to authenticated users",
                 )
+
+
+    def test_people_page_shows_privacy_and_terms_links(self):
+        """People page should show Privacy Policy and Terms links near add person form."""
+        client = Client()
+        client.force_login(self.regular_user)
+
+        response = client.get("/prayer/people")
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(
+            response, f'href="{reverse("core_app:privacy_policy")}"'
+        )
+        self.assertContains(
+            response, f'href="{reverse("core_app:terms_of_service")}"'
+        )
+        self.assertContains(response, "Privacy Policy")
+        self.assertContains(response, "Terms and Conditions")
+        self.assertContains(response, "By adding yourself, you agree to our")
 
     def test_message_detail_requires_authentication(self):
         """
