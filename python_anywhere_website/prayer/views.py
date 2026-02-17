@@ -351,7 +351,6 @@ def answer_prayer_request(request, id: int):
     return redirect("prayer:prayer_requests")
 
 
-@login_required()
 def people(request) -> render:
     """
     List of people.
