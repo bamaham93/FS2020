@@ -24,6 +24,12 @@
                         <li>Reply <strong>HELP</strong> for assistance</li>
                         <li>Your information is kept private and will only be used for prayer group communications</li>
                     </ul>
+                    <p class="mt-3 mb-0 small">
+                        Review our
+                        <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>
+                        and
+                        <a href="{% url 'core_app:terms_of_service' %}">Terms and Conditions</a>.
+                    </p>
                 </div>
 
                 <div class="card shadow-sm">
@@ -35,7 +41,10 @@
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="consent_checkbox" required>
                                 <label class="form-check-label" for="consent_checkbox">
-                                    I consent to receive SMS messages from the prayer group. I understand I can reply STOP to unsubscribe at any time.
+                                    I consent to receive SMS messages from the prayer group. I understand I can reply STOP to unsubscribe at any time, and that this consent is governed by the
+                                    <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>
+                                    and
+                                    <a href="{% url 'core_app:terms_of_service' %}">Terms and Conditions</a>.
                                 </label>
                             </div>
                             <button type="submit" class="btn btn-primary btn-lg w-100">Sign Up for SMS Updates</button>
