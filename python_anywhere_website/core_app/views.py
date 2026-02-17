@@ -27,6 +27,13 @@ def privacy_policy(request):
     return render(request, "core_app/privacy_policy.html")
 
 
+def terms_of_service(request):
+    """
+    Display the terms of service page.
+    """
+    return render(request, "core_app/terms_of_service.html")
+
+
 class SignUpView(generic.CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy("login")

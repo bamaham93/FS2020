@@ -1,0 +1,24 @@
+{% extends 'core_app/core_base.html' %}
+
+{% block section1 %}
+  <div class="container py-4">
+    <h1>Terms of Service</h1>
+    <p class="text-muted">Last Updated: February 17, 2026</p>
+
+    <p>
+      By using this website and opting in to SMS messaging, you agree to use the service lawfully and
+      responsibly.
+    </p>
+    <ul>
+      <li>Messaging is for service-related communication only.</li>
+      <li>Message and data rates may apply.</li>
+      <li>Message frequency varies.</li>
+      <li>Reply STOP to opt out and HELP for help.</li>
+    </ul>
+
+    <p>
+      Continued use of the service means you accept these terms and our
+      <a href="{% url 'core_app:privacy_policy' %}">Privacy Policy</a>.
+    </p>
+  </div>
+{% endblock %}
