@@ -1,6 +1,5 @@
 from django.db import models
 
-
 """
 Deprecated: Douglas models removed. This file is a placeholder to avoid
 accidental imports while the app is retired.

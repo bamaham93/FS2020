@@ -37,7 +37,11 @@ class NewMessageForm(forms.ModelForm):
             "name",
             "subject",
             "message",
+            "groups",
         ]
+        widgets = {
+            "groups": forms.CheckboxSelectMultiple(),
+        }
 
 
 class NewPrayerRequestForm(forms.ModelForm):

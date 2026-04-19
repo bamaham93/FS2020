@@ -10,15 +10,52 @@
     <hr>
     <h2>Send this message to:</h2>
     <div class="col">
+    {% include 'messages.html' %}
     <form action="#" method="POST">
         {% csrf_token %}
             {% for group in prayer_groups %}
                 <div class="container">
-                    <input class="" id="send_to_{{ group.id }}" type="checkbox" name="groups" value="{{ group.name }}">
+                    <input class="" id="send_to_{{ group.id }}" type="checkbox" name="groups" value="{{ group.name }}"
+                        {% if group.id in associated_group_ids %}checked{% endif %}>
                     <label class="" for="send_to_{{ group.id }}">{{ group.name }}</label>
                 </div>
                 {% endfor %}
-            <input type="submit" class="btn btn-success" value="Send Message">
+            <input type="submit" class="btn btn-success mt-2" value="Send Message">
         </form>
     </div>
+
+    <hr>
+    <h2>SMS Send History</h2>
+    {% if sms_logs %}
+        <table class="table table-sm table-striped">
+            <thead>
+                <tr>
+                    <th>Sent At</th>
+                    <th>Recipient</th>
+                    <th>Status</th>
+                    <th>Error</th>
+                    <th>Sent By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in sms_logs %}
+                <tr>
+                    <td>{{ log.sent_at }}</td>
+                    <td>{{ log.recipient }}</td>
+                    <td>
+                        {% if log.success %}
+                            <span class="badge bg-success">Sent</span>
+                        {% else %}
+                            <span class="badge bg-danger">Failed</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.error_message }}</td>
+                    <td>{{ log.sent_by }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">No messages have been sent yet.</p>
+    {% endif %}
 {% endblock %}

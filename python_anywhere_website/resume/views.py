@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Job, Technology
 from .forms import ContactMeForm
+
 try:
     from logic.queries import JobQueries
 except ModuleNotFoundError:
@@ -15,6 +16,7 @@ except ModuleNotFoundError:
         @staticmethod
         def get_tech_jobs():
             return Job.objects.filter(aviation=False).order_by("-start_date")
+
 
 # Create your views here.
 def index(request):

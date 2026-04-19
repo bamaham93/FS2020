@@ -8,145 +8,152 @@ from pathlib import Path
 
 
 class Command(BaseCommand):
-    help = 'Import KJV Bible data into the database'
+    help = "Import KJV Bible data into the database"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--file',
+            "--file",
             type=str,
-            help='Path to the data file (JSON, CSV, or TXT)',
+            help="Path to the data file (JSON, CSV, or TXT)",
         )
         parser.add_argument(
-            '--format',
+            "--format",
             type=str,
-            choices=['json', 'csv', 'txt', 'gutenberg', 'auto'],
-            default='auto',
-            help='Format of the input file (auto-detect if not specified)',
+            choices=["json", "csv", "txt", "gutenberg", "auto"],
+            default="auto",
+            help="Format of the input file (auto-detect if not specified)",
         )
         parser.add_argument(
-            '--clear',
-            action='store_true',
-            help='Clear existing Bible data before importing',
+            "--clear",
+            action="store_true",
+            help="Clear existing Bible data before importing",
         )
 
     def handle(self, *args, **options):
-        self.stdout.write('Importing KJV Bible data...')
-        
+        self.stdout.write("Importing KJV Bible data...")
+
         # Clear existing data if requested
-        if options['clear']:
-            self.stdout.write('Clearing existing data...')
+        if options["clear"]:
+            self.stdout.write("Clearing existing data...")
             BibleVerse.objects.all().delete()
             BibleBook.objects.all().delete()
-        
+
         # Load data from file or use sample data
-        if options['file']:
-            file_path = Path(options['file'])
+        if options["file"]:
+            file_path = Path(options["file"])
             if not file_path.exists():
                 self.stderr.write(self.style.ERROR(f"File not found: {file_path}"))
                 return
-            
+
             # Auto-detect format if needed
-            file_format = options['format']
-            if file_format == 'auto':
+            file_format = options["format"]
+            if file_format == "auto":
                 file_format = self.detect_format(file_path)
-            
-            self.stdout.write(f'Reading {file_format.upper()} file: {file_path}')
-            
-            if file_format == 'json':
+
+            self.stdout.write(f"Reading {file_format.upper()} file: {file_path}")
+
+            if file_format == "json":
                 bible_data = self.load_json(file_path)
-            elif file_format == 'csv':
+            elif file_format == "csv":
                 bible_data = self.load_csv(file_path)
-            elif file_format == 'gutenberg':
+            elif file_format == "gutenberg":
                 bible_data = parse_gutenberg_kjv(file_path)
-            elif file_format == 'txt':
+            elif file_format == "txt":
                 bible_data = self.load_txt(file_path)
             else:
-                self.stderr.write(self.style.ERROR(f"Unsupported format: {file_format}"))
+                self.stderr.write(
+                    self.style.ERROR(f"Unsupported format: {file_format}")
+                )
                 return
         else:
-            self.stdout.write('No file specified, using sample data...')
+            self.stdout.write("No file specified, using sample data...")
             bible_data = self.get_sample_data()
-        
+
         # Import books
-        self.stdout.write('Creating books...')
+        self.stdout.write("Creating books...")
         books_created = 0
         verses_created = 0
-        
+
         for book_data in bible_data:
             book, created = BibleBook.objects.get_or_create(
-                name=book_data['name'],
+                name=book_data["name"],
                 defaults={
-                    'slug': book_data['slug'],
-                    'order': book_data['order'],
-                    'testament': book_data['testament'],
-                    'chapters': book_data['chapters']
-                }
+                    "slug": book_data["slug"],
+                    "order": book_data["order"],
+                    "testament": book_data["testament"],
+                    "chapters": book_data["chapters"],
+                },
             )
-            
+
             if created:
                 books_created += 1
-            
+
             # Import verses for this book
-            self.stdout.write(f'  Importing verses for {book.name}...')
-            
+            self.stdout.write(f"  Importing verses for {book.name}...")
+
             # Deduplicate verses within this book (keep last occurrence)
             seen_verses = {}
-            for verse_data in book_data['verses']:
-                key = (verse_data['chapter'], verse_data['verse'])
+            for verse_data in book_data["verses"]:
+                key = (verse_data["chapter"], verse_data["verse"])
                 seen_verses[key] = verse_data
-            
+
             verses_to_create = []
             for (chapter, verse_num), verse_data in seen_verses.items():
                 # Check if verse already exists in database
                 if not BibleVerse.objects.filter(
-                    book=book,
-                    chapter=chapter,
-                    verse=verse_num
+                    book=book, chapter=chapter, verse=verse_num
                 ).exists():
                     verses_to_create.append(
                         BibleVerse(
                             book=book,
                             chapter=chapter,
                             verse=verse_num,
-                            text=verse_data['text']
+                            text=verse_data["text"],
                         )
                     )
-            
+
             if verses_to_create:
                 BibleVerse.objects.bulk_create(verses_to_create)
                 verses_created += len(verses_to_create)
-                self.stdout.write(f'    Imported {len(verses_to_create)} verses')
-        
+                self.stdout.write(f"    Imported {len(verses_to_create)} verses")
+
         total_books = BibleBook.objects.count()
         total_verses = BibleVerse.objects.count()
-        
-        self.stdout.write(self.style.SUCCESS(
-            f'\nSuccessfully imported {books_created} new books and {verses_created} new verses'
-        ))
-        self.stdout.write(self.style.SUCCESS(
-            f'Total in database: {total_books} books and {total_verses} verses'
-        ))
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"\nSuccessfully imported {books_created} new books and {verses_created} new verses"
+            )
+        )
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Total in database: {total_books} books and {total_verses} verses"
+            )
+        )
 
     def detect_format(self, file_path):
         """Auto-detect file format based on extension and content."""
         suffix = file_path.suffix.lower()
-        if suffix == '.json':
-            return 'json'
-        elif suffix == '.csv':
-            return 'csv'
-        elif suffix in ['.txt', '.text']:
+        if suffix == ".json":
+            return "json"
+        elif suffix == ".csv":
+            return "csv"
+        elif suffix in [".txt", ".text"]:
             # Try to detect if it's a Gutenberg file
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 first_kb = f.read(1024)
-                if 'Project Gutenberg' in first_kb or 'The First Book of Moses' in first_kb:
-                    return 'gutenberg'
-            return 'txt'
-        return 'txt'  # Default to txt
+                if (
+                    "Project Gutenberg" in first_kb
+                    or "The First Book of Moses" in first_kb
+                ):
+                    return "gutenberg"
+            return "txt"
+        return "txt"  # Default to txt
 
     def load_json(self, file_path):
         """
         Load Bible data from JSON file.
-        
+
         Expected format:
         [
             {
@@ -163,57 +170,55 @@ class Command(BaseCommand):
             ...
         ]
         """
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     def load_csv(self, file_path):
         """
         Load Bible data from CSV file.
-        
+
         Expected CSV format:
         book_name,book_slug,book_order,testament,chapter,verse,text
         Genesis,genesis,1,OT,1,1,"In the beginning..."
         """
         books_dict = {}
-        
-        with open(file_path, 'r', encoding='utf-8') as f:
+
+        with open(file_path, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                book_name = row['book_name']
-                
+                book_name = row["book_name"]
+
                 if book_name not in books_dict:
                     books_dict[book_name] = {
-                        'name': book_name,
-                        'slug': row['book_slug'],
-                        'order': int(row['book_order']),
-                        'testament': row['testament'],
-                        'chapters': 0,
-                        'verses': []
+                        "name": book_name,
+                        "slug": row["book_slug"],
+                        "order": int(row["book_order"]),
+                        "testament": row["testament"],
+                        "chapters": 0,
+                        "verses": [],
                     }
-                
-                chapter_num = int(row['chapter'])
-                verse_num = int(row['verse'])
-                
+
+                chapter_num = int(row["chapter"])
+                verse_num = int(row["verse"])
+
                 # Update max chapters
-                if chapter_num > books_dict[book_name]['chapters']:
-                    books_dict[book_name]['chapters'] = chapter_num
-                
-                books_dict[book_name]['verses'].append({
-                    'chapter': chapter_num,
-                    'verse': verse_num,
-                    'text': row['text']
-                })
-        
+                if chapter_num > books_dict[book_name]["chapters"]:
+                    books_dict[book_name]["chapters"] = chapter_num
+
+                books_dict[book_name]["verses"].append(
+                    {"chapter": chapter_num, "verse": verse_num, "text": row["text"]}
+                )
+
         return list(books_dict.values())
 
     def load_txt(self, file_path):
         """
         Load Bible data from plain text file.
-        
+
         Supports multiple formats:
         1. Simple format: "Book Chapter:Verse Text"
            Example: Genesis 1:1 In the beginning...
-        
+
         2. Block format with headers:
            Genesis 1
            1 In the beginning...
@@ -222,44 +227,44 @@ class Command(BaseCommand):
         books_dict = {}
         current_book = None
         current_chapter = None
-        
-        with open(file_path, 'r', encoding='utf-8') as f:
+
+        with open(file_path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:
                     continue
-                
+
                 # Try format: "Book Chapter:Verse Text"
-                match = re.match(r'^([1-3]?\s*[A-Za-z\s]+?)\s+(\d+):(\d+)\s+(.+)$', line)
+                match = re.match(
+                    r"^([1-3]?\s*[A-Za-z\s]+?)\s+(\d+):(\d+)\s+(.+)$", line
+                )
                 if match:
                     book_name = match.group(1).strip()
                     chapter = int(match.group(2))
                     verse = int(match.group(3))
                     text = match.group(4)
-                    
+
                     if book_name not in books_dict:
                         books_dict[book_name] = {
-                            'name': book_name,
-                            'slug': book_name.lower().replace(' ', '-'),
-                            'order': len(books_dict) + 1,
-                            'testament': 'OT' if len(books_dict) < 39 else 'NT',
-                            'chapters': 0,
-                            'verses': []
+                            "name": book_name,
+                            "slug": book_name.lower().replace(" ", "-"),
+                            "order": len(books_dict) + 1,
+                            "testament": "OT" if len(books_dict) < 39 else "NT",
+                            "chapters": 0,
+                            "verses": [],
                         }
-                    
-                    if chapter > books_dict[book_name]['chapters']:
-                        books_dict[book_name]['chapters'] = chapter
-                    
-                    books_dict[book_name]['verses'].append({
-                        'chapter': chapter,
-                        'verse': verse,
-                        'text': text
-                    })
+
+                    if chapter > books_dict[book_name]["chapters"]:
+                        books_dict[book_name]["chapters"] = chapter
+
+                    books_dict[book_name]["verses"].append(
+                        {"chapter": chapter, "verse": verse, "text": text}
+                    )
                     continue
-                
+
                 # Try format: Book header or verse without book prefix
                 # This is more complex and would need more context
-        
+
         return list(books_dict.values())
 
     def get_sample_data(self):
@@ -269,75 +274,75 @@ class Command(BaseCommand):
         """
         return [
             {
-                'name': 'Genesis',
-                'slug': 'genesis',
-                'order': 1,
-                'testament': 'OT',
-                'chapters': 50,
-                'verses': [
+                "name": "Genesis",
+                "slug": "genesis",
+                "order": 1,
+                "testament": "OT",
+                "chapters": 50,
+                "verses": [
                     {
-                        'chapter': 1,
-                        'verse': 1,
-                        'text': 'In the beginning God created the heaven and the earth.'
+                        "chapter": 1,
+                        "verse": 1,
+                        "text": "In the beginning God created the heaven and the earth.",
                     },
                     {
-                        'chapter': 1,
-                        'verse': 2,
-                        'text': 'And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.'
+                        "chapter": 1,
+                        "verse": 2,
+                        "text": "And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.",
                     },
                     {
-                        'chapter': 1,
-                        'verse': 3,
-                        'text': 'And God said, Let there be light: and there was light.'
+                        "chapter": 1,
+                        "verse": 3,
+                        "text": "And God said, Let there be light: and there was light.",
                     },
-                ]
+                ],
             },
             {
-                'name': 'John',
-                'slug': 'john',
-                'order': 43,
-                'testament': 'NT',
-                'chapters': 21,
-                'verses': [
+                "name": "John",
+                "slug": "john",
+                "order": 43,
+                "testament": "NT",
+                "chapters": 21,
+                "verses": [
                     {
-                        'chapter': 1,
-                        'verse': 1,
-                        'text': 'In the beginning was the Word, and the Word was with God, and the Word was God.'
+                        "chapter": 1,
+                        "verse": 1,
+                        "text": "In the beginning was the Word, and the Word was with God, and the Word was God.",
                     },
                     {
-                        'chapter': 1,
-                        'verse': 2,
-                        'text': 'The same was in the beginning with God.'
+                        "chapter": 1,
+                        "verse": 2,
+                        "text": "The same was in the beginning with God.",
                     },
                     {
-                        'chapter': 3,
-                        'verse': 16,
-                        'text': 'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.'
+                        "chapter": 3,
+                        "verse": 16,
+                        "text": "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
                     },
                     {
-                        'chapter': 3,
-                        'verse': 17,
-                        'text': 'For God sent not his Son into the world to condemn the world; but that the world through him might be saved.'
+                        "chapter": 3,
+                        "verse": 17,
+                        "text": "For God sent not his Son into the world to condemn the world; but that the world through him might be saved.",
                     },
-                ]
+                ],
             },
             {
-                'name': 'Revelation',
-                'slug': 'revelation',
-                'order': 66,
-                'testament': 'NT',
-                'chapters': 22,
-                'verses': [
+                "name": "Revelation",
+                "slug": "revelation",
+                "order": 66,
+                "testament": "NT",
+                "chapters": 22,
+                "verses": [
                     {
-                        'chapter': 1,
-                        'verse': 1,
-                        'text': 'The Revelation of Jesus Christ, which God gave unto him, to shew unto his servants things which must shortly come to pass; and he sent and signified it by his angel unto his servant John:'
+                        "chapter": 1,
+                        "verse": 1,
+                        "text": "The Revelation of Jesus Christ, which God gave unto him, to shew unto his servants things which must shortly come to pass; and he sent and signified it by his angel unto his servant John:",
                     },
                     {
-                        'chapter': 22,
-                        'verse': 21,
-                        'text': 'The grace of our Lord Jesus Christ be with you all. Amen.'
+                        "chapter": 22,
+                        "verse": 21,
+                        "text": "The grace of our Lord Jesus Christ be with you all. Amen.",
                     },
-                ]
+                ],
             },
         ]

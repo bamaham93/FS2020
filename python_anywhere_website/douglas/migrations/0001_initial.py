@@ -52,6 +52,8 @@ class Migration(migrations.Migration):
             ],
         ),
     ]
+
+
 """
 Deprecated: Douglas migrations removed. This file is a harmless placeholder.
 """

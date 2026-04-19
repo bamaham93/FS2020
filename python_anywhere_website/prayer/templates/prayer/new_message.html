@@ -22,15 +22,15 @@
                     </a>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                            data-bs-target="#send-message-modal">
+                            data-bs-target="#send-message-modal-{{ message.id }}">
                       <strong>Send</strong>
                     </button>
 <!-- Modal -->
-<div class="modal fade" id="send-message-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="send-message-modal-{{ message.id }}" tabindex="-1" aria-labelledby="sendModalLabel{{ message.id }}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Send a Message</h5>
+        <h5 class="modal-title" id="sendModalLabel{{ message.id }}">Send a Message</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -44,8 +44,9 @@
             {% csrf_token %}
                 {% for group in prayer_groups %}
                     <div class="container">
-                        <input class="" id="send_to_{{ group.id }}" type="checkbox" name="groups" value="{{ group.name }}">
-                        <label class="" for="send_to_{{ group.id }}">{{ group.name }}</label>
+                        <input class="" id="send_to_{{ message.id }}_{{ group.id }}" type="checkbox" name="groups" value="{{ group.name }}"
+                            {% if group in message.groups.all %}checked{% endif %}>
+                        <label class="" for="send_to_{{ message.id }}_{{ group.id }}">{{ group.name }}</label>
                     </div>
                     {% endfor %}
             <hr>

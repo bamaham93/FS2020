@@ -12,77 +12,86 @@ from .models import Gallery, GalleryPhoto, GallerySelection, Photo, PhotoEssay
 
 class DebugPhotographyView(TemplateView):
     """Debug view to show database contents."""
-    template_name = 'photography/debug.html'
+
+    template_name = "photography/debug.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['featured_essays'] = PhotoEssay.objects.filter(
-            is_published=True,
-            is_featured=True
-        ).prefetch_related('photos')
+        context["featured_essays"] = PhotoEssay.objects.filter(
+            is_published=True, is_featured=True
+        ).prefetch_related("photos")
         return context
 
 
 class PhotographyDashboardView(TemplateView):
     """Display featured photography essays on the dashboard."""
-    template_name = 'photography/dashboard.html'
-    context_object_name = 'featured_essays'
+
+    template_name = "photography/dashboard.html"
+    context_object_name = "featured_essays"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['featured_essays'] = PhotoEssay.objects.filter(
-            is_published=True,
-            is_featured=True
-        ).prefetch_related('photos')
-        context['all_essays_count'] = PhotoEssay.objects.filter(is_published=True).count()
+        context["featured_essays"] = PhotoEssay.objects.filter(
+            is_published=True, is_featured=True
+        ).prefetch_related("photos")
+        context["all_essays_count"] = PhotoEssay.objects.filter(
+            is_published=True
+        ).count()
         return context
 
 
 class PhotoEssayListView(ListView):
     """Display all published photo essays."""
+
     model = PhotoEssay
-    template_name = 'photography/essay_list.html'
-    context_object_name = 'essays'
+    template_name = "photography/essay_list.html"
+    context_object_name = "essays"
     paginate_by = 12
 
     def get_queryset(self):
-        return PhotoEssay.objects.filter(is_published=True).prefetch_related('photos', 'photo_links')
+        return PhotoEssay.objects.filter(is_published=True).prefetch_related(
+            "photos", "photo_links"
+        )
 
 
 class PhotoEssayDetailView(DetailView):
     """Display a single photo essay with all its photos."""
+
     model = PhotoEssay
-    template_name = 'photography/essay_detail.html'
-    context_object_name = 'essay'
-    slug_field = 'slug'
+    template_name = "photography/essay_detail.html"
+    context_object_name = "essay"
+    slug_field = "slug"
 
     def get_queryset(self):
-        return PhotoEssay.objects.filter(is_published=True).prefetch_related('photos')
+        return PhotoEssay.objects.filter(is_published=True).prefetch_related("photos")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        essay = context.get('essay')
-        links = list(essay.photo_links.select_related('photo')) if essay else []
+        essay = context.get("essay")
+        links = list(essay.photo_links.select_related("photo")) if essay else []
 
         ordered_links = [link for link in links if link.display_order > 0]
         unordered_links = [link for link in links if link.display_order == 0]
 
         ordered_links.sort(key=lambda link: link.display_order)
 
-        if essay and essay.layout == 'masonry':
+        if essay and essay.layout == "masonry":
             random.shuffle(unordered_links)
         else:
             unordered_links.sort(key=lambda link: link.photo.created_at, reverse=True)
 
-        context['photos_for_display'] = [link.photo for link in ordered_links + unordered_links]
+        context["photos_for_display"] = [
+            link.photo for link in ordered_links + unordered_links
+        ]
         return context
 
 
 class PhotoListView(ListView):
     """Display all photos not part of an essay."""
+
     model = Photo
-    template_name = 'photography/photo_list.html'
-    context_object_name = 'photos'
+    template_name = "photography/photo_list.html"
+    context_object_name = "photos"
     paginate_by = 20
 
     def get_queryset(self):
@@ -91,17 +100,18 @@ class PhotoListView(ListView):
 
 class PhotoDetailView(DetailView):
     """Display a single photo."""
+
     model = Photo
-    template_name = 'photography/photo_detail.html'
-    context_object_name = 'photo'
+    template_name = "photography/photo_detail.html"
+    context_object_name = "photo"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        photo = context.get('photo')
+        photo = context.get("photo")
         if photo:
-            context['primary_essay'] = photo.essays.order_by('-created_at').first()
+            context["primary_essay"] = photo.essays.order_by("-created_at").first()
         else:
-            context['primary_essay'] = None
+            context["primary_essay"] = None
         return context
 
 
@@ -129,6 +139,7 @@ def _has_gallery_access(request, gallery):
 
 class GalleryListView(ListView):
     """Display public galleries."""
+
     model = Gallery
     template_name = "photography/gallery_list.html"
     context_object_name = "galleries"
@@ -140,6 +151,7 @@ class GalleryListView(ListView):
 
 class GalleryDetailView(DetailView):
     """Display a single gallery with its photos."""
+
     model = Gallery
     template_name = "photography/gallery_detail.html"
     context_object_name = "gallery"
@@ -165,7 +177,9 @@ class GalleryDetailView(DetailView):
         ordered_links.sort(key=lambda link: link.display_order)
         unordered_links.sort(key=lambda link: link.photo.created_at, reverse=True)
 
-        context["photos_for_display"] = [link.photo for link in ordered_links + unordered_links]
+        context["photos_for_display"] = [
+            link.photo for link in ordered_links + unordered_links
+        ]
 
         session_key = _ensure_session_key(self.request)
         selections = GallerySelection.objects.filter(
@@ -179,6 +193,7 @@ class GalleryDetailView(DetailView):
 
 class GalleryAccessView(TemplateView):
     """Prompt for gallery access when protected."""
+
     template_name = "photography/gallery_access.html"
 
     def get_context_data(self, **kwargs):

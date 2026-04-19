@@ -25,7 +25,10 @@ class RudderViewTests(TestCase):
         travel = 15
         expected = sas_solver(chord, travel)
 
-        resp = self.client.post(reverse("fs2020:rudder_calculator"), data={"rudder_chord": chord, "travel_deg": travel})
+        resp = self.client.post(
+            reverse("fs2020:rudder_calculator"),
+            data={"rudder_chord": chord, "travel_deg": travel},
+        )
         self.assertEqual(resp.status_code, 200)
         self.assertIn("result", resp.context)
         self.assertEqual(resp.context["result"]["travel_in"], expected)

@@ -1,6 +1,4 @@
-"""
-
-"""
+""" """
 
 """
 Deprecated: Douglas views removed. Functions left as simple placeholders
