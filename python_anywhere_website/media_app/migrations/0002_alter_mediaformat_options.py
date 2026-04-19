@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('media_app', '0001_initial'),
+        ("media_app", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='mediaformat',
-            options={'ordering': ['name']},
+            name="mediaformat",
+            options={"ordering": ["name"]},
         ),
     ]

@@ -20,9 +20,14 @@ class AircraftForm(forms.ModelForm):
             "notes": forms.Textarea(attrs={"rows": 4}),
         }
 
+
 class O2CalculatorForm(forms.Form):
-    t1 = forms.FloatField(label="Initial temperature (°F)", min_value=-200, max_value=1000)
-    t2 = forms.FloatField(label="Final temperature (°F)", min_value=-200, max_value=1000)
+    t1 = forms.FloatField(
+        label="Initial temperature (°F)", min_value=-200, max_value=1000
+    )
+    t2 = forms.FloatField(
+        label="Final temperature (°F)", min_value=-200, max_value=1000
+    )
     p1 = forms.FloatField(label="Initial pressure (PSI)", min_value=0)
 
     def clean(self):
@@ -36,8 +41,12 @@ class O2CalculatorForm(forms.Form):
 
 
 class RudderCalculatorForm(forms.Form):
-    rudder_chord = forms.DecimalField(label="Rudder chord (in)", min_value=0, max_digits=8, decimal_places=4)
-    travel_deg = forms.DecimalField(label="Required travel (°)", min_value=0, max_digits=7, decimal_places=4)
+    rudder_chord = forms.DecimalField(
+        label="Rudder chord (in)", min_value=0, max_digits=8, decimal_places=4
+    )
+    travel_deg = forms.DecimalField(
+        label="Required travel (°)", min_value=0, max_digits=7, decimal_places=4
+    )
 
     def clean(self):
         cleaned = super().clean()

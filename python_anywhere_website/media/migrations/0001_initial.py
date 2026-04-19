@@ -5,68 +5,130 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='MediaFormat',
+            name="MediaFormat",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='MediaType',
+            name="MediaType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='MediaGenre',
+            name="MediaGenre",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("description", models.TextField(blank=True, null=True)),
             ],
             options={
-                'ordering': ['name'],
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='MediaLocation',
+            name="MediaLocation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.TextField()),
-                ('shelf_unit', models.CharField(max_length=100)),
-                ('shelf', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.TextField()),
+                ("shelf_unit", models.CharField(max_length=100)),
+                ("shelf", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='Media',
+            name="Media",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
-                ('subtitle', models.CharField(blank=True, max_length=100, null=True)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='images')),
-                ('description', models.TextField(blank=True, null=True)),
-                ('upc_code', models.CharField(blank=True, max_length=100, null=True)),
-                ('isbn_code', models.CharField(blank=True, max_length=100, null=True)),
-                ('format', models.ForeignKey(on_delete=models.deletion.CASCADE, to='media.mediaformat')),
-                ('type', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.CASCADE, to='media.mediatype')),
-                ('storage_location', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.CASCADE, to='media.medialocation')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=100)),
+                ("subtitle", models.CharField(blank=True, max_length=100, null=True)),
+                ("image", models.ImageField(blank=True, null=True, upload_to="images")),
+                ("description", models.TextField(blank=True, null=True)),
+                ("upc_code", models.CharField(blank=True, max_length=100, null=True)),
+                ("isbn_code", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "format",
+                    models.ForeignKey(
+                        on_delete=models.deletion.CASCADE, to="media.mediaformat"
+                    ),
+                ),
+                (
+                    "type",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=models.deletion.CASCADE,
+                        to="media.mediatype",
+                    ),
+                ),
+                (
+                    "storage_location",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=models.deletion.CASCADE,
+                        to="media.medialocation",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'media',
+                "verbose_name_plural": "media",
             },
         ),
         migrations.AddField(
-            model_name='media',
-            name='genre',
-            field=models.ManyToManyField(to='media.mediagenre'),
+            model_name="media",
+            name="genre",
+            field=models.ManyToManyField(to="media.mediagenre"),
         ),
     ]
+
+
 # Generated by Django 4.0.6 on 2022-08-08 21:20
 
 from django.db import migrations, models

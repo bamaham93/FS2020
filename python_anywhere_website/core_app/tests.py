@@ -165,8 +165,6 @@ class NavbarAccountsTests(TestCase):
         self.assertNotIn('dropdown-item" href="/admin/"', content)
 
 
-
-
 class PublicAccessTests(TestCase):
     """Ensure policy and signup pages stay public without authentication."""
 
@@ -185,6 +183,7 @@ class PublicAccessTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertNotContains(resp, 'name="next"')
 
+
 class CompliancePolicyTests(TestCase):
     """Tests for Twilio/A2P privacy and opt-in compliance copy."""
 
@@ -199,14 +198,16 @@ class CompliancePolicyTests(TestCase):
         self.assertContains(resp, "How We Use Information")
         self.assertContains(
             resp,
-            "We do not share your phone number, SMS consent, or messaging data with third parties for"
+            "We do not share your phone number, SMS consent, or messaging data with third parties for",
         )
         self.assertContains(resp, "marketing or promotional purposes")
         self.assertContains(resp, "STOP")
 
     def test_signup_page_has_compliant_web_opt_in_statement(self):
         resp = self.client.get("/core_app/signup/")
-        self.assertContains(resp, "By providing your phone number, you agree to receive text messages")
+        self.assertContains(
+            resp, "By providing your phone number, you agree to receive text messages"
+        )
         self.assertContains(resp, "Message and data")
         self.assertContains(resp, "Message frequency varies")
         self.assertContains(resp, "Reply")
@@ -221,5 +222,7 @@ class CompliancePolicyTests(TestCase):
         self.assertContains(resp, "Cancellation / Opt-Out")
         self.assertContains(resp, "Text <strong>STOP</strong>", html=True)
         self.assertContains(resp, "reply <strong>HELP</strong>", html=True)
-        self.assertContains(resp, "Carriers are not liable for delayed or undelivered messages")
+        self.assertContains(
+            resp, "Carriers are not liable for delayed or undelivered messages"
+        )
         self.assertContains(resp, "Message frequency varies")

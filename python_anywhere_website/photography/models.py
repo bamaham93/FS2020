@@ -8,36 +8,33 @@ from django.utils.text import slugify
 
 class PhotoEssay(models.Model):
     """A collection of photos with a theme or narrative."""
-    
+
     LAYOUT_CHOICES = [
-        ('sequential_large', 'Sequential - Large Photos (1 per row)'),
-        ('sequential_medium', 'Sequential - Medium Photos (2 per row)'),
-        ('sequential_small', 'Sequential - Small Photos (3 per row)'),
-        ('masonry', 'Masonry Grid'),
-        ('collage_mixed', 'Collage - Mixed Sizes'),
+        ("sequential_large", "Sequential - Large Photos (1 per row)"),
+        ("sequential_medium", "Sequential - Medium Photos (2 per row)"),
+        ("sequential_small", "Sequential - Small Photos (3 per row)"),
+        ("masonry", "Masonry Grid"),
+        ("collage_mixed", "Collage - Mixed Sizes"),
     ]
-    
+
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True)
-    cover_image = models.ImageField(upload_to='photo_essays/', null=True, blank=True)
+    cover_image = models.ImageField(upload_to="photo_essays/", null=True, blank=True)
     layout = models.CharField(
         max_length=20,
         choices=LAYOUT_CHOICES,
-        default='sequential_medium',
-        help_text="Choose how photos are displayed in this essay"
+        default="sequential_medium",
+        help_text="Choose how photos are displayed in this essay",
     )
     is_featured = models.BooleanField(
-        default=False,
-        help_text="Featured essays appear on the photography dashboard"
+        default=False, help_text="Featured essays appear on the photography dashboard"
     )
     show_essay_title = models.BooleanField(
-        default=True,
-        help_text="Show the essay title header on the detail page"
+        default=True, help_text="Show the essay title header on the detail page"
     )
     show_photo_titles = models.BooleanField(
-        default=True,
-        help_text="Show photo titles and captions inside the essay"
+        default=True, help_text="Show photo titles and captions inside the essay"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -50,7 +47,7 @@ class PhotoEssay(models.Model):
     )
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         verbose_name_plural = "Photo Essays"
 
     def __str__(self):
@@ -64,24 +61,27 @@ class PhotoEssay(models.Model):
 
 class Photo(models.Model):
     """A single photograph."""
+
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     image = models.ImageField(
-        upload_to='photos/', 
-        null=True, 
+        upload_to="photos/",
+        null=True,
         blank=True,
-        help_text="Upload a local image (or provide an external URL below)"
+        help_text="Upload a local image (or provide an external URL below)",
     )
     external_url = models.URLField(
         blank=True,
-        help_text="Link to a photo hosted elsewhere (e.g., Flickr, Google Photos). Leave blank if uploading locally."
+        help_text="Link to a photo hosted elsewhere (e.g., Flickr, Google Photos). Leave blank if uploading locally.",
     )
-    image_alt_text = models.CharField(max_length=255, blank=True, help_text="Alternative text for accessibility")
+    image_alt_text = models.CharField(
+        max_length=255, blank=True, help_text="Alternative text for accessibility"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
         return self.title
@@ -102,12 +102,13 @@ class Photo(models.Model):
         """Validate that at least one image source is provided."""
         if not self.image and not self.external_url:
             raise ValidationError(
-                'Please provide either a local image or an external URL.'
+                "Please provide either a local image or an external URL."
             )
 
 
 class PhotoEssayPhoto(models.Model):
     """Join table for photos in essays with per-essay ordering."""
+
     essay = models.ForeignKey(
         PhotoEssay,
         on_delete=models.CASCADE,
@@ -133,6 +134,7 @@ class PhotoEssayPhoto(models.Model):
 
 class Gallery(models.Model):
     """Client gallery with optional password protection."""
+
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True)
@@ -178,6 +180,7 @@ class Gallery(models.Model):
 
 class GalleryPhoto(models.Model):
     """Join table for photos in galleries with per-gallery ordering."""
+
     gallery = models.ForeignKey(
         Gallery,
         on_delete=models.CASCADE,
@@ -203,6 +206,7 @@ class GalleryPhoto(models.Model):
 
 class GallerySelection(models.Model):
     """Stores per-session favorites for proofing."""
+
     gallery = models.ForeignKey(
         Gallery,
         on_delete=models.CASCADE,

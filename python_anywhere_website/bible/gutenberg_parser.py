@@ -146,6 +146,8 @@ def parse_gutenberg_kjv(file_path, debug=False):
     if debug:
         total_books = len(books_data)
         total_verses = sum(len(b["verses"]) for b in books_data.values())
-        print(f"[DONE] books={total_books}, verses={total_verses}, book_hits={dbg_book_hits}")
+        print(
+            f"[DONE] books={total_books}, verses={total_verses}, book_hits={dbg_book_hits}"
+        )
 
     return list(books_data.values())

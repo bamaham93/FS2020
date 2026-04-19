@@ -8,14 +8,14 @@ def book_list(request):
     Display list of all Bible books, grouped by testament.
     /bible/
     """
-    ot_books = BibleBook.objects.filter(testament='OT')
-    nt_books = BibleBook.objects.filter(testament='NT')
-    
+    ot_books = BibleBook.objects.filter(testament="OT")
+    nt_books = BibleBook.objects.filter(testament="NT")
+
     context = {
-        'ot_books': ot_books,
-        'nt_books': nt_books,
+        "ot_books": ot_books,
+        "nt_books": nt_books,
     }
-    return render(request, 'bible/book_list.html', context)
+    return render(request, "bible/book_list.html", context)
 
 
 def chapter_list(request, book_slug):
@@ -25,12 +25,12 @@ def chapter_list(request, book_slug):
     """
     book = get_object_or_404(BibleBook, slug=book_slug)
     chapters = range(1, book.chapters + 1)
-    
+
     context = {
-        'book': book,
-        'chapters': chapters,
+        "book": book,
+        "chapters": chapters,
     }
-    return render(request, 'bible/chapter_list.html', context)
+    return render(request, "bible/chapter_list.html", context)
 
 
 def chapter_reader(request, book_slug, chapter):
@@ -39,17 +39,19 @@ def chapter_reader(request, book_slug, chapter):
     /bible/{book-slug}/{chapter}/
     """
     book = get_object_or_404(BibleBook, slug=book_slug)
-    
+
     # Validate chapter number
     if chapter < 1 or chapter > book.chapters:
         raise Http404("Chapter not found")
-    
-    verses = BibleVerse.objects.filter(book=book, chapter=chapter).select_related('book')
-    
+
+    verses = BibleVerse.objects.filter(book=book, chapter=chapter).select_related(
+        "book"
+    )
+
     # Determine prev/next chapter
     prev_chapter = None
     next_chapter = None
-    
+
     if chapter > 1:
         prev_chapter = chapter - 1
         prev_book = book
@@ -59,7 +61,7 @@ def chapter_reader(request, book_slug, chapter):
         if prev_book_obj:
             prev_book = prev_book_obj
             prev_chapter = prev_book_obj.chapters
-    
+
     if chapter < book.chapters:
         next_chapter = chapter + 1
         next_book = book
@@ -69,14 +71,14 @@ def chapter_reader(request, book_slug, chapter):
         if next_book_obj:
             next_book = next_book_obj
             next_chapter = 1
-    
+
     context = {
-        'book': book,
-        'chapter': chapter,
-        'verses': verses,
-        'prev_chapter': prev_chapter,
-        'prev_book': prev_book if prev_chapter else None,
-        'next_chapter': next_chapter,
-        'next_book': next_book if next_chapter else None,
+        "book": book,
+        "chapter": chapter,
+        "verses": verses,
+        "prev_chapter": prev_chapter,
+        "prev_book": prev_book if prev_chapter else None,
+        "next_chapter": next_chapter,
+        "next_book": next_book if next_chapter else None,
     }
-    return render(request, 'bible/chapter_reader.html', context)
+    return render(request, "bible/chapter_reader.html", context)

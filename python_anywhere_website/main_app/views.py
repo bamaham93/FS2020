@@ -3,6 +3,7 @@ from django.shortcuts import render
 # from .models import Aircraft, Flight
 from django.shortcuts import redirect
 
+
 # Create your views here.
 def redirect_home(request):
     """

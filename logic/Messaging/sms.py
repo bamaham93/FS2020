@@ -3,7 +3,7 @@ Functions related to sending text messages.
 """
 
 import logging
-from typing import Set
+from typing import Dict, Set, Tuple
 
 from prayer.models import Person
 from twilio.rest import Client
@@ -19,117 +19,83 @@ except ModuleNotFoundError:
     from credentials.mock_faa_twilio import (
         TWILIO_ACCOUNT_SID,
         TWILIO_AUTH_TOKEN,
+        TWILIO_PHONE_NUMBER,
     )
 
-logging.basicConfig(filename="sms_logfile.txt", level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def _mask_phone(phone: str) -> str:
+    """Return a masked phone number showing only the last 4 digits."""
+    if phone and len(phone) > 4:
+        return f"***{phone[-4:]}"
+    return "***"
 
 
 class SMSMessage:
     """
-    For sending emails and texts to recipients. If text messaging fails, or if the contact prefers
-    email, then an email will be sent.
+    Sends SMS messages to a set of Person recipients via Twilio.
+    Callers receive a per-contact result dict so they can persist send logs.
     """
 
     def __init__(self, body: str, contacts: Set[Person], testing=False) -> None:
-        """ """
+        """
+        body: The text of the message to send.
+        contacts: A set of Person model instances. Using a set guarantees each
+                  person receives at most one message even if they belong to
+                  multiple groups.
+        testing: When True, prints the message body instead of actually sending.
+        """
         self.body = body
         self.contacts = contacts
         self.testing = testing
-
-        # account_sid = os.environ["TWILIO_ACCOUNT_SID"]
-        # auth_token = os.environ["TWILIO_AUTH_TOKEN"]
 
         account_sid = TWILIO_ACCOUNT_SID
         auth_token = TWILIO_AUTH_TOKEN
         self.client = Client(account_sid, auth_token)
 
-    def send(self) -> None:
+    def send(self) -> Dict[Person, Tuple[bool, str]]:
         """
-        Send message to list of contacts.
+        Send message to all contacts.
+
+        Returns a dict mapping each Person to a (success, error_message) tuple
+        so the caller can persist SMSLog records.
         """
+        results: Dict[Person, Tuple[bool, str]] = {}
         for contact in self.contacts:
-            first_name = contact.first_name
-            last_name = contact.last_name
-            try:
-                phone_number = contact.phone_number
-            except Exception as e:
-                print(e)
-
-            # Formats the message body; uses the f-string syntax to lazily
-            # replace those tags with the personal information for that specific
-            # person.
-            # body = self.body.format(
-            #     first_name=first_name,
-            #     last_name=last_name)
-            body = self.body
-
+            phone_number = contact.phone_number
             if self.testing:
-                print(body)
+                logger.info(
+                    "TEST send to %s %s (%s): %s",
+                    contact.first_name,
+                    contact.last_name,
+                    _mask_phone(phone_number),
+                    self.body,
+                )
+                results[contact] = (True, "")
             else:
-                self._send(message_body=body, phone_number=phone_number)
+                success, error = self._send(
+                    message_body=self.body, phone_number=phone_number
+                )
+                results[contact] = (success, error)
+        return results
 
-    def _send(self, message_body: str, phone_number: str) -> None:
+    def _send(self, message_body: str, phone_number: str) -> Tuple[bool, str]:
         """
-        Sends each individual message.
+        Send a single message to one phone number.
+
+        Returns a (success, error_message) tuple.
         """
         try:
-            message = self.client.messages.create(
-                body=f"{str(message_body)}",
+            self.client.messages.create(
+                body=str(message_body),
                 from_=TWILIO_PHONE_NUMBER,
-                to=f"{str(phone_number)}",
+                to=str(phone_number),
             )
+            logger.info("Message to %s sent successfully.", _mask_phone(phone_number))
+            return True, ""
         except TwilioRestException as e:
-            logging.WARNING(f"Message to {phone_number} failed to send.{e}")
-
-
-peoples = [
-    (
-        "Andrew",
-        "McGowin",
-        "+12564048322",
-    ),
-    (
-        "James",
-        "McGowin",
-        "+12564048322",
-    ),
-    (
-        "Karen",
-        "McGowin",
-        "+12564048322",
-    ),
-    (
-        "Hudson",
-        "McGowin",
-        "+12564048322",
-    ),
-    (
-        "Elisha",
-        "McGowin",
-        "+12564048322",
-    ),
-    (
-        "Alaina",
-        "McGowin",
-        "+12564048322",
-    ),
-    (
-        "Juliette",
-        "McGowin",
-        "+12564048322",
-    ),
-    (
-        "Jacob",
-        "McGowin",
-        "+12564048322",
-    ),
-]
-
-if __name__ == "__main__":
-    # text = "Hello {first_name} {last_name}, how are you today?"
-    # message = SMSMessage(body=text, contacts=peoples, testing=False)
-    # message.send()
-
-    pass
-    # result = PrayerGroupQueries.get_group_members(name='CBC Members')
-    # print(result)
+            logger.warning(
+                "Message to %s failed to send. %s", _mask_phone(phone_number), e
+            )
+            return False, str(e)

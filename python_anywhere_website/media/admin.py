@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Media, MediaFormat, MediaType, MediaGenre, MediaLocation
 
+
 # Register your models here.
 @admin.register(Media)
 class AdminMedia(admin.ModelAdmin):

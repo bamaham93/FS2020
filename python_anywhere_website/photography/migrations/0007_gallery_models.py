@@ -16,11 +16,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Gallery",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("title", models.CharField(max_length=200)),
                 ("slug", models.SlugField(blank=True, unique=True)),
                 ("description", models.TextField(blank=True)),
-                ("cover_image", models.ImageField(blank=True, null=True, upload_to="gallery_covers/")),
+                (
+                    "cover_image",
+                    models.ImageField(
+                        blank=True, null=True, upload_to="gallery_covers/"
+                    ),
+                ),
                 (
                     "is_public",
                     models.BooleanField(
@@ -44,7 +57,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="GalleryPhoto",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "display_order",
                     models.IntegerField(
@@ -77,7 +98,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="GallerySelection",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("session_key", models.CharField(max_length=40)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 (

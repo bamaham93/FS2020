@@ -21,8 +21,8 @@ urlpatterns = [
     path("formats", views.formats_list, name="formats"),
     path("types", views.types_list, name="types"),
     path("genres", views.genres_list, name="genres"),
-    path('<int:pk>/', views.media_detail, name='detail'),
-    path('<int:pk>/lookup/', views.media_lookup, name='lookup'),
-    path('<int:pk>/apply-lookup/', views.apply_lookup, name='apply_lookup'),
-    path('sorted_by', views.sorted_by, name="sorted_by"),
+    path("<int:pk>/", views.media_detail, name="detail"),
+    path("<int:pk>/lookup/", views.media_lookup, name="lookup"),
+    path("<int:pk>/apply-lookup/", views.apply_lookup, name="apply_lookup"),
+    path("sorted_by", views.sorted_by, name="sorted_by"),
 ]

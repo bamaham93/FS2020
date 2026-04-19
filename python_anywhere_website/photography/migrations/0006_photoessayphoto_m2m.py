@@ -20,7 +20,11 @@ def backwards_migrate_photo_links(apps, schema_editor):
     PhotoEssayPhoto = apps.get_model("photography", "PhotoEssayPhoto")
 
     for photo in Photo.objects.all():
-        link = PhotoEssayPhoto.objects.filter(photo_id=photo.id).order_by("display_order").first()
+        link = (
+            PhotoEssayPhoto.objects.filter(photo_id=photo.id)
+            .order_by("display_order")
+            .first()
+        )
         if link:
             photo.essay_id = link.essay_id
             photo.display_order = link.display_order
@@ -40,7 +44,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="PhotoEssayPhoto",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "display_order",
                     models.IntegerField(
@@ -80,7 +92,9 @@ class Migration(migrations.Migration):
                 to="photography.photo",
             ),
         ),
-        migrations.RunPython(forwards_migrate_photo_links, backwards_migrate_photo_links),
+        migrations.RunPython(
+            forwards_migrate_photo_links, backwards_migrate_photo_links
+        ),
         migrations.RemoveField(
             model_name="photo",
             name="essay",

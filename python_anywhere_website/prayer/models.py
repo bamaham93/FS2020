@@ -68,9 +68,54 @@ class PrayerMessage(models.Model):
     is_completed = models.BooleanField(default=False)
     answer_text = models.TextField(null=True, blank=True)
     answered_at = models.DateTimeField(null=True, blank=True)
+    groups = models.ManyToManyField(
+        PrayerGroup,
+        blank=True,
+        related_name="messages",
+        help_text="Groups this message is targeted to",
+    )
 
     def __str__(self):
         return f"{self.name}"
+
+
+class SMSLog(models.Model):
+    """
+    Records every individual SMS send attempt so that successes and
+    failures can be reviewed later.
+    """
+
+    message = models.ForeignKey(
+        PrayerMessage,
+        on_delete=models.CASCADE,
+        related_name="sms_logs",
+    )
+    recipient = models.ForeignKey(
+        Person,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="sms_logs",
+    )
+    sent_at = models.DateTimeField(auto_now_add=True)
+    success = models.BooleanField()
+    error_message = models.TextField(blank=True, default="")
+    sent_by = models.ForeignKey(
+        "auth.User",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="sms_sends",
+    )
+
+    def __str__(self):
+        status = "OK" if self.success else "FAIL"
+        recipient_str = str(self.recipient) if self.recipient else "unknown"
+        return f"[{status}] {self.message} → {recipient_str}"
+
+    class Meta:
+        verbose_name = "SMS Log"
+        verbose_name_plural = "SMS Logs"
+        ordering = ["-sent_at"]
 
 
 class Permissions(models.Model):

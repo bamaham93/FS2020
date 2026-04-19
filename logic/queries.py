@@ -5,6 +5,7 @@ The purpose of centralizing the queries like this is to allow a query to be writ
 once, rather than reimplementing it in each view that requires it. This speeds development, as well as allowing for
 better quality testing.
 """
+
 import datetime
 
 from resume.models import Job
