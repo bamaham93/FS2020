@@ -17,8 +17,12 @@ class PrayerProfileAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
     """ """
 
-    list_display = ("first_name", "last_name", "phone_number", "email")
-    fields = (("first_name", "last_name"), ("phone_number", "email"))
+    list_display = ("first_name", "last_name", "phone_number", "email", "sms_consent")
+    fields = (
+        ("first_name", "last_name"),
+        ("phone_number", "email"),
+        ("sms_consent", "sms_consent_date"),
+    )
     empty_value = "-empty-"
 
 
