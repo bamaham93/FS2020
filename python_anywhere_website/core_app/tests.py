@@ -226,3 +226,23 @@ class CompliancePolicyTests(TestCase):
             resp, "Carriers are not liable for delayed or undelivered messages"
         )
         self.assertContains(resp, "Message frequency varies")
+
+
+class RobotsTxtTests(TestCase):
+    """Tests for robots.txt endpoint."""
+
+    def test_robots_txt_available_at_site_root(self):
+        resp = self.client.get("/robots.txt")
+        self.assertEqual(resp.status_code, 200)
+
+    def test_robots_txt_content_and_content_type(self):
+        resp = self.client.get("/robots.txt")
+        self.assertEqual(resp["Content-Type"], "text/plain")
+        self.assertEqual(
+            resp.content.decode("utf-8"),
+            "User-agent: *\nDisallow: /prayer/\n",
+        )
+
+    def test_robots_txt_disallows_prayer_app(self):
+        resp = self.client.get("/robots.txt")
+        self.assertContains(resp, "Disallow: /prayer/")

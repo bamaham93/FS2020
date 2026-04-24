@@ -20,13 +20,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 # from django.shortcuts import redirect
-from .views import redirect_home
+from .views import redirect_home, robots_txt
 from bible.urls import api_urlpatterns as bible_api_urls
 from prayer import views as prayer_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", redirect_home),
+    path("robots.txt", robots_txt, name="robots_txt"),
     # core_app is available under /core_app/ (auth and app URLs)
     # Removed duplicate include at /home/ to avoid namespace collision
     path("fs2020/", include("fs2020.urls", namespace="fs2020")),
