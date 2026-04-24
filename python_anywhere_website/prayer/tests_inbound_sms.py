@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
@@ -151,6 +151,29 @@ class TwilioWebhookTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+
+    @patch.dict("os.environ", {"TWILIO_AUTH_TOKEN": "env-token"}, clear=False)
+    @patch("prayer.views.RequestValidator")
+    def test_webhook_uses_env_twilio_token_when_setting_missing(
+        self, request_validator_cls
+    ):
+        request_validator = Mock()
+        request_validator.validate.return_value = True
+        request_validator_cls.return_value = request_validator
+
+        response = self.client.post(
+            "/api/webhooks/twilio/sms/",
+            {
+                "MessageSid": "SM203",
+                "From": "+15550001111",
+                "To": "+18005550100",
+                "Body": "Env token fallback",
+            },
+            HTTP_X_TWILIO_SIGNATURE="sig",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        request_validator_cls.assert_called_once_with("env-token")
 
 
 class InboundMessagesViewTests(TestCase):

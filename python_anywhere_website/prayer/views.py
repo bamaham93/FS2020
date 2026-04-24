@@ -1,3 +1,6 @@
+import logging
+import os
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -35,6 +38,9 @@ def is_group(user, group):
         return True
     else:
         return False
+
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -454,10 +460,12 @@ def public_signup(request) -> render:
 def _is_valid_twilio_signature(request) -> bool:
     signature = request.META.get("HTTP_X_TWILIO_SIGNATURE")
     if not signature:
+        logger.warning("Twilio webhook rejected: missing X-Twilio-Signature header")
         return False
 
-    twilio_token = getattr(settings, "TWILIO_AUTH_TOKEN", "")
+    twilio_token = _get_twilio_auth_token()
     if not twilio_token:
+        logger.error("Twilio webhook rejected: TWILIO_AUTH_TOKEN is not configured")
         return False
 
     validator = RequestValidator(twilio_token)
@@ -466,7 +474,31 @@ def _is_valid_twilio_signature(request) -> bool:
     for url in candidate_urls:
         if validator.validate(url, request.POST, signature):
             return True
+    logger.warning(
+        "Twilio webhook rejected: signature validation failed for all %s candidate URLs",
+        len(candidate_urls),
+    )
     return False
+
+
+def _get_twilio_auth_token() -> str:
+    """
+    Read Twilio auth token from supported config locations.
+    """
+    settings_token = str(getattr(settings, "TWILIO_AUTH_TOKEN", "")).strip()
+    if settings_token:
+        return settings_token
+
+    env_token = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
+    if env_token:
+        return env_token
+
+    # Legacy fallback used elsewhere in this project for outbound SMS.
+    try:
+        from logic.Messaging.sms import TWILIO_AUTH_TOKEN as legacy_token
+    except Exception:
+        legacy_token = ""
+    return str(legacy_token).strip()
 
 
 def _twilio_signature_candidate_urls(request):
