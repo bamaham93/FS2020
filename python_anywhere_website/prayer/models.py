@@ -26,10 +26,6 @@ class Person(models.Model):
     sms_consent_date = models.DateTimeField(
         null=True, blank=True, help_text="Date and time when SMS consent was given"
     )
-    is_admin = models.BooleanField(
-        default=False,
-        help_text="Designates this person as a Prayer Group admin who receives inbound SMS notifications",
-    )
 
     def __str__(self):
         """ """

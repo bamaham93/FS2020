@@ -1,11 +1,14 @@
 import logging
 from dataclasses import dataclass
 
+from django.contrib.auth.models import Group
 from django.utils import timezone
 
 from prayer.models import Person, InboundSmsMessage
 
 logger = logging.getLogger(__name__)
+
+PRAYER_ADMIN_GROUP = "Prayer Admin"
 
 try:
     from twilio.rest import Client as TwilioClient
@@ -58,19 +61,48 @@ def _match_person(from_number: str) -> Person | None:
     return None
 
 
+def _get_prayer_admin_persons() -> list[Person]:
+    """
+    Return Person records whose email matches a user in the 'Prayer Admin'
+    Django group and who have a phone number on file.
+    """
+    try:
+        group = Group.objects.get(name=PRAYER_ADMIN_GROUP)
+    except Group.DoesNotExist:
+        logger.warning(
+            "Admin notification skipped: Django group '%s' does not exist.",
+            PRAYER_ADMIN_GROUP,
+        )
+        return []
+
+    admin_emails = set(
+        group.user_set.exclude(email="")
+        .exclude(email__isnull=True)
+        .values_list("email", flat=True)
+    )
+    if not admin_emails:
+        return []
+
+    return list(
+        Person.objects.filter(email__in=admin_emails)
+        .exclude(phone_number__isnull=True)
+        .exclude(phone_number="")
+    )
+
+
 def _notify_admins(message: InboundSmsMessage) -> None:
     """
     Send an SMS notification to all Prayer Group admins when a new inbound
     message is received.
 
+    Admins are determined by membership in the 'Prayer Admin' Django group.
+    Phone numbers are looked up by matching the group member's email address
+    to a Person record.
+
     The notification reads:
         "A message was received at {time} on {date} from {name or phone number}."
     """
-    admins = list(
-        Person.objects.filter(is_admin=True)
-        .exclude(phone_number__isnull=True)
-        .exclude(phone_number="")
-    )
+    admins = _get_prayer_admin_persons()
     if not admins:
         return
 
