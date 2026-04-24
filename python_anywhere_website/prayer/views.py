@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from twilio.request_validator import RequestValidator
+from urllib.parse import urlsplit, urlunsplit
 
 # from logic.users_groups import is_group
 from prayer.forms import (
@@ -460,7 +461,35 @@ def _is_valid_twilio_signature(request) -> bool:
         return False
 
     validator = RequestValidator(twilio_token)
-    return validator.validate(request.build_absolute_uri(), request.POST, signature)
+
+    candidate_urls = _twilio_signature_candidate_urls(request)
+    for url in candidate_urls:
+        if validator.validate(url, request.POST, signature):
+            return True
+    return False
+
+
+def _twilio_signature_candidate_urls(request):
+    """
+    Return candidate absolute URLs for Twilio signature validation.
+
+    Twilio signs the exact webhook URL (including scheme). Some reverse proxies
+    can forward requests to Django as plain HTTP even when the public URL is
+    HTTPS, so we try both variants.
+    """
+    absolute_url = request.build_absolute_uri()
+    parsed = urlsplit(absolute_url)
+
+    candidates = [absolute_url]
+    if parsed.scheme in {"http", "https"}:
+        alt_scheme = "https" if parsed.scheme == "http" else "http"
+        alt_url = urlunsplit(
+            (alt_scheme, parsed.netloc, parsed.path, parsed.query, parsed.fragment)
+        )
+        candidates.append(alt_url)
+
+    # Remove duplicates while preserving order.
+    return list(dict.fromkeys(candidates))
 
 
 @csrf_exempt
