@@ -180,6 +180,11 @@ CACHES = {
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+# Trust the X-Forwarded-Proto header set by the reverse proxy (e.g. PythonAnywhere).
+# This ensures request.build_absolute_uri() returns https:// URLs so that
+# third-party webhook signature validation (e.g. Twilio) works correctly.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # Login, Signup redirects
 LOGIN_URL = "login"
 LOGOUT_REDIRECT_URL = "core_app:index"
