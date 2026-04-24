@@ -184,6 +184,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # This ensures request.build_absolute_uri() returns https:// URLs so that
 # third-party webhook signature validation (e.g. Twilio) works correctly.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# Trust X-Forwarded-Host as well so host reconstruction behind the proxy
+# matches the public host used by providers signing webhook callbacks.
+USE_X_FORWARDED_HOST = True
 
 # Login, Signup redirects
 LOGIN_URL = "login"
