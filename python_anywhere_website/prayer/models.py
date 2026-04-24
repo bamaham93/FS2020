@@ -118,6 +118,31 @@ class SMSLog(models.Model):
         ordering = ["-sent_at"]
 
 
+class InboundSmsMessage(models.Model):
+    provider = models.CharField(max_length=30, default="twilio")
+    provider_message_id = models.CharField(max_length=64, unique=True)
+
+    from_number = models.CharField(max_length=20)
+    to_number = models.CharField(max_length=20)
+
+    body = models.TextField(blank=True)
+    received_at = models.DateTimeField(auto_now_add=True)
+
+    person = models.ForeignKey(
+        Person,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="inbound_sms_messages",
+    )
+
+    direction = models.CharField(max_length=20, default="inbound")
+    processed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-received_at"]
+
+
 class Permissions(models.Model):
     profile = models.OneToOneField(PrayerProfile, on_delete=models.CASCADE)
     may_send_emails = models.BooleanField()

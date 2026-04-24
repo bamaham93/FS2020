@@ -1,0 +1,38 @@
+{% extends 'prayer/prayer_base.html' %}
+
+{% block section1 %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Inbound SMS Messages</h2>
+        {% if unread_count %}
+        <span class="badge bg-danger">Unread: {{ unread_count }}</span>
+        {% endif %}
+    </div>
+
+    {% if inbound_messages %}
+    <div class="list-group">
+        {% for message in inbound_messages %}
+        <div class="list-group-item {% if not message.person %}list-group-item-warning{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">From {{ message.from_number }} to {{ message.to_number }}</h5>
+                <small>{{ message.received_at }}</small>
+            </div>
+            <p class="mb-1">{{ message.body|default:"(no body)" }}</p>
+            <small>
+                {% if message.person %}
+                    Linked to {{ message.person.first_name }} {{ message.person.last_name }}
+                {% else %}
+                    Unassigned - review needed
+                {% endif %}
+                {% if not message.processed %}
+                    • <strong>Unread</strong>
+                {% endif %}
+            </small>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No inbound SMS messages have been received yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

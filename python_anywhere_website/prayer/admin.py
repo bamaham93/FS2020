@@ -1,5 +1,12 @@
 from django.contrib import admin
-from prayer.models import PrayerGroup, PrayerProfile, Person, PrayerMessage, SMSLog
+from prayer.models import (
+    PrayerGroup,
+    PrayerProfile,
+    Person,
+    PrayerMessage,
+    SMSLog,
+    InboundSmsMessage,
+)
 
 
 # Register your models here.
@@ -54,3 +61,26 @@ class SMSLogAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+
+@admin.register(InboundSmsMessage)
+class InboundSmsMessageAdmin(admin.ModelAdmin):
+    list_display = (
+        "provider_message_id",
+        "from_number",
+        "to_number",
+        "person",
+        "received_at",
+        "processed",
+    )
+    list_filter = ("processed", "provider", "received_at")
+    search_fields = ("provider_message_id", "from_number", "to_number", "body")
+    readonly_fields = (
+        "provider",
+        "provider_message_id",
+        "from_number",
+        "to_number",
+        "body",
+        "received_at",
+        "direction",
+    )
