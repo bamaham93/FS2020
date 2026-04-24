@@ -1,3 +1,6 @@
+import logging
+import os
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -7,6 +10,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from twilio.request_validator import RequestValidator
+from urllib.parse import urlsplit, urlunsplit
 
 # from logic.users_groups import is_group
 from prayer.forms import (
@@ -34,6 +38,9 @@ def is_group(user, group):
         return True
     else:
         return False
+
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -453,14 +460,89 @@ def public_signup(request) -> render:
 def _is_valid_twilio_signature(request) -> bool:
     signature = request.META.get("HTTP_X_TWILIO_SIGNATURE")
     if not signature:
+        logger.warning("Twilio webhook rejected: missing X-Twilio-Signature header")
         return False
 
-    twilio_token = getattr(settings, "TWILIO_AUTH_TOKEN", "")
+    twilio_token = _get_twilio_auth_token()
     if not twilio_token:
+        logger.error("Twilio webhook rejected: TWILIO_AUTH_TOKEN is not configured")
         return False
 
     validator = RequestValidator(twilio_token)
-    return validator.validate(request.build_absolute_uri(), request.POST, signature)
+
+    candidate_urls = _twilio_signature_candidate_urls(request)
+    for url in candidate_urls:
+        if validator.validate(url, request.POST, signature):
+            return True
+    logger.warning(
+        "Twilio webhook rejected: signature validation failed for all %s candidate URLs",
+        len(candidate_urls),
+    )
+    return False
+
+
+def _get_twilio_auth_token() -> str:
+    """
+    Read Twilio auth token from supported config locations.
+    """
+    settings_token = str(getattr(settings, "TWILIO_AUTH_TOKEN", "")).strip()
+    if settings_token:
+        return settings_token
+
+    env_token = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
+    if env_token:
+        return env_token
+
+    # Legacy fallback used elsewhere in this project for outbound SMS.
+    try:
+        from logic.Messaging.sms import TWILIO_AUTH_TOKEN as legacy_token
+    except Exception:
+        legacy_token = ""
+    return str(legacy_token).strip()
+
+
+def _twilio_signature_candidate_urls(request):
+    """
+    Return candidate absolute URLs for Twilio signature validation.
+
+    Twilio signs the exact webhook URL (including scheme). Some reverse proxies
+    can forward requests to Django as plain HTTP even when the public URL is
+    HTTPS, so we try both variants.
+    """
+    absolute_url = request.build_absolute_uri()
+    parsed = urlsplit(absolute_url)
+    path_with_query = urlunsplit(("", "", parsed.path, parsed.query, ""))
+
+    # Build host and scheme options from both direct request metadata and
+    # reverse-proxy forwarding headers.
+    host_candidates = [parsed.netloc]
+    for header_name in ("HTTP_X_FORWARDED_HOST", "HTTP_HOST"):
+        header_value = request.META.get(header_name, "")
+        if header_value:
+            first_host = header_value.split(",")[0].strip()
+            if first_host:
+                host_candidates.append(first_host)
+
+    scheme_candidates = [parsed.scheme]
+    forwarded_proto = request.META.get("HTTP_X_FORWARDED_PROTO", "")
+    if forwarded_proto:
+        for proto in forwarded_proto.split(","):
+            normalized_proto = proto.strip().lower()
+            if normalized_proto in {"http", "https"}:
+                scheme_candidates.append(normalized_proto)
+
+    if "http" not in scheme_candidates:
+        scheme_candidates.append("http")
+    if "https" not in scheme_candidates:
+        scheme_candidates.append("https")
+
+    candidates = [absolute_url]
+    for scheme in scheme_candidates:
+        for host in host_candidates:
+            candidates.append(f"{scheme}://{host}{path_with_query}")
+
+    # Remove duplicates while preserving order.
+    return list(dict.fromkeys(candidates))
 
 
 @csrf_exempt
