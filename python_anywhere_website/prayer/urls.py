@@ -38,4 +38,6 @@ urlpatterns = [
     path("people", views.people, name="people"),
     path("delete-person/<person_id>", views.delete_person, name="delete_person"),
     path("permissions/<int:id>", views.permissions, name="permissions"),
+    path("messages/inbound", views.inbound_messages, name="inbound_messages"),
 ]
+

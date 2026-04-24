@@ -1,8 +1,12 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from twilio.request_validator import RequestValidator
 
 # from logic.users_groups import is_group
 from prayer.forms import (
@@ -12,7 +16,8 @@ from prayer.forms import (
     PermissionsForm,
     PublicSignupForm,
 )
-from prayer.models import Person, PrayerGroup, PrayerMessage, SMSLog
+from prayer.models import Person, PrayerGroup, PrayerMessage, SMSLog, InboundSmsMessage
+from prayer.services import InboundSmsPayload, handle_inbound_sms
 
 try:
     import logic.queries
@@ -443,3 +448,51 @@ def public_signup(request) -> render:
             )
 
     return render(request, "prayer/public_signup.html", context)
+
+
+def _is_valid_twilio_signature(request) -> bool:
+    signature = request.META.get("HTTP_X_TWILIO_SIGNATURE")
+    if not signature:
+        return False
+
+    twilio_token = getattr(settings, "TWILIO_AUTH_TOKEN", "")
+    if not twilio_token:
+        return False
+
+    validator = RequestValidator(twilio_token)
+    return validator.validate(request.build_absolute_uri(), request.POST, signature)
+
+
+@csrf_exempt
+def twilio_sms_webhook(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    if not _is_valid_twilio_signature(request):
+        return HttpResponseForbidden()
+
+    required_fields = ["MessageSid", "From", "To"]
+    if not all(field in request.POST for field in required_fields):
+        return HttpResponse(status=400)
+
+    payload = InboundSmsPayload(
+        provider="twilio",
+        provider_message_id=request.POST["MessageSid"],
+        from_number=request.POST["From"],
+        to_number=request.POST["To"],
+        body=request.POST.get("Body", ""),
+    )
+
+    handle_inbound_sms(payload)
+    return HttpResponse(status=200)
+
+
+@login_required()
+@staff_member_required
+def inbound_messages(request):
+    message_qs = InboundSmsMessage.objects.select_related("person")
+    context = {
+        "messages": message_qs,
+        "unread_count": message_qs.filter(processed=False).count(),
+    }
+    return render(request, "prayer/inbound_messages.html", context)

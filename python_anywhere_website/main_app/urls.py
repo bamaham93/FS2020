@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 # from django.shortcuts import redirect
 from .views import redirect_home
 from bible.urls import api_urlpatterns as bible_api_urls
+from prayer import views as prayer_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -37,6 +38,7 @@ urlpatterns = [
     path("media/", include("media_app.urls", namespace="media")),
     path("finance/", include("finance.urls", namespace="finance")),
     path("photography/", include("photography.urls", namespace="photography")),
+    path("api/webhooks/twilio/sms/", prayer_views.twilio_sms_webhook, name="twilio_sms_webhook"),
 ]
 
 # Add Bible API URLs (not under /bible/ prefix)
