@@ -107,6 +107,38 @@ class TwilioWebhookTests(TestCase):
         self.assertEqual(validator_mock.call_count, 2)
 
     @override_settings(TWILIO_AUTH_TOKEN="test-token")
+    @patch("prayer.views.RequestValidator.validate")
+    def test_webhook_accepts_valid_signature_with_forwarded_host_and_proto(
+        self, validator_mock
+    ):
+        expected_url = "https://www.jacob-mcgowin.us/api/webhooks/twilio/sms/"
+
+        def validate_side_effect(url, _post_data, _signature):
+            return url == expected_url
+
+        validator_mock.side_effect = validate_side_effect
+
+        response = self.client.post(
+            "/api/webhooks/twilio/sms/",
+            {
+                "MessageSid": "SM202",
+                "From": "+15550001111",
+                "To": "+18005550100",
+                "Body": "Forwarded host/proto",
+            },
+            HTTP_HOST="username.pythonanywhere.com",
+            HTTP_X_FORWARDED_HOST="www.jacob-mcgowin.us",
+            HTTP_X_FORWARDED_PROTO="http,https",
+            HTTP_X_TWILIO_SIGNATURE="sig",
+            wsgi_url_scheme="http",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(InboundSmsMessage.objects.count(), 1)
+        validated_urls = [call.args[0] for call in validator_mock.call_args_list]
+        self.assertIn(expected_url, validated_urls)
+
+    @override_settings(TWILIO_AUTH_TOKEN="test-token")
     @patch("prayer.views.RequestValidator.validate", return_value=True)
     def test_webhook_returns_400_when_required_fields_missing(self, _validator):
         response = self.client.post(

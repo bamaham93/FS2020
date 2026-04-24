@@ -479,14 +479,35 @@ def _twilio_signature_candidate_urls(request):
     """
     absolute_url = request.build_absolute_uri()
     parsed = urlsplit(absolute_url)
+    path_with_query = urlunsplit(("", "", parsed.path, parsed.query, ""))
+
+    # Build host and scheme options from both direct request metadata and
+    # reverse-proxy forwarding headers.
+    host_candidates = [parsed.netloc]
+    for header_name in ("HTTP_X_FORWARDED_HOST", "HTTP_HOST"):
+        header_value = request.META.get(header_name, "")
+        if header_value:
+            first_host = header_value.split(",")[0].strip()
+            if first_host:
+                host_candidates.append(first_host)
+
+    scheme_candidates = [parsed.scheme]
+    forwarded_proto = request.META.get("HTTP_X_FORWARDED_PROTO", "")
+    if forwarded_proto:
+        for proto in forwarded_proto.split(","):
+            normalized_proto = proto.strip().lower()
+            if normalized_proto in {"http", "https"}:
+                scheme_candidates.append(normalized_proto)
+
+    if "http" not in scheme_candidates:
+        scheme_candidates.append("http")
+    if "https" not in scheme_candidates:
+        scheme_candidates.append("https")
 
     candidates = [absolute_url]
-    if parsed.scheme in {"http", "https"}:
-        alt_scheme = "https" if parsed.scheme == "http" else "http"
-        alt_url = urlunsplit(
-            (alt_scheme, parsed.netloc, parsed.path, parsed.query, parsed.fragment)
-        )
-        candidates.append(alt_url)
+    for scheme in scheme_candidates:
+        for host in host_candidates:
+            candidates.append(f"{scheme}://{host}{path_with_query}")
 
     # Remove duplicates while preserving order.
     return list(dict.fromkeys(candidates))
