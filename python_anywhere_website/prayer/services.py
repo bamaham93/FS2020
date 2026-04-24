@@ -85,8 +85,8 @@ def _notify_admins(message: InboundSmsMessage) -> None:
         return
 
     received_at = message.received_at or timezone.now()
-    time_str = received_at.strftime("%-I:%M %p")
-    date_str = received_at.strftime("%B %-d, %Y")
+    time_str = received_at.strftime("%I:%M %p").lstrip("0") or "12"
+    date_str = f"{received_at.strftime('%B')} {received_at.day}, {received_at.year}"
 
     if message.person:
         sender = f"{message.person.first_name} {message.person.last_name}".strip()
