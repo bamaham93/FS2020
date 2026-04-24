@@ -233,9 +233,17 @@ img{ width:100%; height:auto; }
 .table {
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.04);
+  /* Override Bootstrap 5 CSS variable defaults so dark-theme text stays light */
+  --bs-table-color: var(--text);
+  --bs-table-striped-color: var(--text);
+  --bs-table-hover-color: var(--text);
+  --bs-table-active-color: var(--text);
+  --bs-table-bg: rgba(255,255,255,0.02);
+  --bs-table-striped-bg: rgba(255,255,255,0.04);
+  --bs-table-hover-bg: rgba(255,255,255,0.06);
 }
 .table th { color: var(--text); font-weight:700; }
-.table td { color: var(--muted); }
+.table td { color: var(--text); }
 .table-striped>tbody>tr:nth-of-type(odd) { background-color: rgba(255,255,255,0.01); }
 
 /* Resume nav small tweaks */
