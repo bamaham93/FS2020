@@ -30,9 +30,9 @@ def _match_person(from_number: str) -> Person | None:
 
 def handle_inbound_sms(payload: InboundSmsPayload) -> InboundSmsMessage:
     message, created = InboundSmsMessage.objects.get_or_create(
-        provider=payload.provider,
         provider_message_id=payload.provider_message_id,
         defaults={
+            "provider": payload.provider,
             "from_number": payload.from_number,
             "to_number": payload.to_number,
             "body": payload.body,
