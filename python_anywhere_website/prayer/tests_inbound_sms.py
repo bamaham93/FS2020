@@ -1,11 +1,16 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from prayer.models import InboundSmsMessage, Person
-from prayer.services import InboundSmsPayload, handle_inbound_sms
+from prayer.services import (
+    InboundSmsPayload,
+    _get_prayer_admin_persons,
+    _notify_admins,
+    handle_inbound_sms,
+)
 
 
 class InboundSmsServiceTests(TestCase):
@@ -197,3 +202,195 @@ class InboundMessagesViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Unread: 1")
         self.assertContains(response, "Unassigned - review needed")
+
+
+class AdminNotificationTests(TestCase):
+    """Tests for the _notify_admins / admin-notification path in handle_inbound_sms."""
+
+    ADMIN_GROUP = "Prayer Admin"
+
+    def setUp(self):
+        self.group, _ = Group.objects.get_or_create(name=self.ADMIN_GROUP)
+
+    def _make_admin_user(self, username, email, phone_number):
+        """Create a User in the Prayer Admin group with a matching Person record."""
+        user = User.objects.create_user(username=username, email=email, password="pw")
+        user.groups.add(self.group)
+        person = Person.objects.create(
+            first_name=user.first_name or username,
+            last_name=user.last_name or "Admin",
+            email=email,
+            phone_number=phone_number,
+        )
+        return user, person
+
+    def _make_message(self, person=None, from_number="+15550001111"):
+        return InboundSmsMessage.objects.create(
+            provider="twilio",
+            provider_message_id="SM_NOTIFY_TEST",
+            from_number=from_number,
+            to_number="+18005550100",
+            body="Hello",
+            person=person,
+        )
+
+    def test_get_prayer_admin_persons_returns_persons_for_group_members(self):
+        """_get_prayer_admin_persons returns Person records matched by email."""
+        _, person = self._make_admin_user(
+            "admin1", "admin1@example.com", "+15559990000"
+        )
+        results = _get_prayer_admin_persons()
+        self.assertIn(person, results)
+
+    def test_get_prayer_admin_persons_excludes_non_members(self):
+        """Person records whose email is not in the group are excluded."""
+        Person.objects.create(
+            first_name="Not",
+            last_name="Admin",
+            email="notadmin@example.com",
+            phone_number="+15558880000",
+        )
+        results = _get_prayer_admin_persons()
+        self.assertEqual(results, [])
+
+    def test_get_prayer_admin_persons_returns_empty_when_group_missing(self):
+        """Returns empty list gracefully when the Prayer Admin group doesn't exist."""
+        Group.objects.filter(name=self.ADMIN_GROUP).delete()
+        results = _get_prayer_admin_persons()
+        self.assertEqual(results, [])
+
+    def test_get_prayer_admin_persons_skips_members_without_person_record(self):
+        """Group members with no matching Person (by email) are silently skipped."""
+        user = User.objects.create_user(
+            username="noperson", email="noperson@example.com", password="pw"
+        )
+        user.groups.add(self.group)
+        results = _get_prayer_admin_persons()
+        self.assertEqual(results, [])
+
+    def test_get_prayer_admin_persons_skips_persons_without_phone(self):
+        """Person records with no phone number are excluded."""
+        user = User.objects.create_user(
+            username="nophone", email="nophone@example.com", password="pw"
+        )
+        user.groups.add(self.group)
+        Person.objects.create(
+            first_name="No",
+            last_name="Phone",
+            email="nophone@example.com",
+            phone_number=None,
+        )
+        results = _get_prayer_admin_persons()
+        self.assertEqual(results, [])
+
+    @patch("prayer.services.TwilioClient")
+    def test_notify_admins_sends_sms_to_prayer_admin_group_members(
+        self, mock_client_cls
+    ):
+        """_notify_admins sends one SMS per Prayer Admin group member with a phone."""
+        _, admin_person = self._make_admin_user(
+            "alice", "alice@example.com", "+15559990001"
+        )
+        non_admin = Person.objects.create(
+            first_name="Bob",
+            last_name="Regular",
+            email="bob@example.com",
+            phone_number="+15558880001",
+        )
+
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
+
+        msg = self._make_message()
+        with patch("prayer.services._TWILIO_AVAILABLE", True), patch(
+            "prayer.services.TWILIO_ACCOUNT_SID", "ACtest"
+        ), patch("prayer.services.TWILIO_AUTH_TOKEN", "tok"), patch(
+            "prayer.services.TWILIO_PHONE_NUMBER", "+18001234567"
+        ):
+            _notify_admins(msg)
+
+        mock_client.messages.create.assert_called_once()
+        call_kwargs = mock_client.messages.create.call_args.kwargs
+        self.assertEqual(call_kwargs["to"], admin_person.phone_number)
+        self.assertNotEqual(call_kwargs["to"], non_admin.phone_number)
+
+    @patch("prayer.services.TwilioClient")
+    def test_notify_admins_uses_person_name_when_matched(self, mock_client_cls):
+        """Notification body uses sender's name when a Person is matched."""
+        sender = Person.objects.create(
+            first_name="Jane",
+            last_name="Doe",
+            phone_number="+15551112222",
+        )
+        self._make_admin_user("admin2", "admin2@example.com", "+15559990002")
+
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
+
+        msg = self._make_message(person=sender)
+        with patch("prayer.services._TWILIO_AVAILABLE", True), patch(
+            "prayer.services.TWILIO_ACCOUNT_SID", "ACtest"
+        ), patch("prayer.services.TWILIO_AUTH_TOKEN", "tok"), patch(
+            "prayer.services.TWILIO_PHONE_NUMBER", "+18001234567"
+        ):
+            _notify_admins(msg)
+
+        body = mock_client.messages.create.call_args.kwargs["body"]
+        self.assertIn("Jane Doe", body)
+
+    @patch("prayer.services.TwilioClient")
+    def test_notify_admins_uses_phone_number_when_no_person_match(
+        self, mock_client_cls
+    ):
+        """Notification body falls back to the raw phone number when no Person matched."""
+        self._make_admin_user("admin3", "admin3@example.com", "+15559990003")
+
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
+
+        msg = self._make_message(from_number="+15554440000")
+        with patch("prayer.services._TWILIO_AVAILABLE", True), patch(
+            "prayer.services.TWILIO_ACCOUNT_SID", "ACtest"
+        ), patch("prayer.services.TWILIO_AUTH_TOKEN", "tok"), patch(
+            "prayer.services.TWILIO_PHONE_NUMBER", "+18001234567"
+        ):
+            _notify_admins(msg)
+
+        body = mock_client.messages.create.call_args.kwargs["body"]
+        self.assertIn("+15554440000", body)
+
+    @patch("prayer.services.TwilioClient")
+    def test_notify_admins_skips_when_no_admins(self, mock_client_cls):
+        """No SMS sent when the Prayer Admin group has no eligible members."""
+        msg = self._make_message()
+        _notify_admins(msg)
+        mock_client_cls.assert_not_called()
+
+    @patch("prayer.services._notify_admins")
+    def test_handle_inbound_sms_notifies_admins_on_new_message(self, mock_notify):
+        """handle_inbound_sms calls _notify_admins exactly once for a new message."""
+        payload = InboundSmsPayload(
+            provider="twilio",
+            provider_message_id="SM_HANDLE_NEW",
+            from_number="+15550005555",
+            to_number="+18005550100",
+            body="New message",
+        )
+
+        handle_inbound_sms(payload)
+        mock_notify.assert_called_once()
+
+    @patch("prayer.services._notify_admins")
+    def test_handle_inbound_sms_does_not_notify_on_duplicate(self, mock_notify):
+        """handle_inbound_sms does NOT call _notify_admins for duplicate messages."""
+        payload = InboundSmsPayload(
+            provider="twilio",
+            provider_message_id="SM_HANDLE_DUP",
+            from_number="+15550005556",
+            to_number="+18005550100",
+            body="Duplicate",
+        )
+
+        handle_inbound_sms(payload)
+        handle_inbound_sms(payload)
+        mock_notify.assert_called_once()
