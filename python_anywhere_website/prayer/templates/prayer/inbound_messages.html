@@ -9,9 +9,9 @@
         {% endif %}
     </div>
 
-    {% if messages %}
+    {% if inbound_messages %}
     <div class="list-group">
-        {% for message in messages %}
+        {% for message in inbound_messages %}
         <div class="list-group-item {% if not message.person %}list-group-item-warning{% endif %}">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">From {{ message.from_number }} to {{ message.to_number }}</h5>
