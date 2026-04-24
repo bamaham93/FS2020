@@ -80,6 +80,33 @@ class TwilioWebhookTests(TestCase):
         self.assertEqual(saved.body, "Need prayer")
 
     @override_settings(TWILIO_AUTH_TOKEN="test-token")
+    @patch("prayer.views.RequestValidator.validate")
+    def test_webhook_accepts_valid_signature_when_https_fallback_matches(
+        self, validator_mock
+    ):
+        def validate_side_effect(url, _post_data, _signature):
+            return url.startswith("https://")
+
+        validator_mock.side_effect = validate_side_effect
+
+        response = self.client.post(
+            "/api/webhooks/twilio/sms/",
+            {
+                "MessageSid": "SM201",
+                "From": "+15550001111",
+                "To": "+18005550100",
+                "Body": "Proxy mismatch",
+            },
+            HTTP_HOST="example.com",
+            HTTP_X_TWILIO_SIGNATURE="sig",
+            wsgi_url_scheme="http",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(InboundSmsMessage.objects.count(), 1)
+        self.assertEqual(validator_mock.call_count, 2)
+
+    @override_settings(TWILIO_AUTH_TOKEN="test-token")
     @patch("prayer.views.RequestValidator.validate", return_value=True)
     def test_webhook_returns_400_when_required_fields_missing(self, _validator):
         response = self.client.post(
