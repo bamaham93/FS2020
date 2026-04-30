@@ -1176,3 +1176,31 @@ class TestSMSLogging(TestCase):
         self.assertIn("OK", str(log_ok))
         self.assertIn("FAIL", str(log_fail))
         self.assertIn("Bob", str(log_ok))
+
+    def test_new_message_page_shows_group_badges(self):
+        """
+        Messages with assigned groups should show badge tokens on the new-message page.
+        Messages with no groups should show 'No groups selected' text.
+        """
+        self.message.groups.set([self.group_a, self.group_b])
+
+        from prayer.models import PrayerMessage
+
+        message_no_groups = PrayerMessage.objects.create(
+            name="No Group Sender",
+            subject="No Group Subject",
+            message="No group message.",
+        )
+
+        client = Client()
+        client.force_login(self.staff)
+        response = client.get("/prayer/new-message")
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+        # Message with groups should show group name badges
+        self.assertContains(response, "Group A")
+        self.assertContains(response, "Group B")
+
+        # Message without groups should show fallback text
+        self.assertContains(response, "No groups selected")

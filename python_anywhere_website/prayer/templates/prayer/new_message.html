@@ -14,7 +14,19 @@
                 </div>
                 <div class="card-body">
                     Subject: {{ message.subject }}
-                    <p class="card-text">{{ message.message }}
+                    <p class="card-text">{{ message.message }}</p>
+                    {% if message.groups.all %}
+                    <div class="mt-2">
+                        <small class="text-muted">Groups: </small>
+                        {% for group in message.groups.all %}
+                            <span class="badge bg-primary me-1">{{ group.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="mt-2">
+                        <small class="text-muted fst-italic">No groups selected</small>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="d-flex justify-content-between m-2">
                     <a href="{% url 'prayer:message-detail' id=message.id%}">
