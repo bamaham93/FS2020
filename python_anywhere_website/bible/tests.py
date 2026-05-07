@@ -1,6 +1,9 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from bible.models import BibleBook, BibleVerse
+import sqlite3
+import tempfile
+import os
 
 
 class BibleBookModelTest(TestCase):
@@ -288,3 +291,130 @@ class BibleAdminActionTest(TestCase):
             mock_call_command.side_effect = Exception("Test error")
             # Should not raise, just log
             _run_import_kjv("testuser")
+
+
+class ImportKJVSQLiteTest(TestCase):
+    """Tests for import_kjv management command's sqlite format support."""
+
+    def _make_kjv_db(self, path, rows, include_key_english=True):
+        """Create a minimal KJV SQLite database at *path* with *rows*.
+
+        rows is a list of (b, c, v, t) tuples.
+        """
+        conn = sqlite3.connect(path)
+        try:
+            conn.execute("CREATE TABLE t_kjv (b INTEGER, c INTEGER, v INTEGER, t TEXT)")
+            conn.executemany("INSERT INTO t_kjv VALUES (?,?,?,?)", rows)
+            if include_key_english:
+                conn.execute("CREATE TABLE key_english (b INTEGER PRIMARY KEY, n TEXT)")
+                # Insert names only for the books that appear in rows
+                book_nums = sorted({r[0] for r in rows})
+                from bible.management.commands.import_kjv import Command
+
+                for b in book_nums:
+                    if 1 <= b <= 66 and Command._KJV_BOOK_INFO[b]:
+                        name = Command._KJV_BOOK_INFO[b][0]
+                        conn.execute("INSERT INTO key_english VALUES (?,?)", (b, name))
+            conn.commit()
+        finally:
+            conn.close()
+
+    def test_load_sqlite_basic(self):
+        """load_sqlite returns correct book/verse structure."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = os.path.join(tmpdir, "kjv.db")
+            self._make_kjv_db(
+                db_path,
+                [
+                    (1, 1, 1, "In the beginning God created the heaven and the earth."),
+                    (1, 1, 2, "And the earth was without form, and void."),
+                    (43, 3, 16, "For God so loved the world..."),
+                ],
+            )
+            cmd = Command()
+            result = cmd.load_sqlite(Path(db_path))
+
+        # Should return two books in order
+        self.assertEqual(len(result), 2)
+        genesis = result[0]
+        john = result[1]
+
+        self.assertEqual(genesis["name"], "Genesis")
+        self.assertEqual(genesis["slug"], "genesis")
+        self.assertEqual(genesis["order"], 1)
+        self.assertEqual(genesis["testament"], "OT")
+        self.assertEqual(genesis["chapters"], 50)
+        self.assertEqual(len(genesis["verses"]), 2)
+        self.assertEqual(
+            genesis["verses"][0]["text"],
+            "In the beginning God created the heaven and the earth.",
+        )
+
+        self.assertEqual(john["name"], "John")
+        self.assertEqual(john["slug"], "john")
+        self.assertEqual(john["order"], 43)
+        self.assertEqual(john["testament"], "NT")
+        self.assertEqual(john["chapters"], 21)
+        self.assertEqual(len(john["verses"]), 1)
+        self.assertEqual(john["verses"][0]["verse"], 16)
+
+    def test_load_sqlite_without_key_english(self):
+        """load_sqlite falls back to canonical names when key_english is absent."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = os.path.join(tmpdir, "kjv_no_key.db")
+            self._make_kjv_db(
+                db_path,
+                [(66, 22, 21, "The grace of our Lord Jesus Christ be with you all.")],
+                include_key_english=False,
+            )
+            cmd = Command()
+            result = cmd.load_sqlite(Path(db_path))
+
+        self.assertEqual(len(result), 1)
+        revelation = result[0]
+        self.assertEqual(revelation["name"], "Revelation")
+        self.assertEqual(revelation["testament"], "NT")
+
+    def test_detect_format_sqlite_extensions(self):
+        """detect_format recognises .db, .sqlite, and .sqlite3 as sqlite."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        cmd = Command()
+        for ext in [".db", ".sqlite", ".sqlite3"]:
+            with self.subTest(ext=ext):
+                self.assertEqual(cmd.detect_format(Path(f"kjv{ext}")), "sqlite")
+
+    def test_import_kjv_command_sqlite_format(self):
+        """The management command can import a full book from a KJV SQLite file."""
+        from django.core.management import call_command
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = os.path.join(tmpdir, "kjv.db")
+            self._make_kjv_db(
+                db_path,
+                [
+                    (43, 1, 1, "In the beginning was the Word."),
+                    (43, 1, 2, "The same was in the beginning with God."),
+                    (43, 3, 16, "For God so loved the world..."),
+                ],
+            )
+            call_command(
+                "import_kjv",
+                file=db_path,
+                format="sqlite",
+                clear=True,
+                verbosity=0,
+            )
+
+        self.assertEqual(BibleBook.objects.count(), 1)
+        self.assertEqual(BibleVerse.objects.count(), 3)
+        book = BibleBook.objects.get(slug="john")
+        self.assertEqual(book.chapters, 21)

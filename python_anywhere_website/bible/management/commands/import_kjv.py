@@ -3,6 +3,7 @@ from bible.models import BibleBook, BibleVerse
 import json
 import csv
 import re
+import sqlite3
 from pathlib import Path
 
 
@@ -18,7 +19,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--format",
             type=str,
-            choices=["json", "csv", "txt", "auto"],
+            choices=["json", "csv", "txt", "sqlite", "auto"],
             default="auto",
             help="Format of the input file (auto-detect if not specified)",
         )
@@ -57,6 +58,8 @@ class Command(BaseCommand):
                 bible_data = self.load_csv(file_path)
             elif file_format == "txt":
                 bible_data = self.load_txt(file_path)
+            elif file_format == "sqlite":
+                bible_data = self.load_sqlite(file_path)
             else:
                 self.stderr.write(
                     self.style.ERROR(f"Unsupported format: {file_format}")
@@ -135,6 +138,8 @@ class Command(BaseCommand):
             return "json"
         elif suffix == ".csv":
             return "csv"
+        elif suffix in [".db", ".sqlite", ".sqlite3"]:
+            return "sqlite"
         elif suffix in [".txt", ".text"]:
             return "txt"
         return "txt"  # Default to txt
@@ -255,6 +260,159 @@ class Command(BaseCommand):
                 # This is more complex and would need more context
 
         return list(books_dict.values())
+
+    # KJV canonical book metadata: (name, slug, testament, chapter_count)
+    # Indexed by standard book number (1-66).
+    _KJV_BOOK_INFO = [
+        None,  # placeholder so index 1 = Genesis
+        ("Genesis", "genesis", "OT", 50),
+        ("Exodus", "exodus", "OT", 40),
+        ("Leviticus", "leviticus", "OT", 27),
+        ("Numbers", "numbers", "OT", 36),
+        ("Deuteronomy", "deuteronomy", "OT", 34),
+        ("Joshua", "joshua", "OT", 24),
+        ("Judges", "judges", "OT", 21),
+        ("Ruth", "ruth", "OT", 4),
+        ("1 Samuel", "1-samuel", "OT", 31),
+        ("2 Samuel", "2-samuel", "OT", 24),
+        ("1 Kings", "1-kings", "OT", 22),
+        ("2 Kings", "2-kings", "OT", 25),
+        ("1 Chronicles", "1-chronicles", "OT", 29),
+        ("2 Chronicles", "2-chronicles", "OT", 36),
+        ("Ezra", "ezra", "OT", 10),
+        ("Nehemiah", "nehemiah", "OT", 13),
+        ("Esther", "esther", "OT", 10),
+        ("Job", "job", "OT", 42),
+        ("Psalms", "psalms", "OT", 150),
+        ("Proverbs", "proverbs", "OT", 31),
+        ("Ecclesiastes", "ecclesiastes", "OT", 12),
+        ("Song of Solomon", "song-of-solomon", "OT", 8),
+        ("Isaiah", "isaiah", "OT", 66),
+        ("Jeremiah", "jeremiah", "OT", 52),
+        ("Lamentations", "lamentations", "OT", 5),
+        ("Ezekiel", "ezekiel", "OT", 48),
+        ("Daniel", "daniel", "OT", 12),
+        ("Hosea", "hosea", "OT", 14),
+        ("Joel", "joel", "OT", 3),
+        ("Amos", "amos", "OT", 9),
+        ("Obadiah", "obadiah", "OT", 1),
+        ("Jonah", "jonah", "OT", 4),
+        ("Micah", "micah", "OT", 7),
+        ("Nahum", "nahum", "OT", 3),
+        ("Habakkuk", "habakkuk", "OT", 3),
+        ("Zephaniah", "zephaniah", "OT", 3),
+        ("Haggai", "haggai", "OT", 2),
+        ("Zechariah", "zechariah", "OT", 14),
+        ("Malachi", "malachi", "OT", 4),
+        ("Matthew", "matthew", "NT", 28),
+        ("Mark", "mark", "NT", 16),
+        ("Luke", "luke", "NT", 24),
+        ("John", "john", "NT", 21),
+        ("Acts", "acts", "NT", 28),
+        ("Romans", "romans", "NT", 16),
+        ("1 Corinthians", "1-corinthians", "NT", 16),
+        ("2 Corinthians", "2-corinthians", "NT", 13),
+        ("Galatians", "galatians", "NT", 6),
+        ("Ephesians", "ephesians", "NT", 6),
+        ("Philippians", "philippians", "NT", 4),
+        ("Colossians", "colossians", "NT", 4),
+        ("1 Thessalonians", "1-thessalonians", "NT", 5),
+        ("2 Thessalonians", "2-thessalonians", "NT", 3),
+        ("1 Timothy", "1-timothy", "NT", 6),
+        ("2 Timothy", "2-timothy", "NT", 4),
+        ("Titus", "titus", "NT", 3),
+        ("Philemon", "philemon", "NT", 1),
+        ("Hebrews", "hebrews", "NT", 13),
+        ("James", "james", "NT", 5),
+        ("1 Peter", "1-peter", "NT", 5),
+        ("2 Peter", "2-peter", "NT", 3),
+        ("1 John", "1-john", "NT", 5),
+        ("2 John", "2-john", "NT", 1),
+        ("3 John", "3-john", "NT", 1),
+        ("Jude", "jude", "NT", 1),
+        ("Revelation", "revelation", "NT", 22),
+    ]
+
+    def load_sqlite(self, file_path):
+        """
+        Load Bible data from a KJV SQLite database file.
+
+        Expected schema (used by many open-source KJV SQLite datasets):
+          key_english(b INTEGER, n TEXT)   -- book number -> book name
+          t_kjv(b INTEGER, c INTEGER, v INTEGER, t TEXT)
+                                           -- book, chapter, verse, text
+
+        Book numbers follow the standard 1-66 KJV ordering.
+        If key_english is absent, canonical names from _KJV_BOOK_INFO are used.
+        """
+        books_dict = {}
+
+        conn = sqlite3.connect(str(file_path))
+        try:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            # Build a book-number -> name mapping from key_english if available.
+            book_names = {}
+            try:
+                cursor.execute("SELECT b, n FROM key_english ORDER BY b")
+                for row in cursor.fetchall():
+                    book_names[row["b"]] = row["n"]
+            except sqlite3.OperationalError:
+                # key_english table not present; fall back to canonical names.
+                pass
+
+            # Read all verses from t_kjv.
+            cursor.execute("SELECT b, c, v, t FROM t_kjv ORDER BY b, c, v")
+            rows = cursor.fetchall()
+        finally:
+            conn.close()
+
+        for row in rows:
+            book_num = row["b"]
+            chapter = row["c"]
+            verse = row["v"]
+            text = row["t"]
+
+            if book_num not in books_dict:
+                # Determine metadata from key_english or canonical table.
+                if book_names.get(book_num):
+                    db_name = book_names[book_num]
+                elif 1 <= book_num <= 66 and self._KJV_BOOK_INFO[book_num]:
+                    db_name = self._KJV_BOOK_INFO[book_num][0]
+                else:
+                    db_name = f"Book {book_num}"
+
+                # Use canonical metadata when available; fall back to guessing.
+                if 1 <= book_num <= 66 and self._KJV_BOOK_INFO[book_num]:
+                    canon_name, slug, testament, chapter_count = self._KJV_BOOK_INFO[
+                        book_num
+                    ]
+                    name = db_name if db_name else canon_name
+                else:
+                    name = db_name
+                    slug = name.lower().replace(" ", "-")
+                    testament = "OT" if book_num <= 39 else "NT"
+                    chapter_count = 0  # will be updated below
+
+                books_dict[book_num] = {
+                    "name": name,
+                    "slug": slug,
+                    "order": book_num,
+                    "testament": testament,
+                    "chapters": chapter_count,
+                    "verses": [],
+                }
+
+            # Update chapter count if we didn't have canonical data.
+            if chapter > books_dict[book_num]["chapters"]:
+                books_dict[book_num]["chapters"] = chapter
+
+            books_dict[book_num]["verses"].append(
+                {"chapter": chapter, "verse": verse, "text": text}
+            )
+
+        return [books_dict[k] for k in sorted(books_dict)]
 
     def get_sample_data(self):
         """
