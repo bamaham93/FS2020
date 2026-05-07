@@ -224,7 +224,9 @@ class TestAccessControl(TestCase):
 
     def test_new_message_modal_is_scrollable(self):
         """Send modal on new message page should use Bootstrap scrollable dialog."""
-        PrayerGroup.objects.create(name="Prayer Team")
+        prayer_groups_count = 25
+        for index in range(1, prayer_groups_count + 1):
+            PrayerGroup.objects.create(name=f"Prayer Team {index}")
         PrayerMessage.objects.create(
             subject="Test Subject",
             message="Test content",
@@ -237,6 +239,8 @@ class TestAccessControl(TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertContains(response, "modal-dialog modal-dialog-scrollable")
+        self.assertContains(response, "Test Subject")
+        self.assertContains(response, f"Prayer Team {prayer_groups_count}")
 
     def test_staff_views_blocked_for_regular_users(self):
         """
