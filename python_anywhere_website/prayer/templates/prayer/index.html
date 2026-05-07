@@ -6,15 +6,15 @@
 
             {% if user.is_staff %}
             <div class="col">
-                <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:new_message' %}" aria-label="Open message composer to create a new message">
+                <a class="card-accessible text-decoration-none text-dark" href="{% url 'prayer:message_list' %}" aria-label="Open prayer message list">
                     <div class="card h-100 shadow-sm home-card">
                         <img alt="Create Message" class="card-img-top"
                              src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=870&q=80">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">Create Message</h5>
-                            <p class="card-text flex-grow-1">Compose a new message to share with one or more prayer groups.</p>
+                            <p class="card-text flex-grow-1">View saved messages, review groups, open details, and send updates.</p>
                             <div class="mt-3">
-                                <div class="accessible-cta" role="button">Open Message Composer</div>
+                                <div class="accessible-cta" role="button">Open Messages</div>
                             </div>
                         </div>
                     </div>

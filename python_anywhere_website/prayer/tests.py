@@ -178,6 +178,7 @@ class TestAccessControl(TestCase):
 
         # Views that should require login
         protected_urls = [
+            "/prayer/messages",
             "/prayer/new-message",
             "/prayer/groups",
             "/prayer/send-message/1",
@@ -218,6 +219,10 @@ class TestAccessControl(TestCase):
         response = client.get("/prayer/new-message")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
+        # Test message_list view (staff only)
+        response = client.get("/prayer/messages")
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
         # Test groups view (staff only)
         response = client.get("/prayer/groups")
         self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -247,6 +252,14 @@ class TestAccessControl(TestCase):
             response.status_code,
             [302, 403],
             "new_message should be blocked for non-staff users",
+        )
+
+        # Test message_list view - should redirect (403 or 302)
+        response = client.get("/prayer/messages")
+        self.assertIn(
+            response.status_code,
+            [302, 403],
+            "message_list should be blocked for non-staff users",
         )
 
         # Test groups view - should redirect (403 or 302)
@@ -972,6 +985,37 @@ class TestPrayerLegalLinks(TestCase):
         self.assertContains(response, "Terms and Conditions")
         self.assertContains(response, "/core_app/privacy-policy/")
         self.assertContains(response, "/core_app/terms-of-service/")
+
+
+class TestMessageListView(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="messageliststaff", password="pw", is_staff=True
+        )
+        self.client.force_login(self.staff)
+
+        self.group = PrayerGroup.objects.create(name="Announcements", short_description="A")
+        self.message = PrayerMessage.objects.create(
+            name="Prayer Team",
+            subject="Weekly Update",
+            message="This is a test message for the list page.",
+        )
+        self.message.groups.add(self.group)
+
+    def test_message_list_renders_cards_with_actions(self):
+        response = self.client.get(reverse("prayer:message_list"))
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Weekly Update")
+        self.assertContains(response, "Announcements")
+        self.assertContains(response, "View Details")
+        self.assertContains(response, "Send")
+        self.assertContains(
+            response, reverse("prayer:message-detail", kwargs={"id": self.message.id})
+        )
+        self.assertContains(
+            response, reverse("prayer:send_message", kwargs={"id": self.message.id})
+        )
 
 
 class TestSMSLogging(TestCase):
