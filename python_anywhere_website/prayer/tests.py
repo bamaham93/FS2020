@@ -5,6 +5,8 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import reverse
 
+from prayer.models import PrayerGroup, PrayerMessage
+
 
 # Create your tests here.
 class TestPrayerModule(TestCase):
@@ -219,6 +221,22 @@ class TestAccessControl(TestCase):
         # Test groups view (staff only)
         response = client.get("/prayer/groups")
         self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_new_message_modal_is_scrollable(self):
+        """Send modal on new message page should use Bootstrap scrollable dialog."""
+        PrayerGroup.objects.create(name="Prayer Team")
+        PrayerMessage.objects.create(
+            subject="Test Subject",
+            message="Test content",
+            name="Staff User",
+        )
+        client = Client()
+        client.force_login(self.staff_user)
+
+        response = client.get("/prayer/new-message")
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "modal-dialog modal-dialog-scrollable")
 
     def test_staff_views_blocked_for_regular_users(self):
         """
