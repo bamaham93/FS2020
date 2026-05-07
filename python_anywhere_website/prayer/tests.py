@@ -222,25 +222,16 @@ class TestAccessControl(TestCase):
         response = client.get("/prayer/groups")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_new_message_modal_is_scrollable(self):
-        """Send modal on new message page should use Bootstrap scrollable dialog."""
-        prayer_groups_count = 25
-        for index in range(1, prayer_groups_count + 1):
-            PrayerGroup.objects.create(name=f"Prayer Team {index}")
-        PrayerMessage.objects.create(
-            subject="Test Subject",
-            message="Test content",
-            name="Staff User",
-        )
+    def test_new_message_page_shows_workflow_explanation(self):
+        """New message page should direct staff into the message detail workflow."""
         client = Client()
         client.force_login(self.staff_user)
 
         response = client.get("/prayer/new-message")
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertContains(response, "modal-dialog modal-dialog-scrollable")
-        self.assertContains(response, "Test Subject")
-        self.assertContains(response, f"Prayer Team {prayer_groups_count}")
+        self.assertContains(response, "message details page")
+        self.assertContains(response, "Save and Continue")
 
     def test_staff_views_blocked_for_regular_users(self):
         """
@@ -368,6 +359,11 @@ class TestPrayerForms(TestCase):
         }
         response = client.post(endpoint, data)
         self.assertEqual(response.status_code, 302)
+        created_message = PrayerMessage.objects.latest("id")
+        self.assertRedirects(
+            response,
+            reverse("prayer:message-detail", kwargs={"id": created_message.id}),
+        )
 
     def test_new_person_form(self):
         """ """
@@ -1199,30 +1195,26 @@ class TestSMSLogging(TestCase):
         self.assertIn("FAIL", str(log_fail))
         self.assertIn("Bob", str(log_ok))
 
-    def test_new_message_page_shows_group_badges(self):
+    def test_new_message_form_redirect_preserves_selected_groups(self):
         """
-        Messages with assigned groups should show badge tokens on the new-message page.
-        Messages with no groups should show 'No groups selected' text.
+        Groups selected during message creation should still be selected on the
+        detail page after the redirect.
         """
-        self.message.groups.set([self.group_a, self.group_b])
-
-        from prayer.models import PrayerMessage
-
-        message_no_groups = PrayerMessage.objects.create(
-            name="No Group Sender",
-            subject="No Group Subject",
-            message="No group message.",
-        )
-
         client = Client()
         client.force_login(self.staff)
-        response = client.get("/prayer/new-message")
+        response = client.post(
+            "/prayer/new-message",
+            {
+                "name": "Grouped Sender",
+                "subject": "Grouped Subject",
+                "message": "Grouped message.",
+                "groups": [self.group_a.id, self.group_b.id],
+            },
+            follow=True,
+        )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-
-        # Message with groups should show group name badges
-        self.assertContains(response, "Group A")
-        self.assertContains(response, "Group B")
-
-        # Message without groups should show fallback text
-        self.assertContains(response, "No groups selected")
+        self.assertEqual(
+            response.context["associated_group_ids"],
+            {self.group_a.id, self.group_b.id},
+        )

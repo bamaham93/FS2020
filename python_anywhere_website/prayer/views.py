@@ -56,38 +56,17 @@ def index(request) -> render:
 @staff_member_required
 def new_message(request) -> render:
     """
-    Create a new message.
+    Create a new message and redirect to its detail page for review and sending.
     Staff-only view for composing messages to prayer groups.
     """
-    # Check if logic.queries classes are available
-    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
-        try:
-            msg_query = PrayerMessageQueries()
-            pg_queries = PrayerGroupQueries()
-            prayer_groups = pg_queries.get_all()
-            all_messages = reversed(msg_query.get_all_messages())
-        except (AttributeError, ImportError):
-            prayer_groups = PrayerGroup.objects.all()
-            all_messages = reversed(PrayerMessage.objects.all())
-    else:
-        prayer_groups = PrayerGroup.objects.all()
-        all_messages = reversed(PrayerMessage.objects.all())
-
-    context = {
-        "form": NewMessageForm(),
-        "messages": all_messages,
-        "prayer_groups": prayer_groups,
-    }
+    form = NewMessageForm(request.POST or None)
     if request.method == "POST":
-        form = NewMessageForm(request.POST)
         if form.is_valid():
-            form.save()
+            message = form.save()
             messages.success(request, "Your message was saved!")
-            return redirect("prayer:new_message")
-        else:
-            context["form"] = form
-            messages.warning(request, "There was a problem with your submission.")
-    return render(request, "prayer/new_message.html", context)
+            return redirect("prayer:message-detail", id=message.id)
+        messages.warning(request, "There was a problem with your submission.")
+    return render(request, "prayer/new_message.html", {"form": form})
 
 
 @login_required()
