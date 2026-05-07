@@ -56,7 +56,7 @@ def index(request) -> render:
 @staff_member_required
 def new_message(request) -> render:
     """
-    Create a new message, then continue in the message detail workflow.
+    Create a new message and redirect to its detail page for review and sending.
     Staff-only view for composing messages to prayer groups.
     """
     context = {"form": NewMessageForm()}
