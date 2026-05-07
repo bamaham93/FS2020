@@ -5,83 +5,12 @@
 {% include 'messages.html' %}
 
 {% block section1 %}
-    <h1>Messages</h1>
-    <div class="container">
-        {% for message in messages %}
-            <div class="card m-3">
-                <div class="card-header">
-                    <h3>{{ message.name }}</h3>
-                </div>
-                <div class="card-body">
-                    Subject: {{ message.subject }}
-                    <p class="card-text">{{ message.message }}</p>
-                    {% if message.groups.all %}
-                    <div class="mt-2">
-                        <small class="text-muted">Groups: </small>
-                        {% for group in message.groups.all %}
-                            <span class="badge bg-primary me-1">{{ group.name }}</span>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <div class="mt-2">
-                        <small class="text-muted fst-italic">No groups selected</small>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="d-flex justify-content-between m-2">
-                    <a href="{% url 'prayer:message-detail' id=message.id%}">
-                        <button class="btn btn-secondary">Message Details</button>
-                    </a>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                            data-bs-target="#send-message-modal-{{ message.id }}">
-                      <strong>Send</strong>
-                    </button>
-<!-- Modal -->
-<div class="modal fade" id="send-message-modal-{{ message.id }}" tabindex="-1" aria-labelledby="sendModalLabel{{ message.id }}" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="sendModalLabel{{ message.id }}">Send a Message</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h3>{{ message }}</h3>
-        <h3>{{ message.subject }}</h3>
-        <p>{{ message.message }}</p>
-        <hr>
-        <h2>Send this message to:</h2>
-        <div class="col">
-        <form action="{% url 'prayer:message-detail' message.id%}" method="POST">
-            {% csrf_token %}
-                {% for group in prayer_groups %}
-                    <div class="container">
-                        <input class="" id="send_to_{{ message.id }}_{{ group.id }}" type="checkbox" name="groups" value="{{ group.name }}"
-                            {% if group in message.groups.all %}checked{% endif %}>
-                        <label class="" for="send_to_{{ message.id }}_{{ group.id }}">{{ group.name }}</label>
-                    </div>
-                    {% endfor %}
-            <hr>
-                <input type="submit" class="btn btn-success" value="Send Message">
-            </form>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    <h3>Create a new message</h3>
+    <h1>Create a new message</h1>
+    <p class="text-muted">After saving, you'll be taken to the message details page to review and send it.</p>
     {% include 'messages.html' %}
     <form action="#" method="POST">
         {% csrf_token %}
         {{ form | crispy }}
-        <input type="submit" value="Submit">
+        <input class="btn btn-primary" type="submit" value="Save and continue">
     </form>
 {% endblock %}
