@@ -231,7 +231,7 @@ class TestAccessControl(TestCase):
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertContains(response, "message details page")
-        self.assertContains(response, "Save and continue")
+        self.assertContains(response, "Save and Continue")
 
     def test_staff_views_blocked_for_regular_users(self):
         """

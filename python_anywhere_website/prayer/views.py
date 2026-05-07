@@ -59,17 +59,14 @@ def new_message(request) -> render:
     Create a new message and redirect to its detail page for review and sending.
     Staff-only view for composing messages to prayer groups.
     """
-    context = {"form": NewMessageForm()}
+    form = NewMessageForm(request.POST or None)
     if request.method == "POST":
-        form = NewMessageForm(request.POST)
         if form.is_valid():
             message = form.save()
             messages.success(request, "Your message was saved!")
             return redirect("prayer:message-detail", id=message.id)
-        else:
-            context["form"] = form
-            messages.warning(request, "There was a problem with your submission.")
-    return render(request, "prayer/new_message.html", context)
+        messages.warning(request, "There was a problem with your submission.")
+    return render(request, "prayer/new_message.html", {"form": form})
 
 
 @login_required()
