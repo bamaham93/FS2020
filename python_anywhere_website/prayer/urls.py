@@ -8,6 +8,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("index", views.index, name="index"),
     path("signup", views.public_signup, name="public_signup"),
+    path("messages", views.message_list, name="message_list"),
     path("new-message", views.new_message, name="new_message"),
     path("message-detail/<int:id>", views.message_detail, name="message-detail"),
     path("send-message/<int:id>", views.send_message, name="send_message"),
@@ -40,4 +41,3 @@ urlpatterns = [
     path("permissions/<int:id>", views.permissions, name="permissions"),
     path("messages/inbound", views.inbound_messages, name="inbound_messages"),
 ]
-

@@ -62,6 +62,7 @@ A messaging system that allows sending SMS messages to contact lists (prayer gro
 
 * **A2P-Compliant Signup**: Users can opt-in to receive SMS messages during signup with clear consent language
 * **Message Creation**: Create messages through the web UI, then review and send them from the details page
+* **Message List View**: Browse all saved messages as cards, see targeted groups as pills, and jump to detail/send actions
 * **Group Messaging**: Send messages to predefined groups of contacts
 * **Consent Management**: Only sends messages to contacts who have explicitly consented to SMS
 * **Privacy-First**: Includes consent tracking with timestamps and opt-out instructions

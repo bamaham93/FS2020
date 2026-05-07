@@ -71,6 +71,20 @@ def new_message(request) -> render:
 
 @login_required()
 @staff_member_required
+def message_list(request):
+    """
+    List all saved messages for staff with quick access to details and sending.
+    """
+    prayer_messages = PrayerMessage.objects.prefetch_related("groups").order_by(
+        "-created_at"
+    )
+    return render(
+        request, "prayer/message_list.html", {"prayer_messages": prayer_messages}
+    )
+
+
+@login_required()
+@staff_member_required
 def message_detail(request, id):
     """
     See message details and send to prayer groups.
