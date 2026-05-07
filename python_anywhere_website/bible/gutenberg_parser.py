@@ -173,7 +173,7 @@ def parse_gutenberg_kjv(file_path, debug=False):
             break
 
     if start_idx is None:
-        # No Gutenberg TOC found; treat the whole file as Bible content.
+        # No Genesis header found; treat the whole file as Bible content.
         start_idx = 0
 
     lines = lines[start_idx:]
