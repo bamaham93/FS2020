@@ -51,6 +51,11 @@ A portfolio gallery for displaying my photos and photo essays with flexible arti
 
 Displays the current status and location for each of the aircraft in my personal MSFS2020 fleet.
 
+# Bible Data
+
+Bible text is maintained in the SQLite database used by the Django app.
+Repository artifacts for `pg10.txt` and Gutenberg-specific parsing/import have been removed.
+
 # Prayer/Messaging
 
 A messaging system that allows sending SMS messages to contact lists (prayer groups). Features include:

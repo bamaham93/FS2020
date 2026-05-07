@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 from bible.models import BibleBook, BibleVerse
-from bible.gutenberg_parser import parse_gutenberg_kjv
 import json
 import csv
 import re
@@ -19,7 +18,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--format",
             type=str,
-            choices=["json", "csv", "txt", "gutenberg", "auto"],
+            choices=["json", "csv", "txt", "auto"],
             default="auto",
             help="Format of the input file (auto-detect if not specified)",
         )
@@ -56,8 +55,6 @@ class Command(BaseCommand):
                 bible_data = self.load_json(file_path)
             elif file_format == "csv":
                 bible_data = self.load_csv(file_path)
-            elif file_format == "gutenberg":
-                bible_data = parse_gutenberg_kjv(file_path)
             elif file_format == "txt":
                 bible_data = self.load_txt(file_path)
             else:
@@ -139,14 +136,6 @@ class Command(BaseCommand):
         elif suffix == ".csv":
             return "csv"
         elif suffix in [".txt", ".text"]:
-            # Try to detect if it's a Gutenberg file
-            with open(file_path, "r", encoding="utf-8") as f:
-                first_kb = f.read(1024)
-                if (
-                    "Project Gutenberg" in first_kb
-                    or "The First Book of Moses" in first_kb
-                ):
-                    return "gutenberg"
             return "txt"
         return "txt"  # Default to txt
 
@@ -270,7 +259,7 @@ class Command(BaseCommand):
     def get_sample_data(self):
         """
         Returns sample Bible data for testing.
-        In production, this would load from Project Gutenberg KJV text.
+        In production, Bible content should be maintained in the SQLite database.
         """
         return [
             {
