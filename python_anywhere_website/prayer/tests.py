@@ -1211,5 +1211,7 @@ class TestSMSLogging(TestCase):
         )
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertContains(response, 'value="Group A" checked')
-        self.assertContains(response, 'value="Group B" checked')
+        self.assertEqual(
+            response.context["associated_group_ids"],
+            {self.group_a.id, self.group_b.id},
+        )
