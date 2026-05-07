@@ -222,7 +222,7 @@ class TestAccessControl(TestCase):
         response = client.get("/prayer/groups")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_new_message_page_explains_redirect_to_detail_workflow(self):
+    def test_new_message_page_shows_workflow_explanation(self):
         """New message page should direct staff into the message detail workflow."""
         client = Client()
         client.force_login(self.staff_user)
