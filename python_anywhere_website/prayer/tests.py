@@ -994,7 +994,9 @@ class TestMessageListView(TestCase):
         )
         self.client.force_login(self.staff)
 
-        self.group = PrayerGroup.objects.create(name="Announcements", short_description="A")
+        self.group = PrayerGroup.objects.create(
+            name="Announcements", short_description="A"
+        )
         self.message = PrayerMessage.objects.create(
             name="Prayer Team",
             subject="Weekly Update",

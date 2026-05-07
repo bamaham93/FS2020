@@ -78,7 +78,9 @@ def message_list(request) -> render:
     prayer_messages = PrayerMessage.objects.prefetch_related("groups").order_by(
         "-created_at"
     )
-    return render(request, "prayer/message_list.html", {"prayer_messages": prayer_messages})
+    return render(
+        request, "prayer/message_list.html", {"prayer_messages": prayer_messages}
+    )
 
 
 @login_required()
