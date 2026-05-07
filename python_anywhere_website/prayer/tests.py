@@ -360,7 +360,10 @@ class TestPrayerForms(TestCase):
         response = client.post(endpoint, data)
         self.assertEqual(response.status_code, 302)
         created_message = PrayerMessage.objects.latest("id")
-        self.assertRedirects(response, f"/prayer/message-detail/{created_message.id}")
+        self.assertRedirects(
+            response,
+            reverse("prayer:message-detail", kwargs={"id": created_message.id}),
+        )
 
     def test_new_person_form(self):
         """ """
