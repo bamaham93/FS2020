@@ -388,7 +388,7 @@ class Command(BaseCommand):
                     canon_name, slug, testament, chapter_count = self._KJV_BOOK_INFO[
                         book_num
                     ]
-                    name = db_name if db_name else canon_name
+                    name = db_name or canon_name
                 else:
                     name = db_name
                     slug = name.lower().replace(" ", "-")
@@ -412,7 +412,7 @@ class Command(BaseCommand):
                 {"chapter": chapter, "verse": verse, "text": text}
             )
 
-        return [books_dict[k] for k in sorted(books_dict)]
+        return [books_dict[k] for k in sorted(books_dict.keys())]
 
     def get_sample_data(self):
         """
