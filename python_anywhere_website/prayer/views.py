@@ -71,7 +71,7 @@ def new_message(request) -> render:
 
 @login_required()
 @staff_member_required
-def message_list(request) -> render:
+def message_list(request):
     """
     List all saved messages for staff with quick access to details and sending.
     """
