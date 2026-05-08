@@ -7,6 +7,12 @@ app_name = "bible"
 urlpatterns = [
     # Reader URLs
     path("", views.book_list, name="index"),
+    path("reader/", views.continuous_reader, name="continuous_reader"),
+    path(
+        "reader/<slug:book_slug>/<int:chapter>/",
+        views.continuous_reader,
+        name="continuous_reader_chapter",
+    ),
     path("<slug:book_slug>/", views.chapter_list, name="chapter_list"),
     path(
         "<slug:book_slug>/<int:chapter>/", views.chapter_reader, name="chapter_reader"

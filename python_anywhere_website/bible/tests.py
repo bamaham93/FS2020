@@ -114,6 +114,7 @@ class BibleViewsTest(TestCase):
         response = self.client.get(reverse("bible:chapter_list", args=["john"]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "John")
+        self.assertContains(response, reverse("bible:chapter_reader", args=["john", 1]))
 
     def test_chapter_reader_view(self):
         response = self.client.get(reverse("bible:chapter_reader", args=["john", 3]))
@@ -124,6 +125,26 @@ class BibleViewsTest(TestCase):
     def test_invalid_chapter(self):
         response = self.client.get(reverse("bible:chapter_reader", args=["john", 999]))
         self.assertEqual(response.status_code, 404)
+
+    def test_continuous_reader_view(self):
+        response = self.client.get(reverse("bible:continuous_reader"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Continuous KJV Reader")
+        self.assertContains(response, 'data-book="john"')
+        self.assertContains(response, 'data-chapter="1"')
+
+    def test_continuous_reader_hyperlink_targets(self):
+        response = self.client.get(reverse("bible:continuous_reader"))
+        self.assertEqual(response.status_code, 200)
+        expected_url = reverse("bible:continuous_reader_chapter", args=["john", 1])
+        self.assertContains(response, f'href="{expected_url}#chapter-john-1"')
+
+    def test_continuous_reader_accepts_book_chapter_url(self):
+        response = self.client.get(
+            reverse("bible:continuous_reader_chapter", args=["john", 3])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "chapter: 3")
 
 
 class BibleAPITest(TestCase):
