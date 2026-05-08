@@ -82,3 +82,40 @@ def chapter_reader(request, book_slug, chapter):
         "next_book": next_book if next_chapter else None,
     }
     return render(request, "bible/chapter_reader.html", context)
+
+
+def continuous_reader(request, book_slug=None, chapter=1):
+    """
+    Display a continuous Bible reader that lazy-loads chapters while scrolling.
+    /bible/reader/
+    """
+    books = list(BibleBook.objects.all())
+    first_book = books[0] if books else None
+    active_book = first_book
+
+    if book_slug:
+        active_book = next((book for book in books if book.slug == book_slug), first_book)
+
+    query_book = request.GET.get("book")
+    if query_book:
+        active_book = next((book for book in books if book.slug == query_book), active_book)
+
+    query_chapter = request.GET.get("chapter")
+    if query_chapter and query_chapter.isdigit():
+        chapter = int(query_chapter)
+
+    if active_book:
+        chapter = max(1, min(chapter, active_book.chapters))
+
+    books_with_chapters = [
+        {"slug": book.slug, "name": book.name, "chapters": list(range(1, book.chapters + 1))}
+        for book in books
+    ]
+
+    context = {
+        "books": books,
+        "books_with_chapters": books_with_chapters,
+        "initial_book": active_book,
+        "initial_chapter": chapter,
+    }
+    return render(request, "bible/continuous_reader.html", context)
