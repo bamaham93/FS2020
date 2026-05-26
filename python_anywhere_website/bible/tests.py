@@ -8,6 +8,7 @@ import os
 
 class BibleBookModelTest(TestCase):
     def setUp(self):
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -28,6 +29,7 @@ class BibleBookModelTest(TestCase):
 
 class BibleVerseModelTest(TestCase):
     def setUp(self):
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -50,6 +52,7 @@ class BibleVerseModelTest(TestCase):
 class BibleViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -167,6 +170,7 @@ class BibleViewsTest(TestCase):
 class BibleAPITest(TestCase):
     def setUp(self):
         self.client = Client()
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -232,6 +236,7 @@ class BibleAdminActionTest(TestCase):
         )
 
         # Create a test book
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="Test Book", slug="test-book", order=1, testament="OT", chapters=1
         )
@@ -553,6 +558,7 @@ class ImportKJVSQLiteTest(TestCase):
 </XMLBIBLE>
 """
 
+        BibleBook.objects.all().delete()
         book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
