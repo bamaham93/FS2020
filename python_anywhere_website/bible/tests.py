@@ -339,6 +339,9 @@ class BibleAdminActionTest(TestCase):
 class ImportKJVSQLiteTest(TestCase):
     """Tests for import_kjv management command's sqlite format support."""
 
+    def setUp(self):
+        BibleBook.objects.all().delete()
+
     def _make_kjv_db(self, path, rows, include_key_english=True):
         """Create a minimal KJV SQLite database at *path* with *rows*.
 
@@ -558,7 +561,6 @@ class ImportKJVSQLiteTest(TestCase):
 </XMLBIBLE>
 """
 
-        BibleBook.objects.all().delete()
         book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
