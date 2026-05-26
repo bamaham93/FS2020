@@ -1,9 +1,10 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from bible.models import BibleBook, BibleVerse
 import json
 import csv
 import re
 import sqlite3
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
@@ -14,12 +15,12 @@ class Command(BaseCommand):
         parser.add_argument(
             "--file",
             type=str,
-            help="Path to the data file (JSON, CSV, or TXT)",
+            help="Path to the data file (JSON, CSV, TXT, SQLite, or XML)",
         )
         parser.add_argument(
             "--format",
             type=str,
-            choices=["json", "csv", "txt", "sqlite", "auto"],
+            choices=["json", "csv", "txt", "sqlite", "xml", "auto"],
             default="auto",
             help="Format of the input file (auto-detect if not specified)",
         )
@@ -27,6 +28,11 @@ class Command(BaseCommand):
             "--clear",
             action="store_true",
             help="Clear existing Bible data before importing",
+        )
+        parser.add_argument(
+            "--sample",
+            action="store_true",
+            help="Use the small built-in sample dataset when no file is specified",
         )
 
     def handle(self, *args, **options):
@@ -38,7 +44,7 @@ class Command(BaseCommand):
             BibleVerse.objects.all().delete()
             BibleBook.objects.all().delete()
 
-        # Load data from file or use sample data
+        # Load data from file, bundled XML, or sample data.
         if options["file"]:
             file_path = Path(options["file"])
             if not file_path.exists():
@@ -60,14 +66,25 @@ class Command(BaseCommand):
                 bible_data = self.load_txt(file_path)
             elif file_format == "sqlite":
                 bible_data = self.load_sqlite(file_path)
+            elif file_format == "xml":
+                bible_data = self.load_xml(file_path)
             else:
                 self.stderr.write(
                     self.style.ERROR(f"Unsupported format: {file_format}")
                 )
                 return
         else:
-            self.stdout.write("No file specified, using sample data...")
-            bible_data = self.get_sample_data()
+            file_path = self.find_default_xml_file()
+            if file_path:
+                self.stdout.write(f"No file specified, using XML file: {file_path}")
+                bible_data = self.load_xml(file_path)
+            elif options["sample"]:
+                self.stdout.write("No XML file found, using sample data...")
+                bible_data = self.get_sample_data()
+            else:
+                raise CommandError(
+                    "No Bible data file specified and no bundled XML file was found."
+                )
 
         # Import books
         self.stdout.write("Creating books...")
@@ -75,11 +92,11 @@ class Command(BaseCommand):
         verses_created = 0
 
         for book_data in bible_data:
-            book, created = BibleBook.objects.get_or_create(
-                name=book_data["name"],
+            book, created = BibleBook.objects.update_or_create(
+                order=book_data["order"],
                 defaults={
+                    "name": book_data["name"],
                     "slug": book_data["slug"],
-                    "order": book_data["order"],
                     "testament": book_data["testament"],
                     "chapters": book_data["chapters"],
                 },
@@ -97,12 +114,19 @@ class Command(BaseCommand):
                 key = (verse_data["chapter"], verse_data["verse"])
                 seen_verses[key] = verse_data
 
+            existing_verses = {
+                (verse.chapter, verse.verse): verse
+                for verse in BibleVerse.objects.filter(book=book)
+            }
             verses_to_create = []
+            verses_to_update = []
             for (chapter, verse_num), verse_data in seen_verses.items():
-                # Check if verse already exists in database
-                if not BibleVerse.objects.filter(
-                    book=book, chapter=chapter, verse=verse_num
-                ).exists():
+                existing_verse = existing_verses.get((chapter, verse_num))
+                if existing_verse:
+                    if existing_verse.text != verse_data["text"]:
+                        existing_verse.text = verse_data["text"]
+                        verses_to_update.append(existing_verse)
+                else:
                     verses_to_create.append(
                         BibleVerse(
                             book=book,
@@ -116,6 +140,9 @@ class Command(BaseCommand):
                 BibleVerse.objects.bulk_create(verses_to_create)
                 verses_created += len(verses_to_create)
                 self.stdout.write(f"    Imported {len(verses_to_create)} verses")
+            if verses_to_update:
+                BibleVerse.objects.bulk_update(verses_to_update, ["text"])
+                self.stdout.write(f"    Updated {len(verses_to_update)} verses")
 
         total_books = BibleBook.objects.count()
         total_verses = BibleVerse.objects.count()
@@ -140,9 +167,36 @@ class Command(BaseCommand):
             return "csv"
         elif suffix in [".db", ".sqlite", ".sqlite3"]:
             return "sqlite"
+        elif suffix == ".xml":
+            return "xml"
         elif suffix in [".txt", ".text"]:
             return "txt"
         return "txt"  # Default to txt
+
+    def find_default_xml_file(self):
+        """Find a bundled Bible XML file without depending on a hard-coded name."""
+        command_path = Path(__file__).resolve()
+        app_root = command_path.parents[3]
+        project_root = command_path.parents[4]
+        candidates = [
+            app_root / "bible" / "data",
+            app_root / "data",
+            app_root,
+            project_root,
+        ]
+
+        for candidate in candidates:
+            if not candidate.exists():
+                continue
+            xml_files = sorted(
+                path
+                for path in candidate.glob("*.xml")
+                if ".idea" not in path.parts and path.is_file()
+            )
+            if xml_files:
+                return xml_files[0]
+
+        return None
 
     def load_json(self, file_path):
         """
@@ -260,6 +314,288 @@ class Command(BaseCommand):
                 # This is more complex and would need more context
 
         return list(books_dict.values())
+
+    def load_xml(self, file_path):
+        """
+        Load Bible data from XML.
+
+        Supports common KJV layouts, including Zefania-style:
+          BIBLEBOOK -> CHAPTER -> VERS
+        simple XML:
+          bible -> book -> chapter -> verse
+        and OSIS-style:
+          div(type=book) -> chapter -> verse
+        """
+        root = ET.parse(file_path).getroot()
+        books = self.load_simple_xml(root)
+        if books:
+            return books
+        books = self.load_zefania_xml(root)
+        if books:
+            return books
+        books = self.load_osis_xml(root)
+        if books:
+            return books
+        raise ValueError(f"Unsupported Bible XML structure: {file_path}")
+
+    def load_simple_xml(self, root):
+        books = []
+        if self.xml_tag(root) != "bible":
+            return books
+
+        for book_element in root:
+            if self.xml_tag(book_element) != "book":
+                continue
+
+            book_num = self.book_order_from_xml_num(book_element.attrib.get("num"))
+            if book_num is None:
+                book_num = len(books) + 1
+            book_info = self.book_info_for_order(book_num)
+
+            verses = []
+            max_chapter = 0
+            for chapter_element in book_element:
+                if self.xml_tag(chapter_element) != "chapter":
+                    continue
+                chapter = self.xml_int_attr(chapter_element, "num", "number")
+                if chapter is None:
+                    continue
+                max_chapter = max(max_chapter, chapter)
+
+                for verse_element in chapter_element:
+                    if self.xml_tag(verse_element) != "verse":
+                        continue
+                    verse = self.xml_int_attr(verse_element, "num", "number")
+                    if verse is None:
+                        continue
+                    text = " ".join("".join(verse_element.itertext()).split())
+                    verses.append({"chapter": chapter, "verse": verse, "text": text})
+
+            books.append(
+                {
+                    "name": book_info["name"],
+                    "slug": book_info["slug"],
+                    "order": book_num,
+                    "testament": book_info["testament"],
+                    "chapters": book_info["chapters"] or max_chapter,
+                    "verses": verses,
+                }
+            )
+
+        return books
+
+    def load_zefania_xml(self, root):
+        books = []
+        for book_element in root.iter():
+            if self.xml_tag(book_element) != "BIBLEBOOK":
+                continue
+
+            book_num = self.xml_int_attr(book_element, "bnumber", "bnum", "number")
+            if book_num is None:
+                book_num = len(books) + 1
+            book_info = self.book_info_for_order(book_num)
+            name = (
+                book_element.attrib.get("bname")
+                or book_element.attrib.get("name")
+                or book_info["name"]
+            )
+
+            verses = []
+            max_chapter = 0
+            for chapter_element in book_element:
+                if self.xml_tag(chapter_element) != "CHAPTER":
+                    continue
+                chapter = self.xml_int_attr(chapter_element, "cnumber", "number")
+                if chapter is None:
+                    continue
+                max_chapter = max(max_chapter, chapter)
+
+                for verse_element in chapter_element:
+                    if self.xml_tag(verse_element) != "VERS":
+                        continue
+                    verse = self.xml_int_attr(verse_element, "vnumber", "number")
+                    if verse is None:
+                        continue
+                    text = " ".join("".join(verse_element.itertext()).split())
+                    verses.append({"chapter": chapter, "verse": verse, "text": text})
+
+            books.append(
+                {
+                    "name": name,
+                    "slug": book_info["slug"],
+                    "order": book_num,
+                    "testament": book_info["testament"],
+                    "chapters": book_info["chapters"] or max_chapter,
+                    "verses": verses,
+                }
+            )
+
+        return books
+
+    def load_osis_xml(self, root):
+        books = []
+        for book_element in root.iter():
+            if self.xml_tag(book_element) != "div":
+                continue
+            if book_element.attrib.get("type") != "book":
+                continue
+
+            book_num = len(books) + 1
+            book_info = self.book_info_for_order(book_num)
+            name = book_element.attrib.get("canonicalTitle") or book_info["name"]
+
+            verses = []
+            max_chapter = 0
+            for chapter_element in book_element.iter():
+                if self.xml_tag(chapter_element) != "chapter":
+                    continue
+                chapter = self.chapter_from_osis_id(chapter_element.attrib.get("osisID"))
+                if chapter is None:
+                    continue
+                max_chapter = max(max_chapter, chapter)
+
+                for verse_element in chapter_element:
+                    if self.xml_tag(verse_element) != "verse":
+                        continue
+                    verse = self.verse_from_osis_id(verse_element.attrib.get("osisID"))
+                    if verse is None:
+                        continue
+                    text = " ".join("".join(verse_element.itertext()).split())
+                    verses.append({"chapter": chapter, "verse": verse, "text": text})
+
+            books.append(
+                {
+                    "name": name,
+                    "slug": book_info["slug"],
+                    "order": book_num,
+                    "testament": book_info["testament"],
+                    "chapters": book_info["chapters"] or max_chapter,
+                    "verses": verses,
+                }
+            )
+
+        return books
+
+    def book_info_for_order(self, book_num):
+        if 1 <= book_num <= 66 and self._KJV_BOOK_INFO[book_num]:
+            name, slug, testament, chapters = self._KJV_BOOK_INFO[book_num]
+            return {
+                "name": name,
+                "slug": slug,
+                "testament": testament,
+                "chapters": chapters,
+            }
+        return {
+            "name": f"Book {book_num}",
+            "slug": f"book-{book_num}",
+            "testament": "OT" if book_num <= 39 else "NT",
+            "chapters": 0,
+        }
+
+    def xml_tag(self, element):
+        return element.tag.rsplit("}", 1)[-1]
+
+    def xml_int_attr(self, element, *names):
+        for name in names:
+            value = element.attrib.get(name)
+            if value and value.isdigit():
+                return int(value)
+        return None
+
+    def book_order_from_xml_num(self, xml_num):
+        if not xml_num:
+            return None
+        if xml_num.isdigit():
+            return int(xml_num)
+
+        xml_books = [
+            "Gen",
+            "Exod",
+            "Lev",
+            "Num",
+            "Deut",
+            "Josh",
+            "Judg",
+            "Ruth",
+            "1Sam",
+            "2Sam",
+            "1Kgs",
+            "2Kgs",
+            "1Chr",
+            "2Chr",
+            "Ezra",
+            "Neh",
+            "Esth",
+            "Job",
+            "Ps",
+            "Prov",
+            "Eccl",
+            "Song",
+            "Isa",
+            "Jer",
+            "Lam",
+            "Ezek",
+            "Dan",
+            "Hos",
+            "Joel",
+            "Amos",
+            "Obad",
+            "Jonah",
+            "Mic",
+            "Nah",
+            "Hab",
+            "Zeph",
+            "Hag",
+            "Zech",
+            "Mal",
+            "Matt",
+            "Mark",
+            "Luke",
+            "John",
+            "Acts",
+            "Rom",
+            "1Cor",
+            "2Cor",
+            "Gal",
+            "Eph",
+            "Phil",
+            "Col",
+            "1Thess",
+            "2Thess",
+            "1Tim",
+            "2Tim",
+            "Titus",
+            "Phlm",
+            "Heb",
+            "Jas",
+            "1Pet",
+            "2Pet",
+            "1John",
+            "2John",
+            "3John",
+            "Jude",
+            "Rev",
+        ]
+        try:
+            return xml_books.index(xml_num) + 1
+        except ValueError:
+            return None
+
+    def chapter_from_osis_id(self, osis_id):
+        if not osis_id:
+            return None
+        parts = osis_id.split(".")
+        if len(parts) >= 2 and parts[-1].isdigit():
+            return int(parts[-1])
+        return None
+
+    def verse_from_osis_id(self, osis_id):
+        if not osis_id:
+            return None
+        parts = osis_id.split(".")
+        if len(parts) >= 3 and parts[-1].isdigit():
+            return int(parts[-1])
+        return None
 
     # KJV canonical book metadata: (name, slug, testament, chapter_count)
     # Indexed by standard book number (1-66).

@@ -146,6 +146,23 @@ class BibleViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "chapter: 3")
 
+    def test_seed_kjv_books_backfills_all_canonical_books(self):
+        """The deployment migration should repair databases with sample data only."""
+        import importlib
+        from django.apps import apps
+
+        migration = importlib.import_module("bible.migrations.0002_seed_kjv_books")
+
+        BibleBook.objects.exclude(slug__in=["genesis", "john", "revelation"]).delete()
+
+        migration.seed_kjv_books(apps, None)
+
+        self.assertEqual(BibleBook.objects.count(), 66)
+        self.assertEqual(BibleBook.objects.filter(testament="OT").count(), 39)
+        self.assertEqual(BibleBook.objects.filter(testament="NT").count(), 27)
+        self.assertEqual(BibleBook.objects.get(order=1).slug, "genesis")
+        self.assertEqual(BibleBook.objects.get(order=66).slug, "revelation")
+
 
 class BibleAPITest(TestCase):
     def setUp(self):
@@ -412,6 +429,87 @@ class ImportKJVSQLiteTest(TestCase):
             with self.subTest(ext=ext):
                 self.assertEqual(cmd.detect_format(Path(f"kjv{ext}")), "sqlite")
 
+    def test_detect_format_xml_extension(self):
+        """detect_format recognises XML Bible files."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        cmd = Command()
+        self.assertEqual(cmd.detect_format(Path("kjv.xml")), "xml")
+
+    def test_load_xml_zefania_format(self):
+        """load_xml parses bundled Zefania-style KJV XML files."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        xml = """<?xml version="1.0" encoding="utf-8"?>
+<XMLBIBLE>
+  <BIBLEBOOK bnumber="1" bname="Genesis">
+    <CHAPTER cnumber="1">
+      <VERS vnumber="1">In the beginning God created the heaven and the earth.</VERS>
+      <VERS vnumber="2">And the earth was without form, and void.</VERS>
+    </CHAPTER>
+  </BIBLEBOOK>
+  <BIBLEBOOK bnumber="43" bname="John">
+    <CHAPTER cnumber="3">
+      <VERS vnumber="16">For God so loved the world.</VERS>
+    </CHAPTER>
+  </BIBLEBOOK>
+</XMLBIBLE>
+"""
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            xml_path = os.path.join(tmpdir, "kjv.xml")
+            with open(xml_path, "w", encoding="utf-8") as f:
+                f.write(xml)
+            result = Command().load_xml(Path(xml_path))
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["name"], "Genesis")
+        self.assertEqual(result[0]["slug"], "genesis")
+        self.assertEqual(result[0]["chapters"], 50)
+        self.assertEqual(len(result[0]["verses"]), 2)
+        self.assertEqual(result[1]["name"], "John")
+        self.assertEqual(result[1]["order"], 43)
+        self.assertEqual(result[1]["verses"][0]["chapter"], 3)
+        self.assertEqual(result[1]["verses"][0]["verse"], 16)
+
+    def test_load_xml_simple_open_source_bible_data_format(self):
+        """load_xml parses the simple XML format from open-source-bible-data."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        xml = """<bible abbrev="KJV" name="King James Bible">
+<book num="Gen">
+  <chapter num="1">
+    <verse num="1">In the beginning God created the heaven and the earth.</verse>
+    <verse num="2">And the earth was without form, and void; and darkness <i>was</i> upon the face of the deep.</verse>
+  </chapter>
+</book>
+<book num="John">
+  <chapter num="3">
+    <verse num="16">For God so loved the world.</verse>
+  </chapter>
+</book>
+</bible>
+"""
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            xml_path = os.path.join(tmpdir, "kjv.xml")
+            with open(xml_path, "w", encoding="utf-8") as f:
+                f.write(xml)
+            result = Command().load_xml(Path(xml_path))
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["name"], "Genesis")
+        self.assertEqual(result[0]["slug"], "genesis")
+        self.assertEqual(
+            result[0]["verses"][1]["text"],
+            "And the earth was without form, and void; and darkness was upon the face of the deep.",
+        )
+        self.assertEqual(result[1]["name"], "John")
+        self.assertEqual(result[1]["order"], 43)
+
     def test_import_kjv_command_sqlite_format(self):
         """The management command can import a full book from a KJV SQLite file."""
         from django.core.management import call_command
@@ -439,3 +537,38 @@ class ImportKJVSQLiteTest(TestCase):
         self.assertEqual(BibleVerse.objects.count(), 3)
         book = BibleBook.objects.get(slug="john")
         self.assertEqual(book.chapters, 21)
+
+    def test_import_kjv_command_xml_updates_existing_sample_verses(self):
+        """XML import should replace existing sample text and add missing verses."""
+        from django.core.management import call_command
+
+        xml = """<?xml version="1.0" encoding="utf-8"?>
+<XMLBIBLE>
+  <BIBLEBOOK bnumber="43" bname="John">
+    <CHAPTER cnumber="3">
+      <VERS vnumber="16">For God so loved the world.</VERS>
+      <VERS vnumber="17">For God sent not his Son into the world.</VERS>
+    </CHAPTER>
+  </BIBLEBOOK>
+</XMLBIBLE>
+"""
+
+        book = BibleBook.objects.create(
+            name="John", slug="john", order=43, testament="NT", chapters=21
+        )
+        BibleVerse.objects.create(
+            book=book, chapter=3, verse=16, text="stale sample text"
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            xml_path = os.path.join(tmpdir, "kjv.xml")
+            with open(xml_path, "w", encoding="utf-8") as f:
+                f.write(xml)
+            call_command("import_kjv", file=xml_path, format="xml", verbosity=0)
+
+        self.assertEqual(BibleBook.objects.count(), 1)
+        self.assertEqual(BibleVerse.objects.count(), 2)
+        self.assertEqual(
+            BibleVerse.objects.get(book=book, chapter=3, verse=16).text,
+            "For God so loved the world.",
+        )
