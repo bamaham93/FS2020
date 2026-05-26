@@ -53,8 +53,11 @@ Displays the current status and location for each of the aircraft in my personal
 
 # Bible Data
 
-Bible text is maintained in the SQLite database used by the Django app.
-Repository artifacts for `pg10.txt` and Gutenberg-specific parsing/import have been removed.
+Bible text is imported from the bundled XML file in the repository into the
+SQLite database used by the Django app. The XML comes from
+`simoncozens/open-source-bible-data`, specifically `cooked/simple-xml/kjv.xml`.
+Deployments run `import_kjv` after migrations so the `/bible/` pages are
+populated from XML instead of the old three-book sample data.
 
 # Prayer/Messaging
 

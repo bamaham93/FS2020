@@ -21,4 +21,5 @@ fi
 $PIP install -r requirements.txt
 
 $PY python_anywhere_website/manage.py migrate --noinput
+$PY python_anywhere_website/manage.py import_kjv
 $PY python_anywhere_website/manage.py collectstatic --noinput
