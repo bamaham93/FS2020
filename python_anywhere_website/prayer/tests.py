@@ -1019,6 +1019,17 @@ class TestMessageListView(TestCase):
             response, reverse("prayer:send_message", kwargs={"id": self.message.id})
         )
 
+    def test_message_list_renders_direct_recipients(self):
+        from prayer.models import Person
+
+        person = Person.objects.create(first_name="Jane", last_name="Doe")
+        self.message.direct_recipients.add(person)
+
+        response = self.client.get(reverse("prayer:message_list"))
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Jane Doe")
+
 
 class TestSMSLogging(TestCase):
     """
@@ -1102,6 +1113,66 @@ class TestSMSLogging(TestCase):
         self.assertEqual(logs.count(), 2)
         self.assertTrue(all(log.success for log in logs))
         self.assertTrue(all(log.sent_by == self.staff for log in logs))
+
+    def test_direct_recipients_are_sent_without_creating_group(self):
+        """
+        Staff can send a message to one-off selected people without first
+        creating a PrayerGroup for those recipients.
+        """
+        from unittest.mock import patch, MagicMock
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            instance.send.return_value = {
+                self.person_a: (True, ""),
+            }
+            MockSMS.return_value = instance
+
+            response = client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {"direct_recipients": [self.person_a.id]},
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.message.refresh_from_db()
+        self.assertIn(self.person_a, self.message.direct_recipients.all())
+        self.assertEqual(
+            SMSLog.objects.filter(message=self.message, recipient=self.person_a).count(),
+            1,
+        )
+
+    def test_direct_recipients_are_deduplicated_against_group_members(self):
+        """
+        Selecting the same person through a group and as a one-off recipient
+        should still send only one SMS to that person.
+        """
+        from unittest.mock import patch, MagicMock
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            instance.send.return_value = {
+                self.person_both: (True, ""),
+            }
+            MockSMS.return_value = instance
+
+            client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {
+                    "groups": [self.group_b.name],
+                    "direct_recipients": [self.person_both.id],
+                },
+            )
+
+        logs = SMSLog.objects.filter(message=self.message, recipient=self.person_both)
+        self.assertEqual(logs.count(), 1)
 
     def test_deduplication_person_in_two_groups_gets_one_log(self):
         """
@@ -1263,4 +1334,28 @@ class TestSMSLogging(TestCase):
         self.assertEqual(
             response.context["associated_group_ids"],
             {self.group_a.id, self.group_b.id},
+        )
+
+    def test_new_message_form_redirect_preserves_direct_recipients(self):
+        """
+        One-off recipients selected during message creation should still be
+        selected on the detail page after the redirect.
+        """
+        client = Client()
+        client.force_login(self.staff)
+        response = client.post(
+            "/prayer/new-message",
+            {
+                "name": "Direct Sender",
+                "subject": "Direct Subject",
+                "message": "Direct message.",
+                "direct_recipients": [self.person_a.id, self.person_both.id],
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(
+            response.context["associated_person_ids"],
+            {self.person_a.id, self.person_both.id},
         )

@@ -106,22 +106,27 @@ def message_detail(request, id):
         prayer_groups = PrayerGroup.objects.all()
         pg_queries = None
 
+    people = Person.objects.all().order_by("last_name", "first_name")
     sms_logs = SMSLog.objects.filter(message=message).select_related(
         "recipient", "sent_by"
     )
     # IDs of groups already associated with this message (for pre-checking boxes)
     associated_group_ids = set(message.groups.values_list("id", flat=True))
+    associated_person_ids = set(message.direct_recipients.values_list("id", flat=True))
 
     context = {
         "message": message,
         "prayer_groups": prayer_groups,
+        "people": people,
         "sms_logs": sms_logs,
         "associated_group_ids": associated_group_ids,
+        "associated_person_ids": associated_person_ids,
     }
 
     # Send messages
     if request.method == "POST":
         checks = request.POST.getlist("groups")
+        direct_recipient_ids = request.POST.getlist("direct_recipients")
 
         people_set = set()
 
@@ -139,6 +144,9 @@ def message_detail(request, id):
         # Persist the group selection on the message
         selected_groups = PrayerGroup.objects.filter(name__in=checks)
         message.groups.set(selected_groups)
+        direct_recipients = Person.objects.filter(id__in=direct_recipient_ids)
+        message.direct_recipients.set(direct_recipients)
+        people_set.update(direct_recipients)
 
         # Filter to only people who have consented to SMS and have a phone number
         consented_people = set(

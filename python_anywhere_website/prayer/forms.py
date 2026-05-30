@@ -38,9 +38,11 @@ class NewMessageForm(forms.ModelForm):
             "subject",
             "message",
             "groups",
+            "direct_recipients",
         ]
         widgets = {
             "groups": forms.CheckboxSelectMultiple(),
+            "direct_recipients": forms.CheckboxSelectMultiple(),
         }
 
 

@@ -38,7 +38,7 @@ class PrayerMessageAdmin(admin.ModelAdmin):
     """ """
 
     list_display = ("name", "subject", "created_at")
-    filter_horizontal = ("groups",)
+    filter_horizontal = ("groups", "direct_recipients")
 
 
 @admin.register(SMSLog)

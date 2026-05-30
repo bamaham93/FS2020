@@ -32,6 +32,11 @@
                                         <span class="badge rounded-pill bg-secondary">No groups</span>
                                     {% endif %}
                                 {% endwith %}
+                                {% with direct_recipients=message.direct_recipients.all %}
+                                    {% for person in direct_recipients %}
+                                        <span class="badge rounded-pill bg-light text-dark border me-1">{{ person }}</span>
+                                    {% endfor %}
+                                {% endwith %}
                             </div>
 
                             <div class="mt-auto d-flex gap-2">
