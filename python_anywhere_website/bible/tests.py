@@ -148,6 +148,16 @@ class BibleViewsTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "chapter: 3")
+        self.assertContains(response, "chapterCount: 21")
+        self.assertContains(response, '<details class="book-item" open>')
+
+    def test_continuous_reader_accepts_book_chapter_query_params(self):
+        response = self.client.get(
+            reverse("bible:continuous_reader"),
+            {"book": "john", "chapter": "3"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "chapter: 3")
 
     def test_seed_kjv_books_backfills_all_canonical_books(self):
         """The deployment migration should repair databases with sample data only."""

@@ -94,11 +94,15 @@ def continuous_reader(request, book_slug=None, chapter=1):
     active_book = first_book
 
     if book_slug:
-        active_book = next((book for book in books if book.slug == book_slug), first_book)
+        active_book = next(
+            (book for book in books if book.slug == book_slug), first_book
+        )
 
     query_book = request.GET.get("book")
     if query_book:
-        active_book = next((book for book in books if book.slug == query_book), active_book)
+        active_book = next(
+            (book for book in books if book.slug == query_book), active_book
+        )
 
     query_chapter = request.GET.get("chapter")
     if query_chapter and query_chapter.isdigit():
@@ -108,7 +112,12 @@ def continuous_reader(request, book_slug=None, chapter=1):
         chapter = max(1, min(chapter, active_book.chapters))
 
     books_with_chapters = [
-        {"slug": book.slug, "name": book.name, "chapters": list(range(1, book.chapters + 1))}
+        {
+            "slug": book.slug,
+            "name": book.name,
+            "chapter_count": book.chapters,
+            "chapters": list(range(1, book.chapters + 1)),
+        }
         for book in books
     ]
 

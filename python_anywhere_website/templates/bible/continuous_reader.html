@@ -6,7 +6,7 @@
         <h2 class="h5">Books & Chapters</h2>
         <div class="toc-books">
             {% for book in books_with_chapters %}
-            <details class="book-item" {% if forloop.first %}open{% endif %}>
+            <details class="book-item" {% if book.slug == initial_book.slug %}open{% endif %}>
                 <summary>{{ book.name }}</summary>
                 <div class="chapter-links">
                     {% for chapter in book.chapters %}
@@ -24,7 +24,7 @@
             <p class="text-muted small">Scroll continuously. Chapters are lazy-loaded from the KJV SQLite-backed API.</p>
         </header>
         <div id="chapter-container"></div>
-        <div id="loading-indicator" class="text-muted small">Loading more chapters…</div>
+        <div id="loading-indicator" class="text-muted small">Loading more chapters...</div>
     </main>
 </div>
 
@@ -49,7 +49,7 @@
     const apiBase = '/api/v1/bible/books';
     const books = [
         {% for book in books_with_chapters %}
-        { slug: '{{ book.slug }}', name: '{{ book.name|escapejs }}', chapters: {{ book.chapters }} },
+        { slug: '{{ book.slug }}', name: '{{ book.name|escapejs }}', chapterCount: {{ book.chapter_count }} },
         {% endfor %}
     ];
     const container = document.getElementById('chapter-container');
@@ -69,7 +69,7 @@
 
     function advanceCursor() {
         const currentBook = books[cursor.bookIndex];
-        if (cursor.chapter < currentBook.chapters) {
+        if (cursor.chapter < currentBook.chapterCount) {
             cursor.chapter += 1;
             return true;
         }
@@ -81,7 +81,25 @@
         return false;
     }
 
-    async function loadNextChapter() {
+    function escapeHtml(value) {
+        const div = document.createElement('div');
+        div.textContent = value;
+        return div.innerHTML;
+    }
+
+    function renderChapter(data, bookSlug, bookName, chapter) {
+        const section = document.createElement('section');
+        section.className = 'chapter-block';
+        section.id = `chapter-${bookSlug}-${chapter}`;
+        section.innerHTML = `
+            <h2 class="chapter-title">${escapeHtml(bookName)} ${chapter}</h2>
+            ${data.verses.map(v => `<p class="verse-line"><span class="verse-no">${v.verse}</span>${escapeHtml(v.text)}</p>`).join('')}
+        `;
+        container.appendChild(section);
+        return section;
+    }
+
+    async function loadNextChapter({ scrollToHash = false } = {}) {
         if (!books.length) return;
         const key = cursorKey(cursor.bookIndex, cursor.chapter);
         if (loaded.has(key)) return;
@@ -89,21 +107,20 @@
 
         const book = books[cursor.bookIndex];
         const resp = await fetch(`${apiBase}/${book.slug}/chapters/${cursor.chapter}`);
-        if (!resp.ok) return;
+        if (!resp.ok) {
+            loaded.delete(key);
+            return;
+        }
         const data = await resp.json();
-
-        const section = document.createElement('section');
-        section.className = 'chapter-block';
-        section.id = `chapter-${book.slug}-${cursor.chapter}`;
-        section.innerHTML = `
-            <h2 class="chapter-title">${data.book.name} ${data.chapter}</h2>
-            ${data.verses.map(v => `<p class="verse-line"><span class="verse-no">${v.verse}</span>${v.text}</p>`).join('')}
-        `;
-        container.appendChild(section);
+        const section = renderChapter(data, book.slug, data.book.name, cursor.chapter);
 
         if (!advanceCursor()) {
             loadingIndicator.textContent = 'End of Bible';
             observer.disconnect();
+        }
+
+        if (scrollToHash && window.location.hash === `#${section.id}`) {
+            requestAnimationFrame(() => section.scrollIntoView());
         }
     }
 
@@ -128,29 +145,23 @@
             loaded.clear();
 
             const idx = books.findIndex((book) => book.slug === bookSlug);
+            if (idx < 0) return;
             cursor = { bookIndex: idx, chapter: chapter };
             loaded.add(`${bookSlug}:${chapter}`);
 
-            const section = document.createElement('section');
-            section.className = 'chapter-block';
-            section.id = `chapter-${bookSlug}-${chapter}`;
-            section.innerHTML = `
-                <h2 class="chapter-title">${bookName} ${chapter}</h2>
-                ${data.verses.map(v => `<p class="verse-line"><span class="verse-no">${v.verse}</span>${v.text}</p>`).join('')}
-            `;
-            container.appendChild(section);
+            const section = renderChapter(data, bookSlug, bookName, chapter);
 
             if (!advanceCursor()) {
                 loadingIndicator.textContent = 'End of Bible';
             } else {
-                loadingIndicator.textContent = 'Loading more chapters…';
+                loadingIndicator.textContent = 'Loading more chapters...';
             }
-            window.history.replaceState({}, '', el.getAttribute('href'));
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.history.pushState({}, '', el.getAttribute('href'));
+            section.scrollIntoView({ behavior: 'smooth' });
         });
     });
 
-    loadNextChapter();
+    loadNextChapter({ scrollToHash: true });
     observer.observe(loadingIndicator);
 })();
 </script>
