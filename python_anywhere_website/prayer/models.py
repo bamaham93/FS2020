@@ -74,6 +74,12 @@ class PrayerMessage(models.Model):
         related_name="messages",
         help_text="Groups this message is targeted to",
     )
+    direct_recipients = models.ManyToManyField(
+        Person,
+        blank=True,
+        related_name="direct_messages",
+        help_text="One-off contacts this message is targeted to",
+    )
 
     def __str__(self):
         return f"{self.name}"
