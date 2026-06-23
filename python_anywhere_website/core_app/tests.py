@@ -100,9 +100,10 @@ class SignUpTests(TestCase):
             "password2": "ComplexPass123!",
         }
         resp = self.client.post("/core_app/signup/", data, follow=True)
-        self.assertTrue(User.objects.filter(username="testuser3").exists())
+        user = User.objects.get(username="testuser3")
         person = Person.objects.filter(phone_number="+12345678900").first()
         self.assertIsNotNone(person)
+        self.assertEqual(person.user, user)
         self.assertTrue(person.sms_consent)
         self.assertIsNotNone(person.sms_consent_date)
 

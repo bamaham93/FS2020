@@ -62,6 +62,7 @@ class SignUpView(generic.CreateView):
         if phone_number:
             try:
                 Person.objects.create(
+                    user=self.object,
                     first_name=form.cleaned_data.get("first_name"),
                     last_name=form.cleaned_data.get("last_name"),
                     phone_number=phone_number,

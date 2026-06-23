@@ -47,7 +47,7 @@ class PhotoEssay(models.Model):
     )
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering = ["-created_at", "-id"]
         verbose_name_plural = "Photo Essays"
 
     def __str__(self):
