@@ -438,6 +438,7 @@ def public_signup(request) -> render:
         form = PublicSignupForm(request.POST)
         if form.is_valid():
             person = form.save(commit=False)
+            person.user = request.user
             # Automatically set SMS consent to True for public signups
             person.sms_consent = True
             person.sms_consent_date = timezone.now()

@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from prayer.models import PrayerGroup, PrayerMessage
+from prayer.models import Person
 
 
 # Create your tests here.
@@ -985,6 +986,97 @@ class TestPrayerLegalLinks(TestCase):
         self.assertContains(response, "Terms and Conditions")
         self.assertContains(response, "/core_app/privacy-policy/")
         self.assertContains(response, "/core_app/terms-of-service/")
+
+
+class TestPersonUserAssociation(TestCase):
+    def test_public_signup_associates_person_with_logged_in_user(self):
+        user = User.objects.create_user(
+            "signupuser_assoc", "signupassoc@example.com", "StrongPass123!"
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(
+            "/prayer/signup",
+            {
+                "first_name": "Jane",
+                "last_name": "Smith",
+                "phone_number": "+12345678901",
+                "email": "signupassoc@example.com",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        person = Person.objects.get(phone_number="+12345678901")
+        self.assertEqual(person.user, user)
+
+    def test_person_can_be_associated_with_user(self):
+        user = User.objects.create_user("linkeduser", "linked@example.com", "pw")
+        person = Person.objects.create(
+            user=user,
+            first_name="Linked",
+            last_name="User",
+            email="linked@example.com",
+        )
+
+        self.assertEqual(person.user, user)
+        self.assertEqual(user.prayer_person, person)
+
+
+class TestPersonAdminUserSuggestions(TestCase):
+    def test_suggest_user_for_person_prefers_exact_email_match(self):
+        from prayer.admin import suggest_user_for_person
+
+        user = User.objects.create_user(
+            username="emailmatch",
+            email="jane@example.com",
+            first_name="Different",
+            last_name="Name",
+        )
+        person = Person.objects.create(
+            first_name="Jane",
+            last_name="Smith",
+            email="jane@example.com",
+        )
+
+        suggested_user, score, reason = suggest_user_for_person(person)
+
+        self.assertEqual(suggested_user, user)
+        self.assertEqual(score, 100)
+        self.assertEqual(reason, "Exact email match.")
+
+    def test_suggest_user_for_person_uses_name_similarity(self):
+        from prayer.admin import suggest_user_for_person
+
+        user = User.objects.create_user(
+            username="jane.smith",
+            email="other@example.com",
+            first_name="Jane",
+            last_name="Smith",
+        )
+        person = Person.objects.create(first_name="Jane", last_name="Smyth")
+
+        suggested_user, score, reason = suggest_user_for_person(person)
+
+        self.assertEqual(suggested_user, user)
+        self.assertGreaterEqual(score, 70)
+        self.assertEqual(reason, "Similar name or username.")
+
+    def test_suggest_user_for_person_returns_no_match_when_not_confident(self):
+        from prayer.admin import suggest_user_for_person
+
+        User.objects.create_user(
+            username="unrelated",
+            email="unrelated@example.com",
+            first_name="No",
+            last_name="Match",
+        )
+        person = Person.objects.create(first_name="Jane", last_name="Smith")
+
+        suggested_user, score, reason = suggest_user_for_person(person)
+
+        self.assertIsNone(suggested_user)
+        self.assertLess(score, 70)
+        self.assertEqual(reason, "No confident match found.")
 
 
 class TestMessageListView(TestCase):

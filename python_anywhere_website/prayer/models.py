@@ -16,6 +16,14 @@ class Person(models.Model):
     A person that may be contacted for the prayer requests contact chain.
     """
 
+    user = models.OneToOneField(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="prayer_person",
+        help_text="Optional Django user account associated with this person.",
+    )
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=50, null=True, blank=True)
