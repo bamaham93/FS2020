@@ -84,7 +84,7 @@ class TwilioWebhookTests(TestCase):
         saved = InboundSmsMessage.objects.get(provider_message_id="SM200")
         self.assertEqual(saved.body, "Need prayer")
 
-    @override_settings(TWILIO_AUTH_TOKEN="test-token")
+    @override_settings(TWILIO_AUTH_TOKEN="test-token", ALLOWED_HOSTS=["example.com"])
     @patch("prayer.views.RequestValidator.validate")
     def test_webhook_accepts_valid_signature_when_https_fallback_matches(
         self, validator_mock
@@ -188,6 +188,23 @@ class InboundMessagesViewTests(TestCase):
         )
         self.client.login(username="staff", password="pw")
 
+    def _create_inbound_message(self, person=None, processed=False):
+        return InboundSmsMessage.objects.create(
+            provider="twilio",
+            provider_message_id=f"SM_{InboundSmsMessage.objects.count()}",
+            from_number="+15557770001",
+            to_number="+18005550100",
+            body="Please pray for us.",
+            person=person,
+            processed=processed,
+        )
+
+    def _create_group_user(self, username="prayer_admin"):
+        group = Group.objects.create(name="Prayer Admins")
+        user = User.objects.create_user(username=username, password="pw")
+        user.groups.add(group)
+        return user
+
     def test_inbound_messages_view_shows_unread_and_unassigned(self):
         InboundSmsMessage.objects.create(
             provider="twilio",
@@ -202,6 +219,151 @@ class InboundMessagesViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Unread: 1")
         self.assertContains(response, "Unassigned - review needed")
+
+    def test_inbound_messages_view_shows_sender_and_body(self):
+        sender = Person.objects.create(
+            first_name="Jane",
+            last_name="Doe",
+            phone_number="+15557770001",
+        )
+        InboundSmsMessage.objects.create(
+            provider="twilio",
+            provider_message_id="SM_ASSIGNED",
+            from_number="+15557770001",
+            to_number="+18005550100",
+            body="Please pray for us.",
+            person=sender,
+        )
+
+        response = self.client.get(reverse("prayer:inbound_messages"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Linked to Jane Doe")
+        self.assertContains(response, "Please pray for us.")
+
+    def test_inbound_sms_string_includes_sender_and_body(self):
+        sender = Person.objects.create(
+            first_name="Jane",
+            last_name="Doe",
+            phone_number="+15557770001",
+        )
+        message = InboundSmsMessage.objects.create(
+            provider="twilio",
+            provider_message_id="SM_STR",
+            from_number="+15557770001",
+            to_number="+18005550100",
+            body="Please pray for us.",
+            person=sender,
+        )
+
+        self.assertEqual(
+            str(message),
+            "You have a message from Jane Doe: Please pray for us.",
+        )
+
+    def test_inbound_sms_string_falls_back_to_phone_number(self):
+        message = InboundSmsMessage.objects.create(
+            provider="twilio",
+            provider_message_id="SM_STR_PHONE",
+            from_number="+15557770001",
+            to_number="+18005550100",
+            body="Please pray for us.",
+        )
+
+        self.assertEqual(
+            str(message),
+            "You have a message from +15557770001: Please pray for us.",
+        )
+
+    def test_staff_sees_inbound_sms_notification_on_prayer_pages(self):
+        sender = Person.objects.create(
+            first_name="Jane",
+            last_name="Doe",
+            phone_number="+15557770001",
+        )
+        InboundSmsMessage.objects.create(
+            provider="twilio",
+            provider_message_id="SM_ALERT",
+            from_number="+15557770001",
+            to_number="+18005550100",
+            body="Please pray for us.",
+            person=sender,
+        )
+
+        response = self.client.get(reverse("prayer:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "1 unread inbound SMS")
+        self.assertContains(
+            response, "You have a message from Jane Doe: Please pray for us."
+        )
+
+    def test_prayer_admins_group_member_sees_inbound_sms_notification(self):
+        sender = Person.objects.create(
+            first_name="Jane",
+            last_name="Doe",
+            phone_number="+15557770001",
+        )
+        self._create_inbound_message(person=sender)
+        self.client.logout()
+        self._create_group_user()
+        self.client.login(username="prayer_admin", password="pw")
+
+        response = self.client.get(reverse("prayer:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "1 unread inbound SMS")
+        self.assertContains(
+            response, "You have a message from Jane Doe: Please pray for us."
+        )
+
+    def test_regular_member_does_not_see_inbound_sms_notification(self):
+        InboundSmsMessage.objects.create(
+            provider="twilio",
+            provider_message_id="SM_HIDDEN",
+            from_number="+15557770001",
+            to_number="+18005550100",
+            body="Please pray for us.",
+        )
+        self.client.logout()
+        User.objects.create_user(username="member", password="pw")
+        self.client.login(username="member", password="pw")
+
+        response = self.client.get(reverse("prayer:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "unread inbound SMS")
+        self.assertNotContains(response, "Please pray for us.")
+
+    def test_processed_messages_do_not_show_in_notification(self):
+        self._create_inbound_message(processed=True)
+
+        response = self.client.get(reverse("prayer:index"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "unread inbound SMS")
+        self.assertNotContains(response, "Please pray for us.")
+
+    def test_prayer_admins_group_member_can_view_inbound_messages_page(self):
+        self._create_inbound_message()
+        self.client.logout()
+        self._create_group_user()
+        self.client.login(username="prayer_admin", password="pw")
+
+        response = self.client.get(reverse("prayer:inbound_messages"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Please pray for us.")
+
+    def test_regular_member_cannot_view_inbound_messages_page(self):
+        self._create_inbound_message()
+        self.client.logout()
+        User.objects.create_user(username="member", password="pw")
+        self.client.login(username="member", password="pw")
+
+        response = self.client.get(reverse("prayer:inbound_messages"))
+
+        self.assertEqual(response.status_code, 302)
 
 
 class AdminNotificationTests(TestCase):
