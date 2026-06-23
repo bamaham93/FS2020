@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -21,6 +21,7 @@ from prayer.forms import (
     PublicSignupForm,
 )
 from prayer.models import Person, PrayerGroup, PrayerMessage, SMSLog, InboundSmsMessage
+from prayer.permissions import can_view_inbound_sms
 from prayer.services import InboundSmsPayload, handle_inbound_sms
 
 try:
@@ -571,11 +572,11 @@ def twilio_sms_webhook(request):
 
 
 @login_required()
-@staff_member_required
+@user_passes_test(can_view_inbound_sms)
 def inbound_messages(request):
     message_qs = InboundSmsMessage.objects.select_related("person")
     context = {
-        "messages": message_qs,
+        "inbound_messages": message_qs,
         "unread_count": message_qs.filter(processed=False).count(),
     }
     return render(request, "prayer/inbound_messages.html", context)

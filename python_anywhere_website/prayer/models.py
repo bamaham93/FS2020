@@ -148,6 +148,20 @@ class InboundSmsMessage(models.Model):
     class Meta:
         ordering = ["-received_at"]
 
+    @property
+    def sender_display(self):
+        if self.person:
+            return f"{self.person.first_name} {self.person.last_name}".strip()
+        return self.from_number
+
+    @property
+    def notification_summary(self):
+        body = self.body.strip() if self.body else "(no message body)"
+        return f"You have a message from {self.sender_display}: {body}"
+
+    def __str__(self):
+        return self.notification_summary
+
 
 class Permissions(models.Model):
     profile = models.OneToOneField(PrayerProfile, on_delete=models.CASCADE)
