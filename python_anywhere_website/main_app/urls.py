@@ -39,6 +39,7 @@ urlpatterns = [
     path("media/", include("media_app.urls", namespace="media")),
     path("finance/", include("finance.urls", namespace="finance")),
     path("photography/", include("photography.urls", namespace="photography")),
+    path("hymns/", include("hymns.urls", namespace="hymns")),
     path("api/webhooks/twilio/sms/", prayer_views.twilio_sms_webhook, name="twilio_sms_webhook"),
 ]
 

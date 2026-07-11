@@ -1,0 +1,40 @@
+{% extends 'hymns/hymns_base.html' %}
+
+{% block hymns_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0">{{ batch.hymnal_code }} import batch {{ batch.id }}</h2>
+  {% if batch.status == 'pending' %}
+    <div class="d-flex gap-2">
+      <form method="post" action="{% url 'hymns:approve_import_batch' batch.id %}">{% csrf_token %}<button class="btn btn-success btn-sm">Approve</button></form>
+      <form method="post" action="{% url 'hymns:reject_import_batch' batch.id %}">{% csrf_token %}<button class="btn btn-outline-warning btn-sm">Reject</button></form>
+    </div>
+  {% endif %}
+</div>
+{% if issues %}
+  <div class="alert alert-warning">
+    <strong>Import issues:</strong>
+    <ul class="mb-0">
+      {% for issue in issues %}<li>{{ issue.message }} {% if issue.source_url %}<a href="{{ issue.source_url }}">source</a>{% endif %}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+<div class="table-responsive">
+  <table class="table table-dark table-striped align-middle">
+    <thead><tr><th>Hymnal</th><th>#</th><th>Title</th><th>Tune</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for entry in entries %}
+        <tr>
+          <td>{{ entry.hymnal.code }}</td>
+          <td>{{ entry.number }}</td>
+          <td>{{ entry.title_as_printed }}</td>
+          <td>{{ entry.tune_as_printed }}</td>
+          <td>{% if entry.is_approved %}Approved{% else %}Pending{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted">No entries in this batch.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
