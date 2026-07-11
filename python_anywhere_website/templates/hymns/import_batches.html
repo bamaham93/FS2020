@@ -1,0 +1,19 @@
+{% extends 'hymns/hymns_base.html' %}
+
+{% block hymns_content %}
+<div class="card bg-dark text-light border-secondary">
+  <div class="card-header">Import Batches</div>
+  <div class="list-group list-group-flush">
+    {% for batch in batches %}
+      <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" href="{% url 'hymns:import_batch_detail' batch.id %}">
+        <strong>{{ batch.hymnal_code }}</strong> batch {{ batch.id }}
+        <span class="badge bg-secondary">{{ batch.get_status_display }}</span>
+        <span class="text-muted">{{ batch.entries.count }} entries, {{ batch.issues.count }} issues</span>
+      </a>
+    {% empty %}
+      <div class="list-group-item bg-dark text-muted">No import batches yet.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+

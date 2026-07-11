@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ plan.title }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; color: #111; margin: 2rem; }
+    h1 { margin-bottom: 0.25rem; }
+    .meta { color: #555; margin-bottom: 2rem; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border-bottom: 1px solid #ddd; padding: 0.5rem; text-align: left; }
+    th { background: #f2f2f2; }
+    @media print { body { margin: 0.5in; } }
+  </style>
+</head>
+<body>
+  <h1>{{ plan.title }}</h1>
+  <div class="meta">{{ plan.service_date|default:"No date" }}</div>
+  <table>
+    <thead><tr><th>Order</th><th>Hymnal</th><th>#</th><th>Title</th><th>Tune</th><th>Notes</th></tr></thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td>{{ item.position }}</td>
+          <td>{{ item.hymnal_entry.hymnal.code }}</td>
+          <td>{{ item.hymnal_entry.number }}</td>
+          <td>{{ item.hymnal_entry.title_as_printed }}</td>
+          <td>{{ item.hymnal_entry.tune_as_printed }}</td>
+          <td>{{ item.notes }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

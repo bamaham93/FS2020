@@ -1,0 +1,54 @@
+{% extends 'hymns/hymns_base.html' %}
+
+{% block hymns_content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card bg-dark text-light border-secondary">
+      <div class="card-header">Hymnals</div>
+      <div class="list-group list-group-flush">
+        {% for hymnal in hymnals %}
+          <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" href="{% url 'hymns:hymnal_detail' hymnal.code %}">
+            <strong>{{ hymnal.title }}</strong>
+            <span class="text-muted">({{ hymnal.code }})</span>
+            <span class="badge bg-secondary float-end">{{ hymnal.entry_count }}</span>
+          </a>
+        {% empty %}
+          <div class="list-group-item bg-dark text-muted">No approved hymnals yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card bg-dark text-light border-secondary mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Recent Plans</span>
+        {% if user.is_staff %}<a class="btn btn-sm btn-primary" href="{% url 'hymns:service_plan_create' %}">New</a>{% endif %}
+      </div>
+      <div class="list-group list-group-flush">
+        {% for plan in plans %}
+          <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" href="{% url 'hymns:service_plan_detail' plan.id %}">
+            {{ plan.title }} <span class="text-muted">{{ plan.service_date|default:"" }}</span>
+          </a>
+        {% empty %}
+          <div class="list-group-item bg-dark text-muted">No plans yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+    {% if user.is_staff %}
+      <div class="card bg-dark text-light border-secondary">
+        <div class="card-header">Pending Imports</div>
+        <div class="list-group list-group-flush">
+          {% for batch in pending_batches %}
+            <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" href="{% url 'hymns:import_batch_detail' batch.id %}">
+              {{ batch.hymnal_code }} batch {{ batch.id }}
+            </a>
+          {% empty %}
+            <div class="list-group-item bg-dark text-muted">No pending batches.</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

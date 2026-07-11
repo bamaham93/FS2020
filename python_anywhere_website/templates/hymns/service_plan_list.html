@@ -1,0 +1,20 @@
+{% extends 'hymns/hymns_base.html' %}
+
+{% block hymns_content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="h4 mb-0">Service Plans</h2>
+  <a class="btn btn-primary btn-sm" href="{% url 'hymns:service_plan_create' %}">New Plan</a>
+</div>
+<div class="list-group">
+  {% for plan in plans %}
+    <a class="list-group-item list-group-item-action bg-dark text-light border-secondary" href="{% url 'hymns:service_plan_detail' plan.id %}">
+      <strong>{{ plan.title }}</strong>
+      <span class="text-muted">{{ plan.service_date|default:"" }}</span>
+      <span class="badge bg-secondary float-end">{{ plan.get_status_display }}</span>
+    </a>
+  {% empty %}
+    <div class="list-group-item bg-dark text-muted">No plans yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}
+

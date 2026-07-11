@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "media_app",
     "finance",
     "photography",
+    "hymns",
 ]
 
 MIDDLEWARE = [
