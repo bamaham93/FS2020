@@ -18,6 +18,19 @@ class SanityTests(TestCase):
         self.assertIn(resp.status_code, (200, 302))
 
 
+class HomePageTests(TestCase):
+    def test_homepage_shows_blog_signup_form(self):
+        resp = self.client.get("/", follow=True)
+
+        self.assertContains(resp, "From the Blog")
+        self.assertContains(
+            resp,
+            "https://cdn.jsdelivr.net/ghost/signup-form@~0.3/umd/signup-form.min.js",
+        )
+        self.assertContains(resp, 'data-site="https://blog.jacob-mcgowin.us/"')
+        self.assertNotContains(resp, "Lorem ipsum")
+
+
 class AuthFlowTests(TestCase):
     def setUp(self):
         self.username = "testuser"
