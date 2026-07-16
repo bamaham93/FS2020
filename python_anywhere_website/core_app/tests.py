@@ -110,6 +110,15 @@ class SignUpTests(TestCase):
 class NavbarAccountsTests(TestCase):
     """Tests for the accounts dropdown in the navbar."""
 
+    def test_navbar_shows_blog_link(self):
+        """Test that the navbar links to the external blog."""
+        resp = self.client.get("/", follow=True)
+        self.assertContains(
+            resp,
+            '<a class="nav-link" href="https://blog.jacob-mcgowin.us">Blog</a>',
+            html=True,
+        )
+
     def test_navbar_shows_login_and_signup_when_anonymous(self):
         """Test that unauthenticated users see Login and Signup in navbar."""
         resp = self.client.get("/")
