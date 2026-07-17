@@ -229,15 +229,16 @@ class TestAccessControl(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_new_message_page_shows_workflow_explanation(self):
-        """New message page should direct staff into the message detail workflow."""
+        """New message page should offer both draft and immediate-send actions."""
         client = Client()
         client.force_login(self.staff_user)
 
         response = client.get("/prayer/new-message")
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertContains(response, "message details page")
-        self.assertContains(response, "Save and Continue")
+        self.assertContains(response, "Save Draft")
+        self.assertContains(response, "Save &amp; Send")
+        self.assertContains(response, "send it immediately")
 
     def test_staff_views_blocked_for_regular_users(self):
         """
@@ -365,7 +366,7 @@ class TestPrayerForms(TestCase):
         client.force_login(user)
         endpoint = "/prayer/new-message"
 
-        # Tests that valid data submits successfully (should redirect after save).
+        # Tests that valid data submits successfully as a draft.
         data = {
             "name": "Prayer Request 8/30/2022",
             "subject": "Today's Requests",
@@ -374,10 +375,8 @@ class TestPrayerForms(TestCase):
         response = client.post(endpoint, data)
         self.assertEqual(response.status_code, 302)
         created_message = PrayerMessage.objects.latest("id")
-        self.assertRedirects(
-            response,
-            reverse("prayer:message-detail", kwargs={"id": created_message.id}),
-        )
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        self.assertEqual(created_message.submitted_by, user)
 
     def test_new_person_form(self):
         """ """
@@ -1406,8 +1405,7 @@ class TestSMSLogging(TestCase):
 
     def test_new_message_form_redirect_preserves_selected_groups(self):
         """
-        Groups selected during message creation should still be selected on the
-        detail page after the redirect.
+        Groups selected while saving a draft should persist on the message.
         """
         client = Client()
         client.force_login(self.staff)
@@ -1419,19 +1417,18 @@ class TestSMSLogging(TestCase):
                 "message": "Grouped message.",
                 "groups": [self.group_a.id, self.group_b.id],
             },
-            follow=True,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        saved_message = PrayerMessage.objects.get(subject="Grouped Subject")
         self.assertEqual(
-            response.context["associated_group_ids"],
+            set(saved_message.groups.values_list("id", flat=True)),
             {self.group_a.id, self.group_b.id},
         )
 
     def test_new_message_form_redirect_preserves_direct_recipients(self):
         """
-        One-off recipients selected during message creation should still be
-        selected on the detail page after the redirect.
+        One-off recipients selected while saving a draft should persist.
         """
         client = Client()
         client.force_login(self.staff)
@@ -1443,11 +1440,128 @@ class TestSMSLogging(TestCase):
                 "message": "Direct message.",
                 "direct_recipients": [self.person_a.id, self.person_both.id],
             },
-            follow=True,
         )
 
-        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        saved_message = PrayerMessage.objects.get(subject="Direct Subject")
         self.assertEqual(
-            response.context["associated_person_ids"],
+            set(saved_message.direct_recipients.values_list("id", flat=True)),
             {self.person_a.id, self.person_both.id},
+        )
+
+    def test_save_draft_does_not_send_sms(self):
+        """Saving a draft persists its targets without attempting delivery."""
+        from unittest.mock import patch
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "Draft Sender",
+                    "subject": "Draft Subject",
+                    "message": "Not ready to send.",
+                    "groups": [self.group_a.id],
+                    "action": "save",
+                },
+            )
+
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        mock_sms.assert_not_called()
+        saved_message = PrayerMessage.objects.get(subject="Draft Subject")
+        self.assertEqual(saved_message.submitted_by, self.staff)
+        self.assertEqual(list(saved_message.groups.all()), [self.group_a])
+
+    def test_save_and_send_delivers_without_message_detail_step(self):
+        """The composer can save, deduplicate, send, and log in one POST."""
+        from unittest.mock import MagicMock, patch
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            sms_instance = MagicMock()
+            sms_instance.send.return_value = {
+                self.person_both: (True, ""),
+                self.person_a: (True, ""),
+            }
+            mock_sms.return_value = sms_instance
+
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "Immediate Sender",
+                    "subject": "Immediate Subject",
+                    "message": "Send this now.",
+                    "groups": [self.group_a.id, self.group_b.id],
+                    "action": "send",
+                },
+            )
+
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        saved_message = PrayerMessage.objects.get(subject="Immediate Subject")
+        self.assertEqual(saved_message.submitted_by, self.staff)
+        self.assertEqual(
+            set(saved_message.groups.values_list("id", flat=True)),
+            {self.group_a.id, self.group_b.id},
+        )
+        self.assertEqual(SMSLog.objects.filter(message=saved_message).count(), 2)
+        sent_contacts = mock_sms.call_args.kwargs["contacts"]
+        self.assertEqual(sent_contacts, {self.person_both, self.person_a})
+
+    def test_save_and_send_requires_a_target(self):
+        """Immediate send does not save or deliver when no target is selected."""
+        from unittest.mock import patch
+
+        client = Client()
+        client.force_login(self.staff)
+        initial_count = PrayerMessage.objects.count()
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "No Target",
+                    "subject": "No Target Subject",
+                    "message": "This needs a recipient.",
+                    "action": "send",
+                },
+            )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Select at least one group or one-off recipient")
+        self.assertEqual(PrayerMessage.objects.count(), initial_count)
+        mock_sms.assert_not_called()
+
+    def test_delivery_exception_keeps_saved_message(self):
+        """A provider exception is reported after the composed message is saved."""
+        from unittest.mock import MagicMock, patch
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            sms_instance = MagicMock()
+            sms_instance.send.side_effect = RuntimeError("provider unavailable")
+            mock_sms.return_value = sms_instance
+
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "Failure Sender",
+                    "subject": "Failure Subject",
+                    "message": "Save even if sending fails.",
+                    "groups": [self.group_a.id],
+                    "action": "send",
+                },
+                follow=True,
+            )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "SMS delivery failed: provider unavailable")
+        self.assertTrue(
+            PrayerMessage.objects.filter(subject="Failure Subject").exists()
         )

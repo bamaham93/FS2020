@@ -45,6 +45,85 @@ def is_group(user, group):
 logger = logging.getLogger(__name__)
 
 
+def _deliver_prayer_message(message, sent_by):
+    """Send one saved message to its selected, SMS-eligible recipients."""
+    recipient_ids = set(message.direct_recipients.values_list("id", flat=True))
+    for group in message.groups.prefetch_related("people"):
+        recipient_ids.update(group.people.values_list("id", flat=True))
+
+    recipients = set(
+        Person.objects.filter(
+            id__in=recipient_ids,
+            sms_consent=True,
+            phone_number__isnull=False,
+        ).exclude(phone_number="")
+    )
+    result = {
+        "eligible_count": len(recipients),
+        "success_count": 0,
+        "failure_count": 0,
+        "error": "",
+    }
+
+    if not recipients:
+        return result
+    if "SMSMessage" not in globals():
+        result["error"] = "SMS functionality is not available."
+        return result
+
+    try:
+        send_results = SMSMessage(
+            body=message.message,
+            contacts=recipients,
+            testing=False,
+        ).send()
+    except Exception as exc:
+        logger.exception("Failed to send prayer message %s", message.id)
+        result["error"] = str(exc)
+        return result
+
+    for person, (success, error) in send_results.items():
+        SMSLog.objects.create(
+            message=message,
+            recipient=person,
+            success=success,
+            error_message=error,
+            sent_by=sent_by,
+        )
+        if success:
+            result["success_count"] += 1
+        else:
+            result["failure_count"] += 1
+    return result
+
+
+def _show_delivery_result(request, result):
+    """Add one user-facing status message for a delivery attempt."""
+    if result["error"]:
+        messages.error(
+            request,
+            f"The message was saved, but SMS delivery failed: {result['error']}",
+        )
+    elif result["eligible_count"] == 0:
+        messages.warning(
+            request,
+            "The message was saved, but no selected recipients have both SMS "
+            "consent and a phone number.",
+        )
+    elif result["failure_count"]:
+        messages.warning(
+            request,
+            f"Message sent to {result['success_count']} recipient(s). "
+            f"{result['failure_count']} send(s) failed; see the message details "
+            "for the delivery log.",
+        )
+    else:
+        messages.success(
+            request,
+            f"Message sent to {result['success_count']} recipient(s).",
+        )
+
+
 # Create your views here.
 def index(request) -> render:
     """
@@ -58,16 +137,37 @@ def index(request) -> render:
 @staff_member_required
 def new_message(request) -> render:
     """
-    Create a new message and redirect to its detail page for review and sending.
-    Staff-only view for composing messages to prayer groups.
+    Create a draft or save and immediately send a message.
     """
     form = NewMessageForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
-            message = form.save()
-            messages.success(request, "Your message was saved!")
-            return redirect("prayer:message-detail", id=message.id)
-        messages.warning(request, "There was a problem with your submission.")
+            action = request.POST.get("action", "save")
+            if action not in {"save", "send"}:
+                form.add_error(None, "Choose whether to save or send this message.")
+            elif action == "send" and not (
+                form.cleaned_data["groups"] or form.cleaned_data["direct_recipients"]
+            ):
+                form.add_error(
+                    None,
+                    "Select at least one group or one-off recipient before sending.",
+                )
+            else:
+                message = form.save(commit=False)
+                message.submitted_by = request.user
+                message.save()
+                form.save_m2m()
+
+                if action == "send":
+                    _show_delivery_result(
+                        request, _deliver_prayer_message(message, request.user)
+                    )
+                else:
+                    messages.success(request, "Draft saved.")
+                return redirect("prayer:message_list")
+
+        if not form.non_field_errors():
+            messages.warning(request, "There was a problem with your submission.")
     return render(request, "prayer/new_message.html", {"form": form})
 
 
@@ -92,21 +192,8 @@ def message_detail(request, id):
     See message details and send to prayer groups.
     Persists an SMSLog entry for every send attempt (success or failure).
     """
-    # Check if logic.queries classes are available
-    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
-        try:
-            pm_queries = PrayerMessageQueries()
-            message = pm_queries.get_message_by_id(id=id)
-            pg_queries = PrayerGroupQueries()
-            prayer_groups = pg_queries.get_all()
-        except (AttributeError, ImportError):
-            message = PrayerMessage.objects.get(id=id)
-            prayer_groups = PrayerGroup.objects.all()
-            pg_queries = None
-    else:
-        message = PrayerMessage.objects.get(id=id)
-        prayer_groups = PrayerGroup.objects.all()
-        pg_queries = None
+    message = get_object_or_404(PrayerMessage, id=id)
+    prayer_groups = PrayerGroup.objects.all()
 
     people = Person.objects.all().order_by("last_name", "first_name")
     sms_logs = SMSLog.objects.filter(message=message).select_related(
@@ -127,76 +214,22 @@ def message_detail(request, id):
 
     # Send messages
     if request.method == "POST":
-        checks = request.POST.getlist("groups")
+        group_ids = request.POST.getlist("groups")
         direct_recipient_ids = request.POST.getlist("direct_recipients")
 
-        people_set = set()
-
-        for group_name in checks:
-            try:
-                group_ = (
-                    pg_queries.get_group_members(group_name)
-                    if pg_queries is not None
-                    else PrayerGroup.objects.get(name=group_name).people.all()
-                )
-            except (AttributeError, ImportError):
-                group_ = PrayerGroup.objects.get(name=group_name).people.all()
-            people_set.update(group_)
-
         # Persist the group selection on the message
-        selected_groups = PrayerGroup.objects.filter(name__in=checks)
+        numeric_group_ids = [value for value in group_ids if value.isdigit()]
+        legacy_group_names = [value for value in group_ids if not value.isdigit()]
+        selected_groups = PrayerGroup.objects.filter(id__in=numeric_group_ids) | (
+            PrayerGroup.objects.filter(name__in=legacy_group_names)
+        )
         message.groups.set(selected_groups)
         direct_recipients = Person.objects.filter(id__in=direct_recipient_ids)
         message.direct_recipients.set(direct_recipients)
-        people_set.update(direct_recipients)
 
-        # Filter to only people who have consented to SMS and have a phone number
-        consented_people = set(
-            Person.objects.filter(
-                id__in=[p.id for p in people_set],
-                sms_consent=True,
-                phone_number__isnull=False,
-            ).exclude(phone_number="")
+        _show_delivery_result(
+            request, _deliver_prayer_message(message, request.user)
         )
-
-        if consented_people:
-            if "SMSMessage" in globals():
-                try:
-                    sms_message = SMSMessage(
-                        body=message.message, contacts=consented_people, testing=False
-                    )
-                    results = sms_message.send()
-                    success_count = 0
-                    for person, (success, error) in results.items():
-                        SMSLog.objects.create(
-                            message=message,
-                            recipient=person,
-                            success=success,
-                            error_message=error,
-                            sent_by=request.user,
-                        )
-                        if success:
-                            success_count += 1
-                    fail_count = len(results) - success_count
-                    if fail_count:
-                        messages.warning(
-                            request,
-                            f"Message sent to {success_count} recipient(s). "
-                            f"{fail_count} send(s) failed — see log for details.",
-                        )
-                    else:
-                        messages.success(
-                            request,
-                            f"Message sent to {success_count} recipient(s) who have consented to SMS.",
-                        )
-                except (AttributeError, ImportError) as e:
-                    messages.error(request, f"Failed to send SMS messages: {e}")
-            else:
-                messages.warning(request, "SMS functionality is not available.")
-        else:
-            messages.warning(
-                request, "No recipients with SMS consent found in the selected groups."
-            )
 
         return redirect("prayer:message-detail", id=id)
 

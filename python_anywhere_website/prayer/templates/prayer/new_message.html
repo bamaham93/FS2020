@@ -4,11 +4,20 @@
 
 {% block section1 %}
     <h1>Create a new message</h1>
-    <p class="text-muted">After saving, you'll be taken to the message details page to review and send it.</p>
+    <p class="text-muted">
+        Save this message as a draft, or choose its groups and recipients now and send it immediately.
+    </p>
     {% include 'messages.html' %}
     <form action="#" method="POST">
         {% csrf_token %}
         {{ form | crispy }}
-        <input class="btn btn-primary" type="submit" value="Save and Continue">
+        <div class="d-flex flex-wrap gap-2 mt-3">
+            <button class="btn btn-outline-primary" type="submit" name="action" value="save">
+                Save Draft
+            </button>
+            <button class="btn btn-success" type="submit" name="action" value="send">
+                Save &amp; Send
+            </button>
+        </div>
     </form>
 {% endblock %}

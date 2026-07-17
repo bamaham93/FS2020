@@ -16,7 +16,7 @@
             <h3>Groups</h3>
             {% for group in prayer_groups %}
                 <div class="container">
-                    <input class="" id="send_to_{{ group.id }}" type="checkbox" name="groups" value="{{ group.name }}"
+                    <input class="" id="send_to_{{ group.id }}" type="checkbox" name="groups" value="{{ group.id }}"
                         {% if group.id in associated_group_ids %}checked{% endif %}>
                     <label class="" for="send_to_{{ group.id }}">{{ group.name }}</label>
                 </div>
