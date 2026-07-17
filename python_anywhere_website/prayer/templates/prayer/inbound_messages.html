@@ -4,15 +4,21 @@
 <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Inbound SMS Messages</h2>
-        {% if unread_count %}
-        <span class="badge bg-danger">Unread: {{ unread_count }}</span>
-        {% endif %}
+        <div class="d-flex align-items-center gap-2">
+            {% if unread_count %}
+            <span class="badge bg-danger">Unread: {{ unread_count }}</span>
+            <form method="post" action="{% url 'prayer:mark_all_inbound_messages_read' %}">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-secondary" type="submit">Mark all read</button>
+            </form>
+            {% endif %}
+        </div>
     </div>
 
     {% if inbound_messages %}
     <div class="list-group">
         {% for message in inbound_messages %}
-        <div class="list-group-item {% if not message.person %}list-group-item-warning{% endif %}">
+        <div class="list-group-item {% if not message.is_read %}list-group-item-info{% elif not message.person %}list-group-item-warning{% endif %}">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">From {{ message.from_number }} to {{ message.to_number }}</h5>
                 <small>{{ message.received_at }}</small>
@@ -24,10 +30,18 @@
                 {% else %}
                     Unassigned - review needed
                 {% endif %}
-                {% if not message.processed %}
+                {% if not message.is_read %}
                     • <strong>Unread</strong>
+                {% else %}
+                    • Read
                 {% endif %}
             </small>
+            <form class="mt-2" method="post" action="{% if message.is_read %}{% url 'prayer:mark_inbound_message_unread' message.id %}{% else %}{% url 'prayer:mark_inbound_message_read' message.id %}{% endif %}">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-primary" type="submit">
+                    {% if message.is_read %}Mark unread{% else %}Mark read{% endif %}
+                </button>
+            </form>
         </div>
         {% endfor %}
     </div>

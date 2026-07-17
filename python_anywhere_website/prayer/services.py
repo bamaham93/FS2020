@@ -1,14 +1,30 @@
 import logging
 from dataclasses import dataclass
+from datetime import timedelta
 
-from django.contrib.auth.models import Group
-from django.utils import timezone
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.db.models import Q
 
 from prayer.models import Person, InboundSmsMessage
 
 logger = logging.getLogger(__name__)
 
-PRAYER_ADMIN_GROUP = "Prayer Admin"
+PRAYER_MANAGER_GROUP = "Prayer Manager"
+PRAYER_APP_URL = "https://jacob-mcgowin.us/prayer/"
+TWILIO_CONTROL_MESSAGES = {
+    "STOP",
+    "STOPALL",
+    "UNSUBSCRIBE",
+    "CANCEL",
+    "END",
+    "QUIT",
+    "START",
+    "YES",
+    "UNSTOP",
+    "HELP",
+    "INFO",
+}
 
 try:
     from twilio.rest import Client as TwilioClient
@@ -61,33 +77,50 @@ def _match_person(from_number: str) -> Person | None:
     return None
 
 
+def _is_twilio_control_message(body: str) -> bool:
+    return str(body or "").strip().upper() in TWILIO_CONTROL_MESSAGES
+
+
 def _get_prayer_admin_persons() -> list[Person]:
     """
-    Return Person records whose email matches a user in the 'Prayer Admin'
-    Django group and who have a phone number on file.
+    Return consented Person records linked to Prayer Managers or staff users.
+
+    The explicit User-to-Person relationship is authoritative. Matching by name
+    is limited to the one-time data migration that introduced this behavior.
     """
-    try:
-        group = Group.objects.get(name=PRAYER_ADMIN_GROUP)
-    except Group.DoesNotExist:
-        logger.warning(
-            "Admin notification skipped: Django group '%s' does not exist.",
-            PRAYER_ADMIN_GROUP,
-        )
-        return []
-
-    admin_emails = set(
-        group.user_set.exclude(email="")
-        .exclude(email__isnull=True)
-        .values_list("email", flat=True)
-    )
-    if not admin_emails:
-        return []
-
+    eligible_users = User.objects.filter(
+        Q(groups__name=PRAYER_MANAGER_GROUP) | Q(is_staff=True)
+    ).distinct()
     return list(
-        Person.objects.filter(email__in=admin_emails)
+        Person.objects.filter(
+            user__in=eligible_users,
+            sms_consent=True,
+            notify_on_inbound_sms=True,
+        )
+        .select_related("user")
         .exclude(phone_number__isnull=True)
         .exclude(phone_number="")
+        .distinct()
     )
+
+
+def _notification_cooldown_active(message: InboundSmsMessage) -> bool:
+    """Return whether an optional global inbound-alert cooldown is active."""
+    try:
+        cooldown_minutes = int(
+            getattr(settings, "INBOUND_SMS_ADMIN_COOLDOWN_MINUTES", 0)
+        )
+    except (TypeError, ValueError):
+        cooldown_minutes = 0
+
+    if cooldown_minutes <= 0:
+        return False
+
+    cutoff = message.received_at - timedelta(minutes=cooldown_minutes)
+    return InboundSmsMessage.objects.exclude(pk=message.pk).filter(
+        received_at__gte=cutoff,
+        received_at__lt=message.received_at,
+    ).exists()
 
 
 def _notify_admins(message: InboundSmsMessage) -> None:
@@ -95,13 +128,14 @@ def _notify_admins(message: InboundSmsMessage) -> None:
     Send an SMS notification to all Prayer Group admins when a new inbound
     message is received.
 
-    Admins are determined by membership in the 'Prayer Admin' Django group.
-    Phone numbers are looked up by matching the group member's email address
-    to a Person record.
-
-    The notification reads:
-        "A message was received at {time} on {date} from {name or phone number}."
+    Recipients are the union of the 'Prayer Manager' group and staff users.
+    Each recipient must have a linked Person record, a phone number, SMS
+    consent, and inbound notifications enabled.
     """
+    if _notification_cooldown_active(message):
+        logger.info("Admin notification skipped because cooldown is active.")
+        return
+
     admins = _get_prayer_admin_persons()
     if not admins:
         return
@@ -116,18 +150,21 @@ def _notify_admins(message: InboundSmsMessage) -> None:
         )
         return
 
-    received_at = message.received_at or timezone.now()
-    time_str = received_at.strftime("%I:%M %p").lstrip("0") or "12"
-    date_str = f"{received_at.strftime('%B')} {received_at.day}, {received_at.year}"
-
     if message.person:
         sender = f"{message.person.first_name} {message.person.last_name}".strip()
     else:
         sender = message.from_number
 
-    notification = f"A message was received at {time_str} on {date_str} from {sender}."
+    notification = (
+        f"New Message from {sender}. Log into {PRAYER_APP_URL} to see more."
+    )
 
-    client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    try:
+        client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    except Exception:
+        logger.exception("Failed to initialize Twilio admin notification client.")
+        return
+
     for admin in admins:
         try:
             client.messages.create(
@@ -147,9 +184,19 @@ def _notify_admins(message: InboundSmsMessage) -> None:
                 admin.last_name,
                 exc,
             )
+        except Exception:
+            logger.exception(
+                "Unexpected failure sending admin notification to %s %s.",
+                admin.first_name,
+                admin.last_name,
+            )
 
 
-def handle_inbound_sms(payload: InboundSmsPayload) -> InboundSmsMessage:
+def handle_inbound_sms(payload: InboundSmsPayload) -> InboundSmsMessage | None:
+    if _is_twilio_control_message(payload.body):
+        logger.info("Twilio control message ignored for Prayer inbox.")
+        return None
+
     message, created = InboundSmsMessage.objects.get_or_create(
         provider_message_id=payload.provider_message_id,
         defaults={
@@ -162,7 +209,15 @@ def handle_inbound_sms(payload: InboundSmsPayload) -> InboundSmsMessage:
     )
 
     if created:
-        _notify_admins(message)
+        try:
+            _notify_admins(message)
+        except Exception:
+            # The inbound message is the source of truth. Notification failures
+            # must not make Twilio retry an otherwise successful ingestion.
+            logger.exception(
+                "Unexpected admin notification failure for inbound message %s.",
+                message.provider_message_id,
+            )
         return message
 
     if not message.person:

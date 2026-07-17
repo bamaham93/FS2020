@@ -25,6 +25,7 @@ class NewPersonForm(forms.ModelForm):
             "phone_number",
             "email",
             "sms_consent",
+            "notify_on_inbound_sms",
         ]
 
 

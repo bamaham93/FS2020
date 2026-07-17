@@ -10,8 +10,8 @@ def inbound_sms_notifications(request):
     if not can_view_inbound_sms(user):
         return {}
 
-    unread_messages = InboundSmsMessage.objects.select_related("person").filter(
-        processed=False
+    unread_messages = InboundSmsMessage.objects.select_related("person").exclude(
+        read_by=user
     )
     return {
         "inbound_sms_can_view": True,

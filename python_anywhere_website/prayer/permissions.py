@@ -1,4 +1,4 @@
-PRAYER_ADMINS_GROUP = "Prayer Admins"
+PRAYER_MANAGERS_GROUP = "Prayer Manager"
 
 
 def can_view_inbound_sms(user):
@@ -8,4 +8,4 @@ def can_view_inbound_sms(user):
     if user.is_staff or user.is_superuser:
         return True
 
-    return user.groups.filter(name=PRAYER_ADMINS_GROUP).exists()
+    return user.groups.filter(name=PRAYER_MANAGERS_GROUP).exists()

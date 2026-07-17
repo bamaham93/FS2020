@@ -6,9 +6,10 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from twilio.request_validator import RequestValidator
 from urllib.parse import urlsplit, urlunsplit
 
@@ -575,9 +576,46 @@ def twilio_sms_webhook(request):
 @login_required()
 @user_passes_test(can_view_inbound_sms)
 def inbound_messages(request):
-    message_qs = InboundSmsMessage.objects.select_related("person")
+    inbound_message_list = list(
+        InboundSmsMessage.objects.select_related("person").all()
+    )
+    read_message_ids = set(
+        request.user.read_inbound_sms_messages.values_list("id", flat=True)
+    )
+    for inbound_message in inbound_message_list:
+        inbound_message.is_read = inbound_message.id in read_message_ids
+
     context = {
-        "inbound_messages": message_qs,
-        "unread_count": message_qs.filter(processed=False).count(),
+        "inbound_messages": inbound_message_list,
+        "unread_count": sum(
+            not inbound_message.is_read for inbound_message in inbound_message_list
+        ),
     }
     return render(request, "prayer/inbound_messages.html", context)
+
+
+@require_POST
+@login_required()
+@user_passes_test(can_view_inbound_sms)
+def mark_inbound_message_read(request, message_id):
+    inbound_message = get_object_or_404(InboundSmsMessage, pk=message_id)
+    inbound_message.read_by.add(request.user)
+    return redirect("prayer:inbound_messages")
+
+
+@require_POST
+@login_required()
+@user_passes_test(can_view_inbound_sms)
+def mark_inbound_message_unread(request, message_id):
+    inbound_message = get_object_or_404(InboundSmsMessage, pk=message_id)
+    inbound_message.read_by.remove(request.user)
+    return redirect("prayer:inbound_messages")
+
+
+@require_POST
+@login_required()
+@user_passes_test(can_view_inbound_sms)
+def mark_all_inbound_messages_read(request):
+    unread_messages = InboundSmsMessage.objects.exclude(read_by=request.user)
+    request.user.read_inbound_sms_messages.add(*unread_messages)
+    return redirect("prayer:inbound_messages")

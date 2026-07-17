@@ -34,6 +34,10 @@ class Person(models.Model):
     sms_consent_date = models.DateTimeField(
         null=True, blank=True, help_text="Date and time when SMS consent was given"
     )
+    notify_on_inbound_sms = models.BooleanField(
+        default=True,
+        help_text="Send an SMS alert when a new inbound Prayer message arrives.",
+    )
 
     def __str__(self):
         """ """
@@ -148,6 +152,13 @@ class InboundSmsMessage(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="inbound_sms_messages",
+    )
+
+    read_by = models.ManyToManyField(
+        User,
+        blank=True,
+        related_name="read_inbound_sms_messages",
+        help_text="Prayer administrators who have marked this message as read.",
     )
 
     direction = models.CharField(max_length=20, default="inbound")
