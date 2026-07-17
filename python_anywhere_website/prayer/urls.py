@@ -40,4 +40,19 @@ urlpatterns = [
     path("delete-person/<person_id>", views.delete_person, name="delete_person"),
     path("permissions/<int:id>", views.permissions, name="permissions"),
     path("messages/inbound", views.inbound_messages, name="inbound_messages"),
+    path(
+        "messages/inbound/<int:message_id>/read",
+        views.mark_inbound_message_read,
+        name="mark_inbound_message_read",
+    ),
+    path(
+        "messages/inbound/<int:message_id>/unread",
+        views.mark_inbound_message_unread,
+        name="mark_inbound_message_unread",
+    ),
+    path(
+        "messages/inbound/read-all",
+        views.mark_all_inbound_messages_read,
+        name="mark_all_inbound_messages_read",
+    ),
 ]

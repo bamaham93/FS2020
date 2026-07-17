@@ -1,8 +1,12 @@
+from datetime import timedelta
+from importlib import import_module
 from unittest.mock import MagicMock, Mock, patch
 
+from django.apps import apps
 from django.contrib.auth.models import Group, User
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from prayer.models import InboundSmsMessage, Person
 from prayer.services import (
@@ -48,6 +52,56 @@ class InboundSmsServiceTests(TestCase):
 
         self.assertEqual(first.id, second.id)
         self.assertEqual(InboundSmsMessage.objects.count(), 1)
+
+    @patch("prayer.services._notify_admins", side_effect=RuntimeError("transport"))
+    def test_notification_failure_does_not_lose_inbound_message(self, _notify):
+        payload = InboundSmsPayload(
+            provider="twilio",
+            provider_message_id="SM_NOTIFY_FAILURE",
+            from_number="+15551112222",
+            to_number="+18005550100",
+            body="Please pray",
+        )
+
+        message = handle_inbound_sms(payload)
+
+        self.assertEqual(message.provider_message_id, "SM_NOTIFY_FAILURE")
+        self.assertTrue(
+            InboundSmsMessage.objects.filter(
+                provider_message_id="SM_NOTIFY_FAILURE"
+            ).exists()
+        )
+
+    @patch("prayer.services._notify_admins")
+    def test_twilio_control_messages_are_ignored_case_insensitively(
+        self, notify_admins
+    ):
+        for index, body in enumerate(("STOP", " stop ", "Help", "unSubscribe")):
+            with self.subTest(body=body):
+                payload = InboundSmsPayload(
+                    provider="twilio",
+                    provider_message_id=f"SM_CONTROL_{index}",
+                    from_number="+15551112222",
+                    to_number="+18005550100",
+                    body=body,
+                )
+                self.assertIsNone(handle_inbound_sms(payload))
+
+        self.assertEqual(InboundSmsMessage.objects.count(), 0)
+        notify_admins.assert_not_called()
+
+    @patch("prayer.services._notify_admins")
+    def test_regular_message_containing_help_is_not_filtered(self, notify_admins):
+        payload = InboundSmsPayload(
+            provider="twilio",
+            provider_message_id="SM_NOT_CONTROL",
+            from_number="+15551112222",
+            to_number="+18005550100",
+            body="Please help my family",
+        )
+
+        self.assertIsNotNone(handle_inbound_sms(payload))
+        notify_admins.assert_called_once()
 
 
 class TwilioWebhookTests(TestCase):
@@ -200,7 +254,7 @@ class InboundMessagesViewTests(TestCase):
         )
 
     def _create_group_user(self, username="prayer_admin"):
-        group = Group.objects.create(name="Prayer Admins")
+        group = Group.objects.create(name="Prayer Manager")
         user = User.objects.create_user(username=username, password="pw")
         user.groups.add(group)
         return user
@@ -335,14 +389,54 @@ class InboundMessagesViewTests(TestCase):
         self.assertNotContains(response, "unread inbound SMS")
         self.assertNotContains(response, "Please pray for us.")
 
-    def test_processed_messages_do_not_show_in_notification(self):
-        self._create_inbound_message(processed=True)
+    def test_read_message_is_hidden_only_for_user_who_read_it(self):
+        inbound_message = self._create_inbound_message(processed=True)
+        other_staff = User.objects.create_user(
+            username="other_staff", password="pw", is_staff=True
+        )
+        inbound_message.read_by.add(self.staff)
 
         response = self.client.get(reverse("prayer:index"))
 
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "unread inbound SMS")
         self.assertNotContains(response, "Please pray for us.")
+
+        self.client.logout()
+        self.client.login(username=other_staff.username, password="pw")
+        response = self.client.get(reverse("prayer:index"))
+        self.assertContains(response, "1 unread inbound SMS")
+
+    def test_mark_read_unread_and_all_read_are_per_user(self):
+        first_message = self._create_inbound_message()
+        second_message = self._create_inbound_message()
+
+        response = self.client.post(
+            reverse("prayer:mark_inbound_message_read", args=[first_message.id])
+        )
+        self.assertRedirects(response, reverse("prayer:inbound_messages"))
+        self.assertTrue(first_message.read_by.filter(pk=self.staff.pk).exists())
+        self.assertFalse(second_message.read_by.filter(pk=self.staff.pk).exists())
+
+        response = self.client.post(reverse("prayer:mark_all_inbound_messages_read"))
+        self.assertRedirects(response, reverse("prayer:inbound_messages"))
+        self.assertTrue(second_message.read_by.filter(pk=self.staff.pk).exists())
+
+        response = self.client.post(
+            reverse("prayer:mark_inbound_message_unread", args=[first_message.id])
+        )
+        self.assertRedirects(response, reverse("prayer:inbound_messages"))
+        self.assertFalse(first_message.read_by.filter(pk=self.staff.pk).exists())
+
+    def test_read_state_changes_require_post(self):
+        inbound_message = self._create_inbound_message()
+
+        response = self.client.get(
+            reverse("prayer:mark_inbound_message_read", args=[inbound_message.id])
+        )
+
+        self.assertEqual(response.status_code, 405)
+        self.assertFalse(inbound_message.read_by.filter(pk=self.staff.pk).exists())
 
     def test_prayer_admins_group_member_can_view_inbound_messages_page(self):
         self._create_inbound_message()
@@ -369,13 +463,13 @@ class InboundMessagesViewTests(TestCase):
 class AdminNotificationTests(TestCase):
     """Tests for the _notify_admins / admin-notification path in handle_inbound_sms."""
 
-    ADMIN_GROUP = "Prayer Admin"
+    ADMIN_GROUP = "Prayer Manager"
 
     def setUp(self):
         self.group, _ = Group.objects.get_or_create(name=self.ADMIN_GROUP)
 
     def _make_admin_user(self, username, email, phone_number):
-        """Create a User in the Prayer Admin group with a matching Person record."""
+        """Create a User in Prayer Manager with an eligible linked Person."""
         user = User.objects.create_user(username=username, email=email, password="pw")
         user.groups.add(self.group)
         person = Person.objects.create(
@@ -383,6 +477,8 @@ class AdminNotificationTests(TestCase):
             last_name=user.last_name or "Admin",
             email=email,
             phone_number=phone_number,
+            user=user,
+            sms_consent=True,
         )
         return user, person
 
@@ -397,7 +493,7 @@ class AdminNotificationTests(TestCase):
         )
 
     def test_get_prayer_admin_persons_returns_persons_for_group_members(self):
-        """_get_prayer_admin_persons returns Person records matched by email."""
+        """Eligible linked Prayer Manager people are returned."""
         _, person = self._make_admin_user(
             "admin1", "admin1@example.com", "+15559990000"
         )
@@ -405,7 +501,7 @@ class AdminNotificationTests(TestCase):
         self.assertIn(person, results)
 
     def test_get_prayer_admin_persons_excludes_non_members(self):
-        """Person records whose email is not in the group are excluded."""
+        """Unlinked Person records are excluded."""
         Person.objects.create(
             first_name="Not",
             last_name="Admin",
@@ -416,13 +512,13 @@ class AdminNotificationTests(TestCase):
         self.assertEqual(results, [])
 
     def test_get_prayer_admin_persons_returns_empty_when_group_missing(self):
-        """Returns empty list gracefully when the Prayer Admin group doesn't exist."""
+        """Returns empty list when no eligible manager or staff user exists."""
         Group.objects.filter(name=self.ADMIN_GROUP).delete()
         results = _get_prayer_admin_persons()
         self.assertEqual(results, [])
 
     def test_get_prayer_admin_persons_skips_members_without_person_record(self):
-        """Group members with no matching Person (by email) are silently skipped."""
+        """Group members with no linked Person are silently skipped."""
         user = User.objects.create_user(
             username="noperson", email="noperson@example.com", password="pw"
         )
@@ -441,15 +537,47 @@ class AdminNotificationTests(TestCase):
             last_name="Phone",
             email="nophone@example.com",
             phone_number=None,
+            user=user,
+            sms_consent=True,
         )
         results = _get_prayer_admin_persons()
         self.assertEqual(results, [])
+
+    def test_get_prayer_admin_persons_includes_staff_union(self):
+        staff_user = User.objects.create_user(
+            username="staff_admin", password="pw", is_staff=True
+        )
+        staff_person = Person.objects.create(
+            user=staff_user,
+            first_name="Staff",
+            last_name="Admin",
+            phone_number="+15550000001",
+            sms_consent=True,
+        )
+
+        self.assertIn(staff_person, _get_prayer_admin_persons())
+
+    def test_get_prayer_admin_persons_requires_consent_and_preference(self):
+        _, no_consent = self._make_admin_user(
+            "no_consent", "no-consent@example.com", "+15550000002"
+        )
+        no_consent.sms_consent = False
+        no_consent.save(update_fields=["sms_consent"])
+        _, opted_out = self._make_admin_user(
+            "opted_out", "opted-out@example.com", "+15550000003"
+        )
+        opted_out.notify_on_inbound_sms = False
+        opted_out.save(update_fields=["notify_on_inbound_sms"])
+
+        results = _get_prayer_admin_persons()
+        self.assertNotIn(no_consent, results)
+        self.assertNotIn(opted_out, results)
 
     @patch("prayer.services.TwilioClient")
     def test_notify_admins_sends_sms_to_prayer_admin_group_members(
         self, mock_client_cls
     ):
-        """_notify_admins sends one SMS per Prayer Admin group member with a phone."""
+        """_notify_admins sends one SMS per eligible Prayer Manager."""
         _, admin_person = self._make_admin_user(
             "alice", "alice@example.com", "+15559990001"
         )
@@ -498,13 +626,17 @@ class AdminNotificationTests(TestCase):
             _notify_admins(msg)
 
         body = mock_client.messages.create.call_args.kwargs["body"]
-        self.assertIn("Jane Doe", body)
+        self.assertEqual(
+            body,
+            "New Message from Jane Doe. Log into "
+            "https://jacob-mcgowin.us/prayer/ to see more.",
+        )
 
     @patch("prayer.services.TwilioClient")
     def test_notify_admins_uses_phone_number_when_no_person_match(
         self, mock_client_cls
     ):
-        """Notification body falls back to the raw phone number when no Person matched."""
+        """Notification body uses the phone number when no Person matched."""
         self._make_admin_user("admin3", "admin3@example.com", "+15559990003")
 
         mock_client = MagicMock()
@@ -520,6 +652,25 @@ class AdminNotificationTests(TestCase):
 
         body = mock_client.messages.create.call_args.kwargs["body"]
         self.assertIn("+15554440000", body)
+
+    @override_settings(INBOUND_SMS_ADMIN_COOLDOWN_MINUTES=5)
+    @patch("prayer.services.TwilioClient")
+    def test_notify_admins_honors_optional_cooldown(self, mock_client_cls):
+        self._make_admin_user("cooldown", "cooldown@example.com", "+15559990004")
+        earlier = InboundSmsMessage.objects.create(
+            provider_message_id="SM_EARLIER",
+            from_number="+15550000001",
+            to_number="+18005550100",
+            body="First",
+        )
+        InboundSmsMessage.objects.filter(pk=earlier.pk).update(
+            received_at=timezone.now() - timedelta(minutes=1)
+        )
+        current = self._make_message()
+
+        _notify_admins(current)
+
+        mock_client_cls.assert_not_called()
 
     @patch("prayer.services.TwilioClient")
     def test_notify_admins_skips_when_no_admins(self, mock_client_cls):
@@ -556,3 +707,76 @@ class AdminNotificationTests(TestCase):
         handle_inbound_sms(payload)
         handle_inbound_sms(payload)
         mock_notify.assert_called_once()
+
+
+class PersonUserRolloutMigrationTests(TestCase):
+    def setUp(self):
+        migration = import_module(
+            "prayer.migrations.0014_inboundsmsmessage_read_by_and_more"
+        )
+        self.link_people = migration.link_people_to_users_by_unique_name
+        self.preserve_read_state = migration.preserve_processed_messages_as_read
+
+    def test_unique_exact_name_is_linked_case_insensitively(self):
+        user = User.objects.create_user(
+            username="pat",
+            first_name="Pat",
+            last_name="Bruce",
+        )
+        person = Person.objects.create(first_name=" pat ", last_name="BRUCE")
+
+        self.link_people(apps, None)
+
+        person.refresh_from_db()
+        self.assertEqual(person.user, user)
+
+    def test_ambiguous_name_is_not_linked(self):
+        User.objects.create_user(
+            username="pat-one",
+            first_name="Pat",
+            last_name="Bruce",
+        )
+        User.objects.create_user(
+            username="pat-two",
+            first_name="Pat",
+            last_name="Bruce",
+        )
+        person = Person.objects.create(first_name="Pat", last_name="Bruce")
+
+        self.link_people(apps, None)
+
+        person.refresh_from_db()
+        self.assertIsNone(person.user)
+
+    def test_user_already_linked_to_another_person_is_not_reused(self):
+        user = User.objects.create_user(
+            username="linked-pat",
+            first_name="Pat",
+            last_name="Bruce",
+        )
+        Person.objects.create(first_name="Existing", last_name="Link", user=user)
+        person = Person.objects.create(first_name="Pat", last_name="Bruce")
+
+        self.link_people(apps, None)
+
+        person.refresh_from_db()
+        self.assertIsNone(person.user)
+
+    def test_processed_messages_start_read_for_managers_and_staff(self):
+        manager_group = Group.objects.create(name="Prayer Manager")
+        manager = User.objects.create_user(username="manager")
+        manager.groups.add(manager_group)
+        staff = User.objects.create_user(username="staff-rollout", is_staff=True)
+        regular = User.objects.create_user(username="regular-rollout")
+        message = InboundSmsMessage.objects.create(
+            provider_message_id="SM_PROCESSED_ROLLOUT",
+            from_number="+15550000001",
+            to_number="+18005550100",
+            processed=True,
+        )
+
+        self.preserve_read_state(apps, None)
+
+        self.assertTrue(message.read_by.filter(pk=manager.pk).exists())
+        self.assertTrue(message.read_by.filter(pk=staff.pk).exists())
+        self.assertFalse(message.read_by.filter(pk=regular.pk).exists())

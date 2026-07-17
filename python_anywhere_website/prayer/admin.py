@@ -90,6 +90,7 @@ class PersonAdmin(admin.ModelAdmin):
         "phone_number",
         "email",
         "sms_consent",
+        "notify_on_inbound_sms",
         "suggested_user",
     )
     list_select_related = ("user",)
@@ -111,6 +112,7 @@ class PersonAdmin(admin.ModelAdmin):
         ("first_name", "last_name"),
         ("phone_number", "email"),
         ("sms_consent", "sms_consent_date"),
+        "notify_on_inbound_sms",
     )
     empty_value = "-empty-"
 
@@ -176,6 +178,7 @@ class InboundSmsMessageAdmin(admin.ModelAdmin):
         "person",
         "received_at",
         "processed",
+        "read_count",
     )
     list_filter = ("processed", "provider", "received_at")
     search_fields = ("provider_message_id", "from_number", "to_number", "body")
@@ -188,3 +191,7 @@ class InboundSmsMessageAdmin(admin.ModelAdmin):
         "received_at",
         "direction",
     )
+
+    @admin.display(description="Read by")
+    def read_count(self, obj):
+        return obj.read_by.count()
