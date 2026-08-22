@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+
 # Optionally load a .env file in development if you use python-dotenv
 # from dotenv import load_dotenv
 # load_dotenv()
@@ -29,7 +30,13 @@ SECRET_KEY = "django-insecure-xmf1c91jkul#-1nh!=(_#0@)fu=!&3_b$)8&ak!qzz-w!=g=_9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["www.jacob-mcgowin.us", "localhost", "127.0.0.1", "192.168.1.10", "192.168.0.38"]
+ALLOWED_HOSTS = [
+    "www.jacob-mcgowin.us",
+    "localhost",
+    "127.0.0.1",
+    "192.168.1.10",
+    "192.168.0.38",
+]
 
 
 # Application definition
@@ -51,6 +58,7 @@ INSTALLED_APPS = [
     "media_app",
     "finance",
     "photography",
+    "hymns",
 ]
 
 MIDDLEWARE = [
@@ -80,6 +88,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "prayer.context_processors.inbound_sms_notifications",
             ],
         },
     },
@@ -152,8 +161,8 @@ STATICFILES_DIRS = [
 ]
 
 # Media files (user-uploaded)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media_uploads'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media_uploads"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -162,18 +171,24 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Cache configuration for Bible API
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'bible-cache',
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000
-        }
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "bible-cache",
+        "OPTIONS": {"MAX_ENTRIES": 1000},
     }
 }
 
 # Crispy Forms Defaults
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Trust the X-Forwarded-Proto header set by the reverse proxy (e.g. PythonAnywhere).
+# This ensures request.build_absolute_uri() returns https:// URLs so that
+# third-party webhook signature validation (e.g. Twilio) works correctly.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# Trust X-Forwarded-Host as well so host reconstruction behind the proxy
+# matches the public host used by providers signing webhook callbacks.
+USE_X_FORWARDED_HOST = True
 
 # Login, Signup redirects
 LOGIN_URL = "login"
@@ -183,7 +198,7 @@ LOGIN_REDIRECT_URL = "core_app:index"
 
 # Optional: allow a server-only `local_settings.py` to override any settings
 # (including `DATABASES`) without using environment variables. Create
-# `main_app/local_settings.py` on the server (do NOT commit it) with e.g.: 
+# `main_app/local_settings.py` on the server (do NOT commit it) with e.g.:
 #
 # DATABASES = {
 #     'default': {

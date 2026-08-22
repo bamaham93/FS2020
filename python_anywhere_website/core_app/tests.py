@@ -18,6 +18,19 @@ class SanityTests(TestCase):
         self.assertIn(resp.status_code, (200, 302))
 
 
+class HomePageTests(TestCase):
+    def test_homepage_shows_blog_signup_form(self):
+        resp = self.client.get("/", follow=True)
+
+        self.assertContains(resp, "From the Blog")
+        self.assertContains(
+            resp,
+            "https://cdn.jsdelivr.net/ghost/signup-form@~0.3/umd/signup-form.min.js",
+        )
+        self.assertContains(resp, 'data-site="https://blog.jacob-mcgowin.us/"')
+        self.assertNotContains(resp, "Lorem ipsum")
+
+
 class AuthFlowTests(TestCase):
     def setUp(self):
         self.username = "testuser"
@@ -100,15 +113,25 @@ class SignUpTests(TestCase):
             "password2": "ComplexPass123!",
         }
         resp = self.client.post("/core_app/signup/", data, follow=True)
-        self.assertTrue(User.objects.filter(username="testuser3").exists())
+        user = User.objects.get(username="testuser3")
         person = Person.objects.filter(phone_number="+12345678900").first()
         self.assertIsNotNone(person)
+        self.assertEqual(person.user, user)
         self.assertTrue(person.sms_consent)
         self.assertIsNotNone(person.sms_consent_date)
 
 
 class NavbarAccountsTests(TestCase):
     """Tests for the accounts dropdown in the navbar."""
+
+    def test_navbar_shows_blog_link(self):
+        """Test that the navbar links to the external blog."""
+        resp = self.client.get("/", follow=True)
+        self.assertContains(
+            resp,
+            '<a class="nav-link" href="https://blog.jacob-mcgowin.us">Blog</a>',
+            html=True,
+        )
 
     def test_navbar_shows_login_and_signup_when_anonymous(self):
         """Test that unauthenticated users see Login and Signup in navbar."""
@@ -165,8 +188,6 @@ class NavbarAccountsTests(TestCase):
         self.assertNotIn('dropdown-item" href="/admin/"', content)
 
 
-
-
 class PublicAccessTests(TestCase):
     """Ensure policy and signup pages stay public without authentication."""
 
@@ -185,6 +206,7 @@ class PublicAccessTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertNotContains(resp, 'name="next"')
 
+
 class CompliancePolicyTests(TestCase):
     """Tests for Twilio/A2P privacy and opt-in compliance copy."""
 
@@ -199,14 +221,16 @@ class CompliancePolicyTests(TestCase):
         self.assertContains(resp, "How We Use Information")
         self.assertContains(
             resp,
-            "We do not share your phone number, SMS consent, or messaging data with third parties for"
+            "We do not share your phone number, SMS consent, or messaging data with third parties for",
         )
         self.assertContains(resp, "marketing or promotional purposes")
         self.assertContains(resp, "STOP")
 
     def test_signup_page_has_compliant_web_opt_in_statement(self):
         resp = self.client.get("/core_app/signup/")
-        self.assertContains(resp, "By providing your phone number, you agree to receive text messages")
+        self.assertContains(
+            resp, "By providing your phone number, you agree to receive text messages"
+        )
         self.assertContains(resp, "Message and data")
         self.assertContains(resp, "Message frequency varies")
         self.assertContains(resp, "Reply")
@@ -223,3 +247,23 @@ class CompliancePolicyTests(TestCase):
         self.assertContains(resp, "Reply <strong>HELP</strong>", html=True)
         self.assertContains(resp, "Carriers are not liable for delayed or undelivered messages")
         self.assertContains(resp, "Message frequency varies")
+
+
+class RobotsTxtTests(TestCase):
+    """Tests for robots.txt endpoint."""
+
+    def test_robots_txt_available_at_site_root(self):
+        resp = self.client.get("/robots.txt")
+        self.assertEqual(resp.status_code, 200)
+
+    def test_robots_txt_content_and_content_type(self):
+        resp = self.client.get("/robots.txt")
+        self.assertEqual(resp["Content-Type"], "text/plain")
+        self.assertEqual(
+            resp.content.decode("utf-8"),
+            "User-agent: *\nDisallow: /prayer/\n",
+        )
+
+    def test_robots_txt_disallows_prayer_app(self):
+        resp = self.client.get("/robots.txt")
+        self.assertContains(resp, "Disallow: /prayer/")

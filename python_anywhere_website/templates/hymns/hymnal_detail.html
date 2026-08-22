@@ -1,0 +1,23 @@
+{% extends 'hymns/hymns_base.html' %}
+
+{% block hymns_content %}
+<h2 class="h4">{{ hymnal.title }} <span class="text-muted">({{ hymnal.code }})</span></h2>
+<div class="table-responsive">
+  <table class="table table-dark table-striped align-middle">
+    <thead><tr><th>#</th><th>Title</th><th>Tune</th><th>Meter</th></tr></thead>
+    <tbody>
+      {% for entry in entries %}
+        <tr>
+          <td>{{ entry.number }}</td>
+          <td>{{ entry.title_as_printed }}</td>
+          <td>{{ entry.tune_as_printed }}</td>
+          <td>{{ entry.meter_as_printed }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="text-muted">No approved entries yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+

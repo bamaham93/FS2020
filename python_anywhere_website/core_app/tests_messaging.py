@@ -5,7 +5,6 @@ from unittest.mock import Mock, patch
 from django.conf import settings
 from django.test import SimpleTestCase
 
-
 LOGIC_ROOT = Path(settings.BASE_DIR).parent
 if str(LOGIC_ROOT) not in sys.path:
     sys.path.insert(0, str(LOGIC_ROOT))
@@ -43,6 +42,9 @@ class APIStatusTests(SimpleTestCase):
             result,
             [
                 {"name": "REST API", "status": "major_outage"},
-                {"name": "SMS Long Code, North America", "status": "degraded_performance"},
+                {
+                    "name": "SMS Long Code, North America",
+                    "status": "degraded_performance",
+                },
             ],
         )

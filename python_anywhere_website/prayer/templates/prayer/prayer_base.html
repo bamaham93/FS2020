@@ -14,7 +14,12 @@
       </li>
       {% if user.is_staff %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'prayer:new_message' %}">Messages</a>
+        <a class="nav-link" href="{% url 'prayer:message_list' %}">Messages</a>
+      </li>
+      {% endif %}
+      {% if inbound_sms_can_view %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'prayer:inbound_messages' %}">Inbound SMS</a>
       </li>
       {% endif %}
       <li class="nav-item">
@@ -34,6 +39,29 @@
     </ul>
   </div>
 </nav>
+{% if inbound_sms_unread_count %}
+<div class="container my-3">
+  <div class="alert alert-info mb-0" role="alert">
+    <div class="d-flex justify-content-between align-items-start gap-3">
+      <div>
+        <strong>
+          {% if inbound_sms_unread_count == 1 %}
+          1 unread inbound SMS
+          {% else %}
+          {{ inbound_sms_unread_count }} unread inbound SMS messages
+          {% endif %}
+        </strong>
+        <ul class="mb-0 mt-2">
+          {% for inbound_message in inbound_sms_notifications %}
+          <li>{{ inbound_message.notification_summary|truncatechars:160 }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <a class="btn btn-sm btn-outline-primary flex-shrink-0" href="{% url 'prayer:inbound_messages' %}">Review</a>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block section1 %}

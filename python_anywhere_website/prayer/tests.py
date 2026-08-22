@@ -5,6 +5,9 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import reverse
 
+from prayer.models import PrayerGroup, PrayerMessage
+from prayer.models import Person
+
 
 # Create your tests here.
 class TestPrayerModule(TestCase):
@@ -176,6 +179,7 @@ class TestAccessControl(TestCase):
 
         # Views that should require login
         protected_urls = [
+            "/prayer/messages",
             "/prayer/new-message",
             "/prayer/groups",
             "/prayer/send-message/1",
@@ -215,9 +219,25 @@ class TestAccessControl(TestCase):
         response = client.get("/prayer/new-message")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
+        # Test message_list view (staff only)
+        response = client.get("/prayer/messages")
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
         # Test groups view (staff only)
         response = client.get("/prayer/groups")
         self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_new_message_page_shows_workflow_explanation(self):
+        """New message page should offer both draft and immediate-send actions."""
+        client = Client()
+        client.force_login(self.staff_user)
+
+        response = client.get("/prayer/new-message")
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Save Draft")
+        self.assertContains(response, "Save &amp; Send")
+        self.assertContains(response, "send it immediately")
 
     def test_staff_views_blocked_for_regular_users(self):
         """
@@ -233,6 +253,14 @@ class TestAccessControl(TestCase):
             response.status_code,
             [302, 403],
             "new_message should be blocked for non-staff users",
+        )
+
+        # Test message_list view - should redirect (403 or 302)
+        response = client.get("/prayer/messages")
+        self.assertIn(
+            response.status_code,
+            [302, 403],
+            "message_list should be blocked for non-staff users",
         )
 
         # Test groups view - should redirect (403 or 302)
@@ -288,20 +316,15 @@ class TestAccessControl(TestCase):
         response = client.get("/prayer/people")
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertContains(
-            response, f'href="{reverse("core_app:privacy_policy")}"'
-        )
-        self.assertContains(
-            response, f'href="{reverse("core_app:terms_of_service")}"'
-        )
+        self.assertContains(response, f'href="{reverse("core_app:privacy_policy")}"')
+        self.assertContains(response, f'href="{reverse("core_app:terms_of_service")}"')
         self.assertContains(response, "Privacy Policy")
         self.assertContains(response, "Terms and Conditions")
         self.assertContains(response, "By adding yourself, you agree to our")
 
     def test_message_detail_requires_authentication(self):
         """
-        Test that message_detail view requires authentication.
-        Note: This view currently lacks @login_required decorator.
+        Test that message_detail view requires authentication and staff status.
         """
         from prayer.models import PrayerMessage
 
@@ -312,19 +335,18 @@ class TestAccessControl(TestCase):
 
         client = Client()
 
-        # Test without login - should redirect or return error
+        # Test without login - should redirect to login
         response = client.get(f"/prayer/message-detail/{message.id}")
-        # If view doesn't have @login_required, this test documents the current behavior
-        # It may return 200 (which would be a security issue to fix)
-        # or 302 (if authentication is required)
-        self.assertIn(
-            response.status_code,
-            [HTTPStatus.OK, 302],
-            "message_detail should either require login or be accessible",
-        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url.lower())
 
-        # Test with login - should work
+        # Test with regular (non-staff) user - should also be redirected (staff only)
         client.force_login(self.regular_user)
+        response = client.get(f"/prayer/message-detail/{message.id}")
+        self.assertIn(response.status_code, [302, 403])
+
+        # Test with staff - should work
+        client.force_login(self.staff_user)
         response = client.get(f"/prayer/message-detail/{message.id}")
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
@@ -357,44 +379,17 @@ class TestPrayerForms(TestCase):
         client.force_login(user)
         endpoint = "/prayer/new-message"
 
-        # Tests that valid data submits successfully.
+        # Tests that valid data submits successfully as a draft.
         data = {
             "name": "Prayer Request 8/30/2022",
             "subject": "Today's Requests",
             "message": "These are today's prayer requests.",
         }
         response = client.post(endpoint, data)
-        self.assertEqual(response.status_code, 200)
-
-        # Tests that form submission with missing data fails.
-        data_1 = {
-            "name": "",
-            "subject": "This has",
-            "message": "words",
-        }
-
-        data_2 = {
-            "name": "This has",
-            "subject": "",
-            "message": "Words",
-        }
-
-        data_3 = {
-            "name": "This has",
-            "subject": "Words",
-            "message": "",
-        }
-
-        data_list = [data_1, data_2, data_3]
-
-        # Runs all tests that should fail.
-        for data in data_list:
-            self.assertRaises(
-                ValueError,
-                client.post,
-                path=endpoint,
-                data=data,
-            )
+        self.assertEqual(response.status_code, 302)
+        created_message = PrayerMessage.objects.latest("id")
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        self.assertEqual(created_message.submitted_by, user)
 
     def test_new_person_form(self):
         """ """
@@ -736,7 +731,6 @@ class TestPublicSignup(TestCase):
         self.assertContains(response, "log in")
         self.assertContains(response, "disabled")
 
-
     def test_public_signup_post_blocked_for_anonymous_user(self):
         """Anonymous users cannot submit signup form data."""
         from prayer.models import Person
@@ -763,7 +757,9 @@ class TestPublicSignup(TestCase):
         from prayer.models import Person
 
         self.client.force_login(
-            User.objects.create_user("signupuser", "signup@example.com", "StrongPass123!")
+            User.objects.create_user(
+                "signupuser", "signup@example.com", "StrongPass123!"
+            )
         )
 
         initial_count = Person.objects.count()
@@ -791,7 +787,9 @@ class TestPublicSignup(TestCase):
         from prayer.models import Person
 
         self.client.force_login(
-            User.objects.create_user("signupuser2", "signup2@example.com", "StrongPass123!")
+            User.objects.create_user(
+                "signupuser2", "signup2@example.com", "StrongPass123!"
+            )
         )
 
         initial_count = Person.objects.count()
@@ -812,7 +810,9 @@ class TestPublicSignup(TestCase):
         from prayer.models import Person
 
         self.client.force_login(
-            User.objects.create_user("signupuser3", "signup3@example.com", "StrongPass123!")
+            User.objects.create_user(
+                "signupuser3", "signup3@example.com", "StrongPass123!"
+            )
         )
 
         initial_count = Person.objects.count()
@@ -834,7 +834,9 @@ class TestPublicSignup(TestCase):
         from prayer.models import Person
 
         self.client.force_login(
-            User.objects.create_user("signupuser4", "signup4@example.com", "StrongPass123!")
+            User.objects.create_user(
+                "signupuser4", "signup4@example.com", "StrongPass123!"
+            )
         )
 
         data = {
@@ -989,11 +991,590 @@ class TestPrayerLegalLinks(TestCase):
 
     def test_public_signup_includes_privacy_and_terms_links(self):
         client = Client()
-        response = client.get('/prayer/signup')
+        response = client.get("/prayer/signup")
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertContains(response, 'Privacy Policy')
-        self.assertContains(response, 'Terms and Conditions')
-        self.assertContains(response, '/core_app/privacy-policy/')
-        self.assertContains(response, '/core_app/terms-of-service/')
+        self.assertContains(response, "Privacy Policy")
+        self.assertContains(response, "Terms and Conditions")
+        self.assertContains(response, "/core_app/privacy-policy/")
+        self.assertContains(response, "/core_app/terms-of-service/")
 
+
+class TestPersonUserAssociation(TestCase):
+    def test_public_signup_associates_person_with_logged_in_user(self):
+        user = User.objects.create_user(
+            "signupuser_assoc", "signupassoc@example.com", "StrongPass123!"
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(
+            "/prayer/signup",
+            {
+                "first_name": "Jane",
+                "last_name": "Smith",
+                "phone_number": "+12345678901",
+                "email": "signupassoc@example.com",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        person = Person.objects.get(phone_number="+12345678901")
+        self.assertEqual(person.user, user)
+
+    def test_person_can_be_associated_with_user(self):
+        user = User.objects.create_user("linkeduser", "linked@example.com", "pw")
+        person = Person.objects.create(
+            user=user,
+            first_name="Linked",
+            last_name="User",
+            email="linked@example.com",
+        )
+
+        self.assertEqual(person.user, user)
+        self.assertEqual(user.prayer_person, person)
+
+
+class TestPersonAdminUserSuggestions(TestCase):
+    def test_suggest_user_for_person_prefers_exact_email_match(self):
+        from prayer.admin import suggest_user_for_person
+
+        user = User.objects.create_user(
+            username="emailmatch",
+            email="jane@example.com",
+            first_name="Different",
+            last_name="Name",
+        )
+        person = Person.objects.create(
+            first_name="Jane",
+            last_name="Smith",
+            email="jane@example.com",
+        )
+
+        suggested_user, score, reason = suggest_user_for_person(person)
+
+        self.assertEqual(suggested_user, user)
+        self.assertEqual(score, 100)
+        self.assertEqual(reason, "Exact email match.")
+
+    def test_suggest_user_for_person_uses_name_similarity(self):
+        from prayer.admin import suggest_user_for_person
+
+        user = User.objects.create_user(
+            username="jane.smith",
+            email="other@example.com",
+            first_name="Jane",
+            last_name="Smith",
+        )
+        person = Person.objects.create(first_name="Jane", last_name="Smyth")
+
+        suggested_user, score, reason = suggest_user_for_person(person)
+
+        self.assertEqual(suggested_user, user)
+        self.assertGreaterEqual(score, 70)
+        self.assertEqual(reason, "Similar name or username.")
+
+    def test_suggest_user_for_person_returns_no_match_when_not_confident(self):
+        from prayer.admin import suggest_user_for_person
+
+        User.objects.create_user(
+            username="unrelated",
+            email="unrelated@example.com",
+            first_name="No",
+            last_name="Match",
+        )
+        person = Person.objects.create(first_name="Jane", last_name="Smith")
+
+        suggested_user, score, reason = suggest_user_for_person(person)
+
+        self.assertIsNone(suggested_user)
+        self.assertLess(score, 70)
+        self.assertEqual(reason, "No confident match found.")
+
+
+class TestMessageListView(TestCase):
+    def setUp(self):
+        self.staff = User.objects.create_user(
+            username="messageliststaff", password="pw", is_staff=True
+        )
+        self.client.force_login(self.staff)
+
+        self.group = PrayerGroup.objects.create(
+            name="Announcements", short_description="A"
+        )
+        self.message = PrayerMessage.objects.create(
+            name="Prayer Team",
+            subject="Weekly Update",
+            message="This is a test message for the list page.",
+        )
+        self.message.groups.add(self.group)
+
+    def test_message_list_renders_cards_with_actions(self):
+        response = self.client.get(reverse("prayer:message_list"))
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Weekly Update")
+        self.assertContains(response, "Announcements")
+        self.assertContains(response, "View Details")
+        self.assertContains(response, "Send")
+        self.assertContains(
+            response, reverse("prayer:message-detail", kwargs={"id": self.message.id})
+        )
+        self.assertContains(
+            response, reverse("prayer:send_message", kwargs={"id": self.message.id})
+        )
+
+    def test_message_list_renders_direct_recipients(self):
+        from prayer.models import Person
+
+        person = Person.objects.create(first_name="Jane", last_name="Doe")
+        self.message.direct_recipients.add(person)
+
+        response = self.client.get(reverse("prayer:message_list"))
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Jane Doe")
+
+
+class TestSMSLogging(TestCase):
+    """
+    Tests for the SMSLog model, message-group association,
+    and deduplication logic in the message_detail view.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.staff = User.objects.create_user(
+            username="smslogstaff",
+            password="pw",
+            email="smslogstaff@example.com",
+            is_staff=True,
+        )
+
+    def setUp(self):
+        from prayer.models import PrayerGroup, PrayerMessage, Person
+
+        self.group_a = PrayerGroup.objects.create(name="Group A", short_description="A")
+        self.group_b = PrayerGroup.objects.create(name="Group B", short_description="B")
+
+        # Person in both groups — should only receive one message
+        self.person_both = Person.objects.create(
+            first_name="Alice",
+            last_name="Smith",
+            phone_number="+10000000001",
+            sms_consent=True,
+        )
+        # Person in group_a only
+        self.person_a = Person.objects.create(
+            first_name="Bob",
+            last_name="Jones",
+            phone_number="+10000000002",
+            sms_consent=True,
+        )
+        # Person without consent
+        self.person_no_consent = Person.objects.create(
+            first_name="Carol",
+            last_name="White",
+            phone_number="+10000000003",
+            sms_consent=False,
+        )
+
+        self.group_a.people.add(self.person_both, self.person_a, self.person_no_consent)
+        self.group_b.people.add(self.person_both)
+
+        self.message = PrayerMessage.objects.create(
+            name="Test Sender",
+            subject="Test Subject",
+            message="Hello, this is a test.",
+        )
+
+    def test_smslog_created_on_send(self):
+        """
+        Posting to message_detail with SMSMessage mocked should create
+        an SMSLog entry for each consented recipient.
+        """
+        from unittest.mock import patch, MagicMock
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            instance.send.return_value = {
+                self.person_both: (True, ""),
+                self.person_a: (True, ""),
+            }
+            MockSMS.return_value = instance
+
+            response = client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {"groups": [self.group_a.name, self.group_b.name]},
+            )
+
+        self.assertEqual(response.status_code, 302)
+        logs = SMSLog.objects.filter(message=self.message)
+        self.assertEqual(logs.count(), 2)
+        self.assertTrue(all(log.success for log in logs))
+        self.assertTrue(all(log.sent_by == self.staff for log in logs))
+
+    def test_direct_recipients_are_sent_without_creating_group(self):
+        """
+        Staff can send a message to one-off selected people without first
+        creating a PrayerGroup for those recipients.
+        """
+        from unittest.mock import patch, MagicMock
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            instance.send.return_value = {
+                self.person_a: (True, ""),
+            }
+            MockSMS.return_value = instance
+
+            response = client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {"direct_recipients": [self.person_a.id]},
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.message.refresh_from_db()
+        self.assertIn(self.person_a, self.message.direct_recipients.all())
+        self.assertEqual(
+            SMSLog.objects.filter(message=self.message, recipient=self.person_a).count(),
+            1,
+        )
+
+    def test_direct_recipients_are_deduplicated_against_group_members(self):
+        """
+        Selecting the same person through a group and as a one-off recipient
+        should still send only one SMS to that person.
+        """
+        from unittest.mock import patch, MagicMock
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            instance.send.return_value = {
+                self.person_both: (True, ""),
+            }
+            MockSMS.return_value = instance
+
+            client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {
+                    "groups": [self.group_b.name],
+                    "direct_recipients": [self.person_both.id],
+                },
+            )
+
+        logs = SMSLog.objects.filter(message=self.message, recipient=self.person_both)
+        self.assertEqual(logs.count(), 1)
+
+    def test_deduplication_person_in_two_groups_gets_one_log(self):
+        """
+        A person who belongs to two selected groups should appear in only
+        one SMSLog entry (the set deduplication guarantees one send).
+        """
+        from unittest.mock import patch, MagicMock
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            # Both groups share person_both; mock returns one entry for them
+            instance.send.return_value = {
+                self.person_both: (True, ""),
+            }
+            MockSMS.return_value = instance
+
+            client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {"groups": [self.group_a.name, self.group_b.name]},
+            )
+
+        logs = SMSLog.objects.filter(message=self.message, recipient=self.person_both)
+        self.assertEqual(logs.count(), 1)
+
+    def test_failed_send_logged_with_error(self):
+        """
+        When a send fails, the SMSLog entry should record success=False
+        and include the error message.
+        """
+        from unittest.mock import patch, MagicMock
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        error_text = "Twilio error: invalid number"
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            instance.send.return_value = {
+                self.person_a: (False, error_text),
+            }
+            MockSMS.return_value = instance
+
+            client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {"groups": [self.group_a.name]},
+            )
+
+        log = SMSLog.objects.get(message=self.message, recipient=self.person_a)
+        self.assertFalse(log.success)
+        self.assertEqual(log.error_message, error_text)
+
+    def test_no_consented_recipients_creates_no_log(self):
+        """
+        Selecting a group where nobody has consented should produce no
+        SMSLog entries.
+        """
+        from prayer.models import SMSLog, PrayerGroup, Person
+
+        group_c = PrayerGroup.objects.create(
+            name="No Consent Group", short_description="C"
+        )
+        group_c.people.add(self.person_no_consent)
+
+        client = Client()
+        client.force_login(self.staff)
+
+        response = client.post(
+            f"/prayer/message-detail/{self.message.id}",
+            {"groups": [group_c.name]},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(SMSLog.objects.filter(message=self.message).count(), 0)
+
+    def test_message_groups_m2m_saved_on_send(self):
+        """
+        After posting to message_detail, the selected groups should be
+        persisted on the PrayerMessage.groups M2M field.
+        """
+        from unittest.mock import patch, MagicMock
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as MockSMS:
+            instance = MagicMock()
+            instance.send.return_value = {self.person_both: (True, "")}
+            MockSMS.return_value = instance
+
+            client.post(
+                f"/prayer/message-detail/{self.message.id}",
+                {"groups": [self.group_a.name]},
+            )
+
+        self.message.refresh_from_db()
+        self.assertIn(self.group_a, self.message.groups.all())
+        self.assertNotIn(self.group_b, self.message.groups.all())
+
+    def test_message_detail_requires_staff(self):
+        """
+        Non-staff authenticated users should be redirected away from
+        the message_detail view.
+        """
+        regular = User.objects.create_user(
+            username="smsregular", password="pw", email="smsreg@example.com"
+        )
+        client = Client()
+        client.force_login(regular)
+
+        response = client.get(f"/prayer/message-detail/{self.message.id}")
+        self.assertIn(response.status_code, [302, 403])
+
+    def test_smslog_str(self):
+        """SMSLog __str__ should include OK/FAIL and recipient name."""
+        from prayer.models import SMSLog
+
+        log_ok = SMSLog.objects.create(
+            message=self.message,
+            recipient=self.person_a,
+            success=True,
+            sent_by=self.staff,
+        )
+        log_fail = SMSLog.objects.create(
+            message=self.message,
+            recipient=self.person_a,
+            success=False,
+            error_message="oops",
+            sent_by=self.staff,
+        )
+        self.assertIn("OK", str(log_ok))
+        self.assertIn("FAIL", str(log_fail))
+        self.assertIn("Bob", str(log_ok))
+
+    def test_new_message_form_redirect_preserves_selected_groups(self):
+        """
+        Groups selected while saving a draft should persist on the message.
+        """
+        client = Client()
+        client.force_login(self.staff)
+        response = client.post(
+            "/prayer/new-message",
+            {
+                "name": "Grouped Sender",
+                "subject": "Grouped Subject",
+                "message": "Grouped message.",
+                "groups": [self.group_a.id, self.group_b.id],
+            },
+        )
+
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        saved_message = PrayerMessage.objects.get(subject="Grouped Subject")
+        self.assertEqual(
+            set(saved_message.groups.values_list("id", flat=True)),
+            {self.group_a.id, self.group_b.id},
+        )
+
+    def test_new_message_form_redirect_preserves_direct_recipients(self):
+        """
+        One-off recipients selected while saving a draft should persist.
+        """
+        client = Client()
+        client.force_login(self.staff)
+        response = client.post(
+            "/prayer/new-message",
+            {
+                "name": "Direct Sender",
+                "subject": "Direct Subject",
+                "message": "Direct message.",
+                "direct_recipients": [self.person_a.id, self.person_both.id],
+            },
+        )
+
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        saved_message = PrayerMessage.objects.get(subject="Direct Subject")
+        self.assertEqual(
+            set(saved_message.direct_recipients.values_list("id", flat=True)),
+            {self.person_a.id, self.person_both.id},
+        )
+
+    def test_save_draft_does_not_send_sms(self):
+        """Saving a draft persists its targets without attempting delivery."""
+        from unittest.mock import patch
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "Draft Sender",
+                    "subject": "Draft Subject",
+                    "message": "Not ready to send.",
+                    "groups": [self.group_a.id],
+                    "action": "save",
+                },
+            )
+
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        mock_sms.assert_not_called()
+        saved_message = PrayerMessage.objects.get(subject="Draft Subject")
+        self.assertEqual(saved_message.submitted_by, self.staff)
+        self.assertEqual(list(saved_message.groups.all()), [self.group_a])
+
+    def test_save_and_send_delivers_without_message_detail_step(self):
+        """The composer can save, deduplicate, send, and log in one POST."""
+        from unittest.mock import MagicMock, patch
+        from prayer.models import SMSLog
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            sms_instance = MagicMock()
+            sms_instance.send.return_value = {
+                self.person_both: (True, ""),
+                self.person_a: (True, ""),
+            }
+            mock_sms.return_value = sms_instance
+
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "Immediate Sender",
+                    "subject": "Immediate Subject",
+                    "message": "Send this now.",
+                    "groups": [self.group_a.id, self.group_b.id],
+                    "action": "send",
+                },
+            )
+
+        self.assertRedirects(response, reverse("prayer:message_list"))
+        saved_message = PrayerMessage.objects.get(subject="Immediate Subject")
+        self.assertEqual(saved_message.submitted_by, self.staff)
+        self.assertEqual(
+            set(saved_message.groups.values_list("id", flat=True)),
+            {self.group_a.id, self.group_b.id},
+        )
+        self.assertEqual(SMSLog.objects.filter(message=saved_message).count(), 2)
+        sent_contacts = mock_sms.call_args.kwargs["contacts"]
+        self.assertEqual(sent_contacts, {self.person_both, self.person_a})
+
+    def test_save_and_send_requires_a_target(self):
+        """Immediate send does not save or deliver when no target is selected."""
+        from unittest.mock import patch
+
+        client = Client()
+        client.force_login(self.staff)
+        initial_count = PrayerMessage.objects.count()
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "No Target",
+                    "subject": "No Target Subject",
+                    "message": "This needs a recipient.",
+                    "action": "send",
+                },
+            )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Select at least one group or one-off recipient")
+        self.assertEqual(PrayerMessage.objects.count(), initial_count)
+        mock_sms.assert_not_called()
+
+    def test_delivery_exception_keeps_saved_message(self):
+        """A provider exception is reported after the composed message is saved."""
+        from unittest.mock import MagicMock, patch
+
+        client = Client()
+        client.force_login(self.staff)
+
+        with patch("prayer.views.SMSMessage") as mock_sms:
+            sms_instance = MagicMock()
+            sms_instance.send.side_effect = RuntimeError("provider unavailable")
+            mock_sms.return_value = sms_instance
+
+            response = client.post(
+                reverse("prayer:new_message"),
+                {
+                    "name": "Failure Sender",
+                    "subject": "Failure Subject",
+                    "message": "Save even if sending fails.",
+                    "groups": [self.group_a.id],
+                    "action": "send",
+                },
+                follow=True,
+            )
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "SMS delivery failed: provider unavailable")
+        self.assertTrue(
+            PrayerMessage.objects.filter(subject="Failure Subject").exists()
+        )

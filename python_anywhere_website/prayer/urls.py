@@ -8,6 +8,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("index", views.index, name="index"),
     path("signup", views.public_signup, name="public_signup"),
+    path("messages", views.message_list, name="message_list"),
     path("new-message", views.new_message, name="new_message"),
     path("message-detail/<int:id>", views.message_detail, name="message-detail"),
     path("send-message/<int:id>", views.send_message, name="send_message"),
@@ -38,4 +39,20 @@ urlpatterns = [
     path("people", views.people, name="people"),
     path("delete-person/<person_id>", views.delete_person, name="delete_person"),
     path("permissions/<int:id>", views.permissions, name="permissions"),
+    path("messages/inbound", views.inbound_messages, name="inbound_messages"),
+    path(
+        "messages/inbound/<int:message_id>/read",
+        views.mark_inbound_message_read,
+        name="mark_inbound_message_read",
+    ),
+    path(
+        "messages/inbound/<int:message_id>/unread",
+        views.mark_inbound_message_unread,
+        name="mark_inbound_message_unread",
+    ),
+    path(
+        "messages/inbound/read-all",
+        views.mark_all_inbound_messages_read,
+        name="mark_all_inbound_messages_read",
+    ),
 ]

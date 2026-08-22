@@ -25,6 +25,7 @@ class NewPersonForm(forms.ModelForm):
             "phone_number",
             "email",
             "sms_consent",
+            "notify_on_inbound_sms",
         ]
 
 
@@ -37,7 +38,13 @@ class NewMessageForm(forms.ModelForm):
             "name",
             "subject",
             "message",
+            "groups",
+            "direct_recipients",
         ]
+        widgets = {
+            "groups": forms.CheckboxSelectMultiple(),
+            "direct_recipients": forms.CheckboxSelectMultiple(),
+        }
 
 
 class NewPrayerRequestForm(forms.ModelForm):

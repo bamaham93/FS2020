@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 
 
-
 def fetch_metar(icao: str):
     """Fetch latest METAR for an ICAO airport code using AviationWeather.gov ADDS.
     Returns a dict with keys: raw_text, observation_time, temp_c, wind, flight_category or None on failure.
@@ -31,6 +30,7 @@ def fetch_metar(icao: str):
         raw = lines[1].strip()
         # Parse temp and wind from METAR string (simple regex)
         import re
+
         # Initialize all fields
         wind = None
         wind_gust = None
@@ -45,7 +45,7 @@ def fetch_metar(icao: str):
         m = re.search(r" (\d{3}|VRB)(\d{2,3})(G(\d{2,3}))?KT", raw)
         if m:
             dir, spd, _, gust = m.group(1), m.group(2), m.group(3), m.group(4)
-            wind = f"{dir}° @ {spd} kt" if dir != 'VRB' else f"VRB @ {spd} kt"
+            wind = f"{dir}° @ {spd} kt" if dir != "VRB" else f"VRB @ {spd} kt"
             if gust:
                 wind_gust = f"Gust {gust} kt"
 
@@ -56,14 +56,18 @@ def fetch_metar(icao: str):
 
         # Sky condition: OVC009 SCT020 BKN100 etc.
         sky = re.findall(r" (FEW|SCT|BKN|OVC|CLR|SKC)(\d{3})", raw)
-        sky_str = ", ".join([f"{cover} {int(height)*100} ft" for cover, height in sky]) if sky else None
+        sky_str = (
+            ", ".join([f"{cover} {int(height)*100} ft" for cover, height in sky])
+            if sky
+            else None
+        )
 
         # Temp/dewpoint: 12/11 or M01/M03
-        m = re.search(r" (M?\d{2})/(M?\d{2}) ", raw+" ")
+        m = re.search(r" (M?\d{2})/(M?\d{2}) ", raw + " ")
         if m:
             t, d = m.group(1), m.group(2)
-            temp_c = -int(t[1:]) if t.startswith('M') else int(t)
-            dew_c = -int(d[1:]) if d.startswith('M') else int(d)
+            temp_c = -int(t[1:]) if t.startswith("M") else int(t)
+            dew_c = -int(d[1:]) if d.startswith("M") else int(d)
 
         # Altimeter: e.g. A2992
         m = re.search(r" A(\d{4})", raw)
@@ -79,10 +83,10 @@ def fetch_metar(icao: str):
             # Simple translation for common codes
             translations = []
             # AO2: Automated station with precipitation sensor
-            if 'AO2' in remarks:
-                translations.append('Automated station with precipitation sensor')
-            if 'AO1' in remarks:
-                translations.append('Automated station without precipitation sensor')
+            if "AO2" in remarks:
+                translations.append("Automated station with precipitation sensor")
+            if "AO1" in remarks:
+                translations.append("Automated station without precipitation sensor")
             # SLPxxx: Sea-level pressure
             m_slp = re.search(r"SLP(\d{3})", remarks)
             if m_slp:
@@ -99,19 +103,21 @@ def fetch_metar(icao: str):
             m_t = re.search(r"T(\d{4})(\d{4})", remarks)
             if m_t:
                 t_raw, d_raw = m_t.group(1), m_t.group(2)
+
                 def parse_t(val):
-                    sign = -1 if val[0]=='1' else 1
-                    return sign * int(val[1:])/10.0
+                    sign = -1 if val[0] == "1" else 1
+                    return sign * int(val[1:]) / 10.0
+
                 t = parse_t(t_raw)
                 d = parse_t(d_raw)
                 translations.append(f"Precise temp: {t:.1f}°C, dewpoint: {d:.1f}°C")
             # $: Maintenance needed
-            if '$' in remarks:
-                translations.append('Maintenance needed at station')
+            if "$" in remarks:
+                translations.append("Maintenance needed at station")
             # 550xx: Pressure tendency
             m_550 = re.search(r"550(\d{2})", remarks)
             if m_550:
-                translations.append('Pressure tendency code: ' + m_550.group(1))
+                translations.append("Pressure tendency code: " + m_550.group(1))
             if translations:
                 remarks_translated = "; ".join(translations)
 

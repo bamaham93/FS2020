@@ -28,7 +28,9 @@ class O2ViewTests(TestCase):
         p1 = 2000
         expected = o2_calc(t1, t2, p1)
 
-        resp = self.client.post(reverse("fs2020:o2_calculator"), data={"t1": t1, "t2": t2, "p1": p1})
+        resp = self.client.post(
+            reverse("fs2020:o2_calculator"), data={"t1": t1, "t2": t2, "p1": p1}
+        )
         self.assertEqual(resp.status_code, 200)
         # Check that the result is passed in the template context
         self.assertIn("result", resp.context)

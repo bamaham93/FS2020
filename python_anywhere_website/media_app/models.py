@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class MediaFormat(models.Model):
     name = models.CharField(max_length=100)
 
@@ -47,7 +48,7 @@ class MediaLocation(models.Model):
 class Media(models.Model):
     title = models.CharField(max_length=100)
     subtitle = models.CharField(max_length=100, blank=True, null=True)
-    image = models.ImageField(upload_to='images', blank=True, null=True)
+    image = models.ImageField(upload_to="images", blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     format = models.ForeignKey(MediaFormat, on_delete=models.CASCADE)
     type = models.ForeignKey(MediaType, on_delete=models.CASCADE, blank=True, null=True)

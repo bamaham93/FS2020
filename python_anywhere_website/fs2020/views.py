@@ -1,13 +1,17 @@
 from django.http import JsonResponse
+
+
 # API endpoint: Return METAR as JSON for a given ICAO code
 def metar_api(request):
-    icao = request.GET.get('icao', '').strip().upper()
+    icao = request.GET.get("icao", "").strip().upper()
     if not icao:
-        return JsonResponse({'error': 'Missing ICAO code'}, status=400)
+        return JsonResponse({"error": "Missing ICAO code"}, status=400)
     data = fetch_metar(icao)
     if not data:
-        return JsonResponse({'error': f'No METAR found for {icao}'}, status=404)
+        return JsonResponse({"error": f"No METAR found for {icao}"}, status=404)
     return JsonResponse(data)
+
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -105,7 +109,9 @@ def aircraft_add(request):
             return redirect("fs2020:index")
     else:
         form = AircraftForm()
-    return render(request, "fs2020/aircraft_form.html", {"form": form, "title": "Add Aircraft"})
+    return render(
+        request, "fs2020/aircraft_form.html", {"form": form, "title": "Add Aircraft"}
+    )
 
 
 @login_required
@@ -120,7 +126,11 @@ def aircraft_edit(request, pk):
             return redirect("fs2020:index")
     else:
         form = AircraftForm(instance=plane)
-    return render(request, "fs2020/aircraft_form.html", {"form": form, "title": "Edit Aircraft", "plane": plane})
+    return render(
+        request,
+        "fs2020/aircraft_form.html",
+        {"form": form, "title": "Edit Aircraft", "plane": plane},
+    )
 
 
 def o2_calculator(request):
@@ -136,7 +146,9 @@ def o2_calculator(request):
             result = {"p2": p2}
     else:
         form = O2CalculatorForm()
-    return render(request, "fs2020/o2_calculator.html", {"form": form, "result": result})
+    return render(
+        request, "fs2020/o2_calculator.html", {"form": form, "result": result}
+    )
 
 
 def sas_solver(r_length, travel_req):

@@ -1,172 +1,14 @@
 from django.test import TestCase, Client
-from unittest import skipIf
 from django.urls import reverse
 from bible.models import BibleBook, BibleVerse
-from bible.gutenberg_parser import parse_gutenberg_kjv
-from importlib import import_module
-_gutenberg = import_module("bible.gutenberg_parser")
-
+import sqlite3
 import tempfile
 import os
 
 
-@skipIf(not getattr(_gutenberg, 'book_patterns', None), "gutenberg_parser.book_patterns not defined; skipping parser unit tests")
-class GutenbergParserTest(TestCase):
-    """Tests for the Gutenberg KJV parser."""
-
-    def create_test_file(self, content):
-        """Helper to create a temporary test file."""
-        fd, path = tempfile.mkstemp(suffix=".txt")
-        with os.fdopen(fd, "w") as f:
-            f.write(content)
-        return path
-
-    def test_parse_simple_book(self):
-        """Test parsing a simple book with a few verses."""
-        content = """
-The First Book of Moses: Called Genesis
-
-
-1:1 In the beginning God created the heaven and the earth.
-
-1:2 And the earth was without form, and void; and darkness was upon
-the face of the deep.
-
-1:3 And God said, Let there be light: and there was light.
-"""
-        path = self.create_test_file(content)
-        try:
-            result = parse_gutenberg_kjv(path)
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0]["name"], "Genesis")
-            self.assertEqual(len(result[0]["verses"]), 3)
-            self.assertEqual(result[0]["verses"][0]["chapter"], 1)
-            self.assertEqual(result[0]["verses"][0]["verse"], 1)
-            self.assertIn("beginning", result[0]["verses"][0]["text"])
-        finally:
-            os.unlink(path)
-
-    def test_parse_with_alternate_titles(self):
-        """Test parsing books with alternate titles (Samuel/Kings)."""
-        content = """
-The First Book of Samuel
-
-Otherwise Called:
-
-The First Book of the Kings
-
-
-1:1 Now there was a certain man of Ramathaimzophim.
-
-1:2 And he had two wives.
-
-
-The Second Book of Samuel
-
-Otherwise Called:
-
-The Second Book of the Kings
-
-
-1:1 Now it came to pass after the death of Saul.
-
-
-The First Book of the Kings
-
-Commonly Called:
-
-The Third Book of the Kings
-
-
-1:1 Now king David was old and stricken in years.
-
-
-The Second Book of the Kings
-
-Commonly Called:
-
-The Fourth Book of the Kings
-
-
-1:1 Then Moab rebelled against Israel.
-"""
-        path = self.create_test_file(content)
-        try:
-            result = parse_gutenberg_kjv(path)
-            book_names = {book["name"] for book in result}
-            # Should have all 4 books, no duplicates
-            self.assertIn("1 Samuel", book_names)
-            self.assertIn("2 Samuel", book_names)
-            self.assertIn("1 Kings", book_names)
-            self.assertIn("2 Kings", book_names)
-            self.assertEqual(len(result), 4)
-        finally:
-            os.unlink(path)
-
-    def test_parse_chronicles(self):
-        """Test parsing Chronicles books."""
-        content = """
-The First Book of the Chronicles
-
-
-1:1 Adam, Sheth, Enosh.
-
-1:2 Kenan, Mahalaleel, Jered.
-
-
-The Second Book of the Chronicles
-
-
-1:1 And Solomon the son of David was strengthened.
-"""
-        path = self.create_test_file(content)
-        try:
-            result = parse_gutenberg_kjv(path)
-            book_names = {book["name"] for book in result}
-            self.assertIn("1 Chronicles", book_names)
-            self.assertIn("2 Chronicles", book_names)
-            self.assertEqual(len(result), 2)
-        finally:
-            os.unlink(path)
-
-    def test_multiline_verse(self):
-        """Test that verses spanning multiple lines are concatenated."""
-        content = """
-The Gospel According to Saint John
-
-
-1:1 In the beginning was the Word, and the Word was with God, and
-the Word was God.
-
-1:2 The same was in the beginning with God.
-"""
-        path = self.create_test_file(content)
-        try:
-            result = parse_gutenberg_kjv(path)
-            self.assertEqual(len(result), 1)
-            verse1_text = result[0]["verses"][0]["text"]
-            # Should contain both lines joined
-            self.assertIn("In the beginning", verse1_text)
-            self.assertIn("Word was God", verse1_text)
-        finally:
-            os.unlink(path)
-
-    def test_all_66_books_defined(self):
-        """Test that BOOK_INFO has all 66 books."""
-        BOOK_INFO = getattr(_gutenberg, "BOOK_INFO", None)
-        if BOOK_INFO is None:
-            self.skipTest("BOOK_INFO not defined in bible.gutenberg_parser; skipping static book-list tests")
-        self.assertEqual(len(BOOK_INFO), 66)
-        # Check a few key books
-        self.assertIn("Genesis", BOOK_INFO)
-        self.assertIn("Revelation", BOOK_INFO)
-        self.assertIn("1 Samuel", BOOK_INFO)
-        self.assertIn("2 Kings", BOOK_INFO)
-        self.assertIn("1 Chronicles", BOOK_INFO)
-
-
 class BibleBookModelTest(TestCase):
     def setUp(self):
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -187,6 +29,7 @@ class BibleBookModelTest(TestCase):
 
 class BibleVerseModelTest(TestCase):
     def setUp(self):
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -209,6 +52,7 @@ class BibleVerseModelTest(TestCase):
 class BibleViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -224,17 +68,24 @@ class BibleViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "John")
 
-    def test_all_66_books_displayed(self):
-        """Integration test: Verify all 66 books are displayed on the home page."""
+    def test_multiple_books_displayed(self):
+        """Integration test: Verify multiple books are displayed on the home page."""
         # Delete the book created in setUp to avoid conflicts
         BibleBook.objects.all().delete()
 
-        # Create all 66 books from BOOK_INFO if available
-        BOOK_INFO = getattr(_gutenberg, "BOOK_INFO", None)
-        if BOOK_INFO is None:
-            self.skipTest("BOOK_INFO not defined in bible.gutenberg_parser; skipping integration book-list test")
+        books = [
+            ("Genesis", "genesis", 1, "OT", 50),
+            ("1 Samuel", "1-samuel", 9, "OT", 31),
+            ("2 Samuel", "2-samuel", 10, "OT", 24),
+            ("1 Kings", "1-kings", 11, "OT", 22),
+            ("2 Kings", "2-kings", 12, "OT", 25),
+            ("1 Chronicles", "1-chronicles", 13, "OT", 29),
+            ("2 Chronicles", "2-chronicles", 14, "OT", 36),
+            ("John", "john", 43, "NT", 21),
+            ("Revelation", "revelation", 66, "NT", 22),
+        ]
 
-        for book_name, (slug, order, testament, chapters) in BOOK_INFO.items():
+        for book_name, slug, order, testament, chapters in books:
             BibleBook.objects.create(
                 name=book_name,
                 slug=slug,
@@ -243,23 +94,18 @@ class BibleViewsTest(TestCase):
                 chapters=chapters,
             )
 
-        # Verify we have exactly 66 books
-        self.assertEqual(BibleBook.objects.count(), 66)
+        self.assertEqual(BibleBook.objects.count(), len(books))
 
-        # Get the Bible home page
         response = self.client.get(reverse("bible:index"))
         self.assertEqual(response.status_code, 200)
 
-        # Verify all 66 books are in the response
-        for book_name in BOOK_INFO.keys():
+        for book_name, *_ in books:
             with self.subTest(book=book_name):
                 self.assertContains(response, book_name)
 
-        # Verify the correct counts are shown
         self.assertContains(response, "Old Testament")
         self.assertContains(response, "New Testament")
 
-        # Verify specific problematic books that were previously missing
         self.assertContains(response, "1 Samuel")
         self.assertContains(response, "2 Samuel")
         self.assertContains(response, "1 Kings")
@@ -271,6 +117,7 @@ class BibleViewsTest(TestCase):
         response = self.client.get(reverse("bible:chapter_list", args=["john"]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "John")
+        self.assertContains(response, reverse("bible:chapter_reader", args=["john", 1]))
 
     def test_chapter_reader_view(self):
         response = self.client.get(reverse("bible:chapter_reader", args=["john", 3]))
@@ -282,10 +129,58 @@ class BibleViewsTest(TestCase):
         response = self.client.get(reverse("bible:chapter_reader", args=["john", 999]))
         self.assertEqual(response.status_code, 404)
 
+    def test_continuous_reader_view(self):
+        response = self.client.get(reverse("bible:continuous_reader"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Continuous KJV Reader")
+        self.assertContains(response, 'data-book="john"')
+        self.assertContains(response, 'data-chapter="1"')
+
+    def test_continuous_reader_hyperlink_targets(self):
+        response = self.client.get(reverse("bible:continuous_reader"))
+        self.assertEqual(response.status_code, 200)
+        expected_url = reverse("bible:continuous_reader_chapter", args=["john", 1])
+        self.assertContains(response, f'href="{expected_url}#chapter-john-1"')
+
+    def test_continuous_reader_accepts_book_chapter_url(self):
+        response = self.client.get(
+            reverse("bible:continuous_reader_chapter", args=["john", 3])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "chapter: 3")
+        self.assertContains(response, "chapterCount: 21")
+        self.assertContains(response, '<details class="book-item" open>')
+
+    def test_continuous_reader_accepts_book_chapter_query_params(self):
+        response = self.client.get(
+            reverse("bible:continuous_reader"),
+            {"book": "john", "chapter": "3"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "chapter: 3")
+
+    def test_seed_kjv_books_backfills_all_canonical_books(self):
+        """The deployment migration should repair databases with sample data only."""
+        import importlib
+        from django.apps import apps
+
+        migration = importlib.import_module("bible.migrations.0002_seed_kjv_books")
+
+        BibleBook.objects.exclude(slug__in=["genesis", "john", "revelation"]).delete()
+
+        migration.seed_kjv_books(apps, None)
+
+        self.assertEqual(BibleBook.objects.count(), 66)
+        self.assertEqual(BibleBook.objects.filter(testament="OT").count(), 39)
+        self.assertEqual(BibleBook.objects.filter(testament="NT").count(), 27)
+        self.assertEqual(BibleBook.objects.get(order=1).slug, "genesis")
+        self.assertEqual(BibleBook.objects.get(order=66).slug, "revelation")
+
 
 class BibleAPITest(TestCase):
     def setUp(self):
         self.client = Client()
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="John", slug="john", order=43, testament="NT", chapters=21
         )
@@ -351,6 +246,7 @@ class BibleAdminActionTest(TestCase):
         )
 
         # Create a test book
+        BibleBook.objects.all().delete()
         self.book = BibleBook.objects.create(
             name="Test Book", slug="test-book", order=1, testament="OT", chapters=1
         )
@@ -448,3 +344,247 @@ class BibleAdminActionTest(TestCase):
             mock_call_command.side_effect = Exception("Test error")
             # Should not raise, just log
             _run_import_kjv("testuser")
+
+
+class ImportKJVSQLiteTest(TestCase):
+    """Tests for import_kjv management command's sqlite format support."""
+
+    def _make_kjv_db(self, path, rows, include_key_english=True):
+        """Create a minimal KJV SQLite database at *path* with *rows*.
+
+        rows is a list of (b, c, v, t) tuples.
+        """
+        conn = sqlite3.connect(path)
+        try:
+            conn.execute("CREATE TABLE t_kjv (b INTEGER, c INTEGER, v INTEGER, t TEXT)")
+            conn.executemany("INSERT INTO t_kjv VALUES (?,?,?,?)", rows)
+            if include_key_english:
+                conn.execute("CREATE TABLE key_english (b INTEGER PRIMARY KEY, n TEXT)")
+                # Insert names only for the books that appear in rows
+                book_nums = sorted({r[0] for r in rows})
+                from bible.management.commands.import_kjv import Command
+
+                for b in book_nums:
+                    if 1 <= b <= 66 and Command._KJV_BOOK_INFO[b]:
+                        name = Command._KJV_BOOK_INFO[b][0]
+                        conn.execute("INSERT INTO key_english VALUES (?,?)", (b, name))
+            conn.commit()
+        finally:
+            conn.close()
+
+    def test_load_sqlite_basic(self):
+        """load_sqlite returns correct book/verse structure."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = os.path.join(tmpdir, "kjv.db")
+            self._make_kjv_db(
+                db_path,
+                [
+                    (1, 1, 1, "In the beginning God created the heaven and the earth."),
+                    (1, 1, 2, "And the earth was without form, and void."),
+                    (43, 3, 16, "For God so loved the world..."),
+                ],
+            )
+            cmd = Command()
+            result = cmd.load_sqlite(Path(db_path))
+
+        # Should return two books in order
+        self.assertEqual(len(result), 2)
+        genesis = result[0]
+        john = result[1]
+
+        self.assertEqual(genesis["name"], "Genesis")
+        self.assertEqual(genesis["slug"], "genesis")
+        self.assertEqual(genesis["order"], 1)
+        self.assertEqual(genesis["testament"], "OT")
+        self.assertEqual(genesis["chapters"], 50)
+        self.assertEqual(len(genesis["verses"]), 2)
+        self.assertEqual(
+            genesis["verses"][0]["text"],
+            "In the beginning God created the heaven and the earth.",
+        )
+
+        self.assertEqual(john["name"], "John")
+        self.assertEqual(john["slug"], "john")
+        self.assertEqual(john["order"], 43)
+        self.assertEqual(john["testament"], "NT")
+        self.assertEqual(john["chapters"], 21)
+        self.assertEqual(len(john["verses"]), 1)
+        self.assertEqual(john["verses"][0]["verse"], 16)
+
+    def test_load_sqlite_without_key_english(self):
+        """load_sqlite falls back to canonical names when key_english is absent."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = os.path.join(tmpdir, "kjv_no_key.db")
+            self._make_kjv_db(
+                db_path,
+                [(66, 22, 21, "The grace of our Lord Jesus Christ be with you all.")],
+                include_key_english=False,
+            )
+            cmd = Command()
+            result = cmd.load_sqlite(Path(db_path))
+
+        self.assertEqual(len(result), 1)
+        revelation = result[0]
+        self.assertEqual(revelation["name"], "Revelation")
+        self.assertEqual(revelation["testament"], "NT")
+
+    def test_detect_format_sqlite_extensions(self):
+        """detect_format recognises .db, .sqlite, and .sqlite3 as sqlite."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        cmd = Command()
+        for ext in [".db", ".sqlite", ".sqlite3"]:
+            with self.subTest(ext=ext):
+                self.assertEqual(cmd.detect_format(Path(f"kjv{ext}")), "sqlite")
+
+    def test_detect_format_xml_extension(self):
+        """detect_format recognises XML Bible files."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        cmd = Command()
+        self.assertEqual(cmd.detect_format(Path("kjv.xml")), "xml")
+
+    def test_load_xml_zefania_format(self):
+        """load_xml parses bundled Zefania-style KJV XML files."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        xml = """<?xml version="1.0" encoding="utf-8"?>
+<XMLBIBLE>
+  <BIBLEBOOK bnumber="1" bname="Genesis">
+    <CHAPTER cnumber="1">
+      <VERS vnumber="1">In the beginning God created the heaven and the earth.</VERS>
+      <VERS vnumber="2">And the earth was without form, and void.</VERS>
+    </CHAPTER>
+  </BIBLEBOOK>
+  <BIBLEBOOK bnumber="43" bname="John">
+    <CHAPTER cnumber="3">
+      <VERS vnumber="16">For God so loved the world.</VERS>
+    </CHAPTER>
+  </BIBLEBOOK>
+</XMLBIBLE>
+"""
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            xml_path = os.path.join(tmpdir, "kjv.xml")
+            with open(xml_path, "w", encoding="utf-8") as f:
+                f.write(xml)
+            result = Command().load_xml(Path(xml_path))
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["name"], "Genesis")
+        self.assertEqual(result[0]["slug"], "genesis")
+        self.assertEqual(result[0]["chapters"], 50)
+        self.assertEqual(len(result[0]["verses"]), 2)
+        self.assertEqual(result[1]["name"], "John")
+        self.assertEqual(result[1]["order"], 43)
+        self.assertEqual(result[1]["verses"][0]["chapter"], 3)
+        self.assertEqual(result[1]["verses"][0]["verse"], 16)
+
+    def test_load_xml_simple_open_source_bible_data_format(self):
+        """load_xml parses the simple XML format from open-source-bible-data."""
+        from bible.management.commands.import_kjv import Command
+        from pathlib import Path
+
+        xml = """<bible abbrev="KJV" name="King James Bible">
+<book num="Gen">
+  <chapter num="1">
+    <verse num="1">In the beginning God created the heaven and the earth.</verse>
+    <verse num="2">And the earth was without form, and void; and darkness <i>was</i> upon the face of the deep.</verse>
+  </chapter>
+</book>
+<book num="John">
+  <chapter num="3">
+    <verse num="16">For God so loved the world.</verse>
+  </chapter>
+</book>
+</bible>
+"""
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            xml_path = os.path.join(tmpdir, "kjv.xml")
+            with open(xml_path, "w", encoding="utf-8") as f:
+                f.write(xml)
+            result = Command().load_xml(Path(xml_path))
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]["name"], "Genesis")
+        self.assertEqual(result[0]["slug"], "genesis")
+        self.assertEqual(
+            result[0]["verses"][1]["text"],
+            "And the earth was without form, and void; and darkness was upon the face of the deep.",
+        )
+        self.assertEqual(result[1]["name"], "John")
+        self.assertEqual(result[1]["order"], 43)
+
+    def test_import_kjv_command_sqlite_format(self):
+        """The management command can import a full book from a KJV SQLite file."""
+        from django.core.management import call_command
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            db_path = os.path.join(tmpdir, "kjv.db")
+            self._make_kjv_db(
+                db_path,
+                [
+                    (43, 1, 1, "In the beginning was the Word."),
+                    (43, 1, 2, "The same was in the beginning with God."),
+                    (43, 3, 16, "For God so loved the world..."),
+                ],
+            )
+            call_command(
+                "import_kjv",
+                file=db_path,
+                format="sqlite",
+                clear=True,
+                verbosity=0,
+            )
+
+        self.assertEqual(BibleBook.objects.count(), 1)
+        self.assertEqual(BibleVerse.objects.count(), 3)
+        book = BibleBook.objects.get(slug="john")
+        self.assertEqual(book.chapters, 21)
+
+    def test_import_kjv_command_xml_updates_existing_sample_verses(self):
+        """XML import should replace existing sample text and add missing verses."""
+        from django.core.management import call_command
+
+        xml = """<?xml version="1.0" encoding="utf-8"?>
+<XMLBIBLE>
+  <BIBLEBOOK bnumber="43" bname="John">
+    <CHAPTER cnumber="3">
+      <VERS vnumber="16">For God so loved the world.</VERS>
+      <VERS vnumber="17">For God sent not his Son into the world.</VERS>
+    </CHAPTER>
+  </BIBLEBOOK>
+</XMLBIBLE>
+"""
+
+        BibleBook.objects.all().delete()
+        book = BibleBook.objects.create(
+            name="John", slug="john", order=43, testament="NT", chapters=21
+        )
+        BibleVerse.objects.create(
+            book=book, chapter=3, verse=16, text="stale sample text"
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            xml_path = os.path.join(tmpdir, "kjv.xml")
+            with open(xml_path, "w", encoding="utf-8") as f:
+                f.write(xml)
+            call_command("import_kjv", file=xml_path, format="xml", verbosity=0)
+
+        self.assertEqual(BibleBook.objects.count(), 1)
+        self.assertEqual(BibleVerse.objects.count(), 2)
+        self.assertEqual(
+            BibleVerse.objects.get(book=book, chapter=3, verse=16).text,
+            "For God so loved the world.",
+        )

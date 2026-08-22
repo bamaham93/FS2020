@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block section1 %}
+<div class="bible-reader continuous-layout">
+    <aside class="toc-panel">
+        <h2 class="h5">Books & Chapters</h2>
+        <div class="toc-books">
+            {% for book in books_with_chapters %}
+            <details class="book-item" {% if book.slug == initial_book.slug %}open{% endif %}>
+                <summary>{{ book.name }}</summary>
+                <div class="chapter-links">
+                    {% for chapter in book.chapters %}
+                    <a href="{% url 'bible:continuous_reader_chapter' book.slug chapter %}#chapter-{{ book.slug }}-{{ chapter }}" class="chapter-jump" data-book="{{ book.slug }}" data-book-name="{{ book.name }}" data-chapter="{{ chapter }}">{{ chapter }}</a>
+                    {% endfor %}
+                </div>
+            </details>
+            {% endfor %}
+        </div>
+    </aside>
+
+    <main class="reader-panel">
+        <header class="mb-3">
+            <h1>Continuous KJV Reader</h1>
+            <p class="text-muted small">Scroll continuously. Chapters are lazy-loaded from the KJV SQLite-backed API.</p>
+        </header>
+        <div id="chapter-container"></div>
+        <div id="loading-indicator" class="text-muted small">Loading more chapters...</div>
+    </main>
+</div>
+
+<style>
+.continuous-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
+.toc-panel { position: sticky; top: 10px; max-height: 85vh; overflow-y: auto; border-right: 1px solid #444; padding-right: 10px; }
+.chapter-links { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+.chapter-jump { border: 1px solid #666; border-radius: 4px; padding: 2px 8px; text-decoration: none; color: #9bc2ff; }
+.chapter-jump:hover { background: rgba(255,255,255,.05); }
+.chapter-block { margin-bottom: 2rem; }
+.chapter-title { color: #e0e0e0; margin-bottom: 1rem; }
+.verse-line { line-height: 1.7; color: #f0f0f0; }
+.verse-no { color: #999; font-size: .85em; margin-right: .2rem; }
+@media (max-width: 900px) {
+  .continuous-layout { grid-template-columns: 1fr; }
+  .toc-panel { position: static; max-height: none; border-right: none; padding-right: 0; }
+}
+</style>
+
+<script>
+(() => {
+    const apiBase = '/api/v1/bible/books';
+    const books = [
+        {% for book in books_with_chapters %}
+        { slug: '{{ book.slug }}', name: '{{ book.name|escapejs }}', chapterCount: {{ book.chapter_count }} },
+        {% endfor %}
+    ];
+    const container = document.getElementById('chapter-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const loaded = new Set();
+    let cursor = {
+        bookIndex: books.findIndex((book) => book.slug === '{{ initial_book.slug|default:"" }}'),
+        chapter: {{ initial_chapter|default:1 }}
+    };
+    if (cursor.bookIndex < 0) {
+        cursor = { bookIndex: 0, chapter: 1 };
+    }
+
+    function cursorKey(bookIndex, chapter) {
+        return `${books[bookIndex].slug}:${chapter}`;
+    }
+
+    function advanceCursor() {
+        const currentBook = books[cursor.bookIndex];
+        if (cursor.chapter < currentBook.chapterCount) {
+            cursor.chapter += 1;
+            return true;
+        }
+        if (cursor.bookIndex < books.length - 1) {
+            cursor.bookIndex += 1;
+            cursor.chapter = 1;
+            return true;
+        }
+        return false;
+    }
+
+    function escapeHtml(value) {
+        const div = document.createElement('div');
+        div.textContent = value;
+        return div.innerHTML;
+    }
+
+    function renderChapter(data, bookSlug, bookName, chapter) {
+        const section = document.createElement('section');
+        section.className = 'chapter-block';
+        section.id = `chapter-${bookSlug}-${chapter}`;
+        section.innerHTML = `
+            <h2 class="chapter-title">${escapeHtml(bookName)} ${chapter}</h2>
+            ${data.verses.map(v => `<p class="verse-line"><span class="verse-no">${v.verse}</span>${escapeHtml(v.text)}</p>`).join('')}
+        `;
+        container.appendChild(section);
+        return section;
+    }
+
+    async function loadNextChapter({ scrollToHash = false } = {}) {
+        if (!books.length) return;
+        const key = cursorKey(cursor.bookIndex, cursor.chapter);
+        if (loaded.has(key)) return;
+        loaded.add(key);
+
+        const book = books[cursor.bookIndex];
+        const resp = await fetch(`${apiBase}/${book.slug}/chapters/${cursor.chapter}`);
+        if (!resp.ok) {
+            loaded.delete(key);
+            return;
+        }
+        const data = await resp.json();
+        const section = renderChapter(data, book.slug, data.book.name, cursor.chapter);
+
+        if (!advanceCursor()) {
+            loadingIndicator.textContent = 'End of Bible';
+            observer.disconnect();
+        }
+
+        if (scrollToHash && window.location.hash === `#${section.id}`) {
+            requestAnimationFrame(() => section.scrollIntoView());
+        }
+    }
+
+    const observer = new IntersectionObserver(async (entries) => {
+        if (entries.some(e => e.isIntersecting)) {
+            await loadNextChapter();
+        }
+    }, { rootMargin: '400px' });
+
+    document.querySelectorAll('.chapter-jump').forEach((el) => {
+        el.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const bookSlug = el.dataset.book;
+            const bookName = el.dataset.bookName;
+            const chapter = Number(el.dataset.chapter);
+
+            const response = await fetch(`${apiBase}/${bookSlug}/chapters/${chapter}`);
+            if (!response.ok) return;
+            const data = await response.json();
+
+            container.innerHTML = '';
+            loaded.clear();
+
+            const idx = books.findIndex((book) => book.slug === bookSlug);
+            if (idx < 0) return;
+            cursor = { bookIndex: idx, chapter: chapter };
+            loaded.add(`${bookSlug}:${chapter}`);
+
+            const section = renderChapter(data, bookSlug, bookName, chapter);
+
+            if (!advanceCursor()) {
+                loadingIndicator.textContent = 'End of Bible';
+            } else {
+                loadingIndicator.textContent = 'Loading more chapters...';
+            }
+            window.history.pushState({}, '', el.getAttribute('href'));
+            section.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    loadNextChapter({ scrollToHash: true });
+    observer.observe(loadingIndicator);
+})();
+</script>
+{% endblock %}

@@ -51,12 +51,21 @@ A portfolio gallery for displaying my photos and photo essays with flexible arti
 
 Displays the current status and location for each of the aircraft in my personal MSFS2020 fleet.
 
+# Bible Data
+
+Bible text is imported from the bundled XML file in the repository into the
+SQLite database used by the Django app. The XML comes from
+`simoncozens/open-source-bible-data`, specifically `cooked/simple-xml/kjv.xml`.
+Deployments run `import_kjv` after migrations so the `/bible/` pages are
+populated from XML instead of the old three-book sample data.
+
 # Prayer/Messaging
 
 A messaging system that allows sending SMS messages to contact lists (prayer groups). Features include:
 
 * **A2P-Compliant Signup**: Users can opt-in to receive SMS messages during signup with clear consent language
-* **Message Creation**: Create and save messages through the web UI
+* **Message Creation**: Create messages through the web UI, then review and send them from the details page
+* **Message List View**: Browse all saved messages as cards, see targeted groups as pills, and jump to detail/send actions
 * **Group Messaging**: Send messages to predefined groups of contacts
 * **Consent Management**: Only sends messages to contacts who have explicitly consented to SMS
 * **Privacy-First**: Includes consent tracking with timestamps and opt-out instructions
@@ -76,4 +85,3 @@ For rules regarding AI, see AI_Rules.md.
 
 # CI/CD
 This app is deployed using a CI/CD workflow, dependant on tests passing. As such, tests are very important to this web app.
-

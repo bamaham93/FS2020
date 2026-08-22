@@ -1,8 +1,17 @@
+import logging
+import os
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from twilio.request_validator import RequestValidator
+from urllib.parse import urlsplit, urlunsplit
 
 # from logic.users_groups import is_group
 from prayer.forms import (
@@ -12,7 +21,9 @@ from prayer.forms import (
     PermissionsForm,
     PublicSignupForm,
 )
-from prayer.models import Person, PrayerGroup, PrayerMessage
+from prayer.models import Person, PrayerGroup, PrayerMessage, SMSLog, InboundSmsMessage
+from prayer.permissions import can_view_inbound_sms
+from prayer.services import InboundSmsPayload, handle_inbound_sms
 
 try:
     import logic.queries
@@ -31,6 +42,88 @@ def is_group(user, group):
         return False
 
 
+logger = logging.getLogger(__name__)
+
+
+def _deliver_prayer_message(message, sent_by):
+    """Send one saved message to its selected, SMS-eligible recipients."""
+    recipient_ids = set(message.direct_recipients.values_list("id", flat=True))
+    for group in message.groups.prefetch_related("people"):
+        recipient_ids.update(group.people.values_list("id", flat=True))
+
+    recipients = set(
+        Person.objects.filter(
+            id__in=recipient_ids,
+            sms_consent=True,
+            phone_number__isnull=False,
+        ).exclude(phone_number="")
+    )
+    result = {
+        "eligible_count": len(recipients),
+        "success_count": 0,
+        "failure_count": 0,
+        "error": "",
+    }
+
+    if not recipients:
+        return result
+    if "SMSMessage" not in globals():
+        result["error"] = "SMS functionality is not available."
+        return result
+
+    try:
+        send_results = SMSMessage(
+            body=message.message,
+            contacts=recipients,
+            testing=False,
+        ).send()
+    except Exception as exc:
+        logger.exception("Failed to send prayer message %s", message.id)
+        result["error"] = str(exc)
+        return result
+
+    for person, (success, error) in send_results.items():
+        SMSLog.objects.create(
+            message=message,
+            recipient=person,
+            success=success,
+            error_message=error,
+            sent_by=sent_by,
+        )
+        if success:
+            result["success_count"] += 1
+        else:
+            result["failure_count"] += 1
+    return result
+
+
+def _show_delivery_result(request, result):
+    """Add one user-facing status message for a delivery attempt."""
+    if result["error"]:
+        messages.error(
+            request,
+            f"The message was saved, but SMS delivery failed: {result['error']}",
+        )
+    elif result["eligible_count"] == 0:
+        messages.warning(
+            request,
+            "The message was saved, but no selected recipients have both SMS "
+            "consent and a phone number.",
+        )
+    elif result["failure_count"]:
+        messages.warning(
+            request,
+            f"Message sent to {result['success_count']} recipient(s). "
+            f"{result['failure_count']} send(s) failed; see the message details "
+            "for the delivery log.",
+        )
+    else:
+        messages.success(
+            request,
+            f"Message sent to {result['success_count']} recipient(s).",
+        )
+
+
 # Create your views here.
 def index(request) -> render:
     """
@@ -44,152 +137,113 @@ def index(request) -> render:
 @staff_member_required
 def new_message(request) -> render:
     """
-    Create a new message.
-    Staff-only view for composing messages to prayer groups.
+    Create a draft or save and immediately send a message.
     """
-    # Check if logic.queries classes are available
-    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
-        try:
-            msg_query = PrayerMessageQueries()
-            pg_queries = PrayerGroupQueries()
-            prayer_groups = pg_queries.get_all()
-            all_messages = reversed(msg_query.get_all_messages())
-        except (AttributeError, ImportError):
-            # Fallback if queries fail
-            from prayer.models import PrayerMessage
-
-            prayer_groups = PrayerGroup.objects.all()
-            all_messages = reversed(PrayerMessage.objects.all())
-    else:
-        # Fallback when logic.queries is not available
-        from prayer.models import PrayerMessage
-
-        prayer_groups = PrayerGroup.objects.all()
-        all_messages = reversed(PrayerMessage.objects.all())
-
-    context = {
-        "form": NewMessageForm(),
-        "messages": all_messages,
-        "prayer_groups": prayer_groups,
-    }
+    form = NewMessageForm(request.POST or None)
     if request.method == "POST":
-        form = NewMessageForm(request.POST)
-        form.save()
-        messages.success(request, "Your message was saved!")
-        redirect("prayer:new_message")
-    return render(request, "prayer/new_message.html", context)
+        if form.is_valid():
+            action = request.POST.get("action", "save")
+            if action not in {"save", "send"}:
+                form.add_error(None, "Choose whether to save or send this message.")
+            elif action == "send" and not (
+                form.cleaned_data["groups"] or form.cleaned_data["direct_recipients"]
+            ):
+                form.add_error(
+                    None,
+                    "Select at least one group or one-off recipient before sending.",
+                )
+            else:
+                message = form.save(commit=False)
+                message.submitted_by = request.user
+                message.save()
+                form.save_m2m()
+
+                if action == "send":
+                    _show_delivery_result(
+                        request, _deliver_prayer_message(message, request.user)
+                    )
+                else:
+                    messages.success(request, "Draft saved.")
+                return redirect("prayer:message_list")
+
+        if not form.non_field_errors():
+            messages.warning(request, "There was a problem with your submission.")
+    return render(request, "prayer/new_message.html", {"form": form})
 
 
 @login_required()
+@staff_member_required
+def message_list(request):
+    """
+    List all saved messages for staff with quick access to details and sending.
+    """
+    prayer_messages = PrayerMessage.objects.prefetch_related("groups").order_by(
+        "-created_at"
+    )
+    return render(
+        request, "prayer/message_list.html", {"prayer_messages": prayer_messages}
+    )
+
+
+@login_required()
+@staff_member_required
 def message_detail(request, id):
     """
-    See message details, send to prayer groups.
-    Todo: Move code pertaining to sending sms messages to the function below.
+    See message details and send to prayer groups.
+    Persists an SMSLog entry for every send attempt (success or failure).
     """
-    # Check if logic.queries classes are available
-    if "PrayerMessageQueries" in globals() and "PrayerGroupQueries" in globals():
-        try:
-            pm_queries = PrayerMessageQueries()
-            message = pm_queries.get_message_by_id(id=id)
-            pg_queries = PrayerGroupQueries()
-            prayer_groups = pg_queries.get_all()
-        except (AttributeError, ImportError):
-            # Fallback if queries fail
-            from prayer.models import PrayerMessage
+    message = get_object_or_404(PrayerMessage, id=id)
+    prayer_groups = PrayerGroup.objects.all()
 
-            message = PrayerMessage.objects.get(id=id)
-            prayer_groups = PrayerGroup.objects.all()
-            pg_queries = None
-    else:
-        # Fallback when logic.queries is not available
-        from prayer.models import PrayerMessage
-
-        message = PrayerMessage.objects.get(id=id)
-        prayer_groups = PrayerGroup.objects.all()
-        pg_queries = None
+    people = Person.objects.all().order_by("last_name", "first_name")
+    sms_logs = SMSLog.objects.filter(message=message).select_related(
+        "recipient", "sent_by"
+    )
+    # IDs of groups already associated with this message (for pre-checking boxes)
+    associated_group_ids = set(message.groups.values_list("id", flat=True))
+    associated_person_ids = set(message.direct_recipients.values_list("id", flat=True))
 
     context = {
         "message": message,
         "prayer_groups": prayer_groups,
+        "people": people,
+        "sms_logs": sms_logs,
+        "associated_group_ids": associated_group_ids,
+        "associated_person_ids": associated_person_ids,
     }
 
     # Send messages
     if request.method == "POST":
-        checks = request.POST.getlist("groups")
+        group_ids = request.POST.getlist("groups")
+        direct_recipient_ids = request.POST.getlist("direct_recipients")
 
-        people_set = set()
-        # print(people_set)
+        # Persist the group selection on the message
+        numeric_group_ids = [value for value in group_ids if value.isdigit()]
+        legacy_group_names = [value for value in group_ids if not value.isdigit()]
+        selected_groups = PrayerGroup.objects.filter(id__in=numeric_group_ids) | (
+            PrayerGroup.objects.filter(name__in=legacy_group_names)
+        )
+        message.groups.set(selected_groups)
+        direct_recipients = Person.objects.filter(id__in=direct_recipient_ids)
+        message.direct_recipients.set(direct_recipients)
 
-        for group in checks:  # group is a string the name of the group.
-            if pg_queries is not None:
-                try:
-                    group_ = pg_queries.get_group_members(
-                        group
-                    )  # group_ is a queryset of person objects.
-                except (AttributeError, ImportError):
-                    group_ = PrayerGroup.objects.get(name=group).people.all()
-            else:
-                group_ = PrayerGroup.objects.get(name=group).people.all()
-            people_set.update(group_)
-
-        # Filter to only people who have consented to SMS - use database filtering
-        consented_people = set(
-            Person.objects.filter(
-                id__in=[p.id for p in people_set],
-                sms_consent=True,
-                phone_number__isnull=False,
-            ).exclude(phone_number="")
+        _show_delivery_result(
+            request, _deliver_prayer_message(message, request.user)
         )
 
-        if consented_people:
-            # Check if SMSMessage is available
-            if "SMSMessage" in globals():
-                try:
-                    sms_message = SMSMessage(
-                        body=message.message, contacts=consented_people, testing=False
-                    )
-                    sms_message.send()
-                    messages.success(
-                        request,
-                        f"Message sent to {len(consented_people)} recipient(s) who have consented to SMS.",
-                    )
-                except (AttributeError, ImportError) as e:
-                    messages.error(request, f"Failed to send SMS messages: {e}")
-            else:
-                messages.warning(request, "SMS functionality is not available.")
-        else:
-            messages.warning(
-                request, "No recipients with SMS consent found in the selected groups."
-            )
+        return redirect("prayer:message-detail", id=id)
 
-        # for person in people_set:  # Used a set so to eliminate duplicate messages.
-        #     print(f"First Name: {person.first_name}")
-        #     print(f"Last Name: {person.last_name}")
-        #     print(f"Ph: {person.phone_number}")
-        #     print("\n")
     return render(request, "prayer/message_detail.html", context)
 
 
 @login_required()
+@staff_member_required
 def send_message(request, id: int):
     """
-    Todo: Move code related to sending text messages into this function
-    instead of handling it in the views.
+    Redirects to message_detail, which handles sending.
+    Kept for URL compatibility.
     """
-    # Check if classes are available
-    if "PrayerMessageQueries" in globals() and "SMSMessage" in globals():
-        try:
-            message = PrayerMessageQueries.get_message_by_id(id=id)
-            body = message.message
-            # SMSMessage.contacts list of tuples
-            sms = SMSMessage(body=body)
-            sms.send()
-        except (AttributeError, ImportError) as e:
-            messages.error(request, f"Failed to send message: {e}")
-            return redirect("prayer:new_message")
-    else:
-        messages.error(request, "SMS functionality is not available.")
-    return redirect("prayer:new_message")
+    return redirect("prayer:message-detail", id=id)
 
 
 @login_required()
@@ -417,6 +471,7 @@ def public_signup(request) -> render:
         form = PublicSignupForm(request.POST)
         if form.is_valid():
             person = form.save(commit=False)
+            person.user = request.user
             # Automatically set SMS consent to True for public signups
             person.sms_consent = True
             person.sms_consent_date = timezone.now()
@@ -436,3 +491,163 @@ def public_signup(request) -> render:
             )
 
     return render(request, "prayer/public_signup.html", context)
+
+
+def _is_valid_twilio_signature(request) -> bool:
+    signature = request.META.get("HTTP_X_TWILIO_SIGNATURE")
+    if not signature:
+        logger.warning("Twilio webhook rejected: missing X-Twilio-Signature header")
+        return False
+
+    twilio_token = _get_twilio_auth_token()
+    if not twilio_token:
+        logger.error("Twilio webhook rejected: TWILIO_AUTH_TOKEN is not configured")
+        return False
+
+    validator = RequestValidator(twilio_token)
+
+    candidate_urls = _twilio_signature_candidate_urls(request)
+    for url in candidate_urls:
+        if validator.validate(url, request.POST, signature):
+            return True
+    logger.warning(
+        "Twilio webhook rejected: signature validation failed for all %s candidate URLs",
+        len(candidate_urls),
+    )
+    return False
+
+
+def _get_twilio_auth_token() -> str:
+    """
+    Read Twilio auth token from supported config locations.
+    """
+    settings_token = str(getattr(settings, "TWILIO_AUTH_TOKEN", "")).strip()
+    if settings_token:
+        return settings_token
+
+    env_token = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
+    if env_token:
+        return env_token
+
+    # Legacy fallback used elsewhere in this project for outbound SMS.
+    try:
+        from logic.Messaging.sms import TWILIO_AUTH_TOKEN as legacy_token
+    except Exception:
+        legacy_token = ""
+    return str(legacy_token).strip()
+
+
+def _twilio_signature_candidate_urls(request):
+    """
+    Return candidate absolute URLs for Twilio signature validation.
+
+    Twilio signs the exact webhook URL (including scheme). Some reverse proxies
+    can forward requests to Django as plain HTTP even when the public URL is
+    HTTPS, so we try both variants.
+    """
+    absolute_url = request.build_absolute_uri()
+    parsed = urlsplit(absolute_url)
+    path_with_query = urlunsplit(("", "", parsed.path, parsed.query, ""))
+
+    # Build host and scheme options from both direct request metadata and
+    # reverse-proxy forwarding headers.
+    host_candidates = [parsed.netloc]
+    for header_name in ("HTTP_X_FORWARDED_HOST", "HTTP_HOST"):
+        header_value = request.META.get(header_name, "")
+        if header_value:
+            first_host = header_value.split(",")[0].strip()
+            if first_host:
+                host_candidates.append(first_host)
+
+    scheme_candidates = [parsed.scheme]
+    forwarded_proto = request.META.get("HTTP_X_FORWARDED_PROTO", "")
+    if forwarded_proto:
+        for proto in forwarded_proto.split(","):
+            normalized_proto = proto.strip().lower()
+            if normalized_proto in {"http", "https"}:
+                scheme_candidates.append(normalized_proto)
+
+    if "http" not in scheme_candidates:
+        scheme_candidates.append("http")
+    if "https" not in scheme_candidates:
+        scheme_candidates.append("https")
+
+    candidates = [absolute_url]
+    for scheme in scheme_candidates:
+        for host in host_candidates:
+            candidates.append(f"{scheme}://{host}{path_with_query}")
+
+    # Remove duplicates while preserving order.
+    return list(dict.fromkeys(candidates))
+
+
+@csrf_exempt
+def twilio_sms_webhook(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    if not _is_valid_twilio_signature(request):
+        return HttpResponseForbidden()
+
+    required_fields = ["MessageSid", "From", "To"]
+    if not all(field in request.POST for field in required_fields):
+        return HttpResponse(status=400)
+
+    payload = InboundSmsPayload(
+        provider="twilio",
+        provider_message_id=request.POST["MessageSid"],
+        from_number=request.POST["From"],
+        to_number=request.POST["To"],
+        body=request.POST.get("Body", ""),
+    )
+
+    handle_inbound_sms(payload)
+    return HttpResponse(status=200)
+
+
+@login_required()
+@user_passes_test(can_view_inbound_sms)
+def inbound_messages(request):
+    inbound_message_list = list(
+        InboundSmsMessage.objects.select_related("person").all()
+    )
+    read_message_ids = set(
+        request.user.read_inbound_sms_messages.values_list("id", flat=True)
+    )
+    for inbound_message in inbound_message_list:
+        inbound_message.is_read = inbound_message.id in read_message_ids
+
+    context = {
+        "inbound_messages": inbound_message_list,
+        "unread_count": sum(
+            not inbound_message.is_read for inbound_message in inbound_message_list
+        ),
+    }
+    return render(request, "prayer/inbound_messages.html", context)
+
+
+@require_POST
+@login_required()
+@user_passes_test(can_view_inbound_sms)
+def mark_inbound_message_read(request, message_id):
+    inbound_message = get_object_or_404(InboundSmsMessage, pk=message_id)
+    inbound_message.read_by.add(request.user)
+    return redirect("prayer:inbound_messages")
+
+
+@require_POST
+@login_required()
+@user_passes_test(can_view_inbound_sms)
+def mark_inbound_message_unread(request, message_id):
+    inbound_message = get_object_or_404(InboundSmsMessage, pk=message_id)
+    inbound_message.read_by.remove(request.user)
+    return redirect("prayer:inbound_messages")
+
+
+@require_POST
+@login_required()
+@user_passes_test(can_view_inbound_sms)
+def mark_all_inbound_messages_read(request):
+    unread_messages = InboundSmsMessage.objects.exclude(read_by=request.user)
+    request.user.read_inbound_sms_messages.add(*unread_messages)
+    return redirect("prayer:inbound_messages")
