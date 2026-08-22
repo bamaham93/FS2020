@@ -244,10 +244,8 @@ class CompliancePolicyTests(TestCase):
         self.assertContains(resp, "Program Description")
         self.assertContains(resp, "Cancellation / Opt-Out")
         self.assertContains(resp, "Text <strong>STOP</strong>", html=True)
-        self.assertContains(resp, "reply <strong>HELP</strong>", html=True)
-        self.assertContains(
-            resp, "Carriers are not liable for delayed or undelivered messages"
-        )
+        self.assertContains(resp, "Reply <strong>HELP</strong>", html=True)
+        self.assertContains(resp, "Carriers are not liable for delayed or undelivered messages")
         self.assertContains(resp, "Message frequency varies")
 
 

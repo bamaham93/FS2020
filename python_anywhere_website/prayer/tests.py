@@ -190,7 +190,6 @@ class TestAccessControl(TestCase):
             "/prayer/prayer-requests/mark-important/1",
             "/prayer/prayer-requests/mark-complete/1",
             "/prayer/prayer-requests/answer/1",
-            "/prayer/people",
             "/prayer/delete-person/1",
             "/prayer/permissions/1",
         ]
@@ -283,7 +282,6 @@ class TestAccessControl(TestCase):
         # (excluding staff-only views)
         accessible_urls = [
             "/prayer/prayer-requests",
-            "/prayer/people",
         ]
 
         for url in accessible_urls:
@@ -294,6 +292,21 @@ class TestAccessControl(TestCase):
                     HTTPStatus.OK,
                     f"{url} should be accessible to authenticated users",
                 )
+
+
+    def test_people_page_accessible_without_login(self):
+        """People page should be publicly accessible."""
+        client = Client()
+
+        response = client.get("/prayer/people")
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(
+            response, f'href="{reverse("core_app:privacy_policy")}"'
+        )
+        self.assertContains(
+            response, f'href="{reverse("core_app:terms_of_service")}"'
+        )
 
     def test_people_page_shows_privacy_and_terms_links(self):
         """People page should show Privacy Policy and Terms links near add person form."""
