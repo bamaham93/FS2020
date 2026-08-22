@@ -156,7 +156,8 @@ def _notify_admins(message: InboundSmsMessage) -> None:
         sender = message.from_number
 
     notification = (
-        f"New Message from {sender}. Log into {PRAYER_APP_URL} to see more."
+        f"New Message from {sender}: {message.body}\n\n"
+        f"Log into {PRAYER_APP_URL} to see more."
     )
 
     try:

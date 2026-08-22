@@ -628,7 +628,7 @@ class AdminNotificationTests(TestCase):
         body = mock_client.messages.create.call_args.kwargs["body"]
         self.assertEqual(
             body,
-            "New Message from Jane Doe. Log into "
+            "New Message from Jane Doe: Hello\n\nLog into "
             "https://jacob-mcgowin.us/prayer/ to see more.",
         )
 
@@ -652,6 +652,7 @@ class AdminNotificationTests(TestCase):
 
         body = mock_client.messages.create.call_args.kwargs["body"]
         self.assertIn("+15554440000", body)
+        self.assertIn("Hello", body)
 
     @override_settings(INBOUND_SMS_ADMIN_COOLDOWN_MINUTES=5)
     @patch("prayer.services.TwilioClient")
