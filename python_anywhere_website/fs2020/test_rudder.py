@@ -19,6 +19,9 @@ class RudderViewTests(TestCase):
         resp = self.client.get(reverse("fs2020:rudder_calculator"))
         self.assertEqual(resp.status_code, 200)
         self.assertIn("form", resp.context)
+        self.assertContains(resp, 'id="rudder-svg"')
+        self.assertContains(resp, 'id="deflected-rudder"')
+        self.assertContains(resp, 'function updateDiagram()')
 
     def test_post_returns_result(self):
         chord = 12
