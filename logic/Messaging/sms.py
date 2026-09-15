@@ -3,6 +3,7 @@ Functions related to sending text messages.
 """
 
 import logging
+import re
 from typing import Dict, Set, Tuple
 
 from prayer.models import Person
@@ -23,6 +24,24 @@ except ModuleNotFoundError:
     )
 
 logger = logging.getLogger(__name__)
+
+EMOJI_PATTERN = re.compile(
+    "["
+    "\U0001F300-\U0001FAFF"  # pictographs, emoticons, transport, supplemental symbols
+    "\U00002600-\U000027BF"  # misc symbols, dingbats
+    "\U0001F1E6-\U0001F1FF"  # flags
+    "\U00002B00-\U00002BFF"  # additional symbols/arrows
+    "\uFE0F"  # variation selector (often trails an emoji)
+    "]+",
+    flags=re.UNICODE,
+)
+
+
+def clean_for_sms(text: str) -> str:
+    """Remove emoji and tidy whitespace before sending an SMS."""
+    text = EMOJI_PATTERN.sub("", text)
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    return text.strip()
 
 
 def _mask_phone(phone: str) -> str:
@@ -88,9 +107,10 @@ class SMSMessage:
         """
         try:
             self.client.messages.create(
-                body=str(message_body),
+                body=clean_for_sms(str(message_body)),
                 from_=TWILIO_PHONE_NUMBER,
                 to=str(phone_number),
+                smart_encoded=True,
             )
             logger.info("Message to %s sent successfully.", _mask_phone(phone_number))
             return True, ""
