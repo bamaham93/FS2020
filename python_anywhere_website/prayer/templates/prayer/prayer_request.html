@@ -38,6 +38,9 @@
                 <form method="POST" action="{% url 'prayer:toggle_complete' req.id %}">{% csrf_token %}
                   <button class="btn btn-outline-success btn-sm" type="submit" aria-pressed="{{ req.is_completed|yesno:'true,false' }}">{% if req.is_completed %}Unmark Answered{% else %}Mark Answered{% endif %}</button>
                 </form>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#compose-message" data-compose-message data-request-id="{{ req.id }}" data-request-name="{{ req.name }}" data-request-subject="{{ req.subject }}" data-request-message="{{ req.message }}">
+                  Create Message
+                </button>
                 <form method="POST" action="{% url 'prayer:delete_prayer_request' req.id %}" onsubmit="return confirm('Delete this request?');">{% csrf_token %}
                   <button class="btn btn-danger btn-sm" type="submit">Delete</button>
                 </form>
@@ -51,6 +54,7 @@
                   <button class="btn btn-primary btn-sm" type="submit">Save Answer</button>
                 </form>
               </div>
+
             {% endif %}
           </div>
         {% endfor %}
@@ -59,4 +63,55 @@
       <p class="muted">No prayer requests to display.</p>
     {% endif %}
 
+    {% if user.is_staff %}
+      <div class="modal fade" id="compose-message" tabindex="-1" aria-labelledby="compose-message-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <form method="POST" action="{% url 'prayer:prayer_requests' %}">
+              {% csrf_token %}
+              <input type="hidden" id="outbound-request-id" name="outbound_request_id" value="{{ open_message_modal_id|default:'' }}">
+              <div class="modal-header">
+                <h2 class="modal-title fs-5" id="compose-message-label">Create Message from Request</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p class="text-muted">Review the prefilled request, choose recipients, and send it now.</p>
+                {{ outbound_message_form|crispy }}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success" type="submit" name="outbound_action" value="send">Send Message</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  {% endblock %}
+
+  {% block extra_scripts %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var modal = document.getElementById('compose-message');
+        if (!modal) {
+          return;
+        }
+
+        document.querySelectorAll('[data-compose-message]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            document.getElementById('outbound-request-id').value = button.dataset.requestId;
+            document.getElementById('id_outbound-name').value = button.dataset.requestName;
+            document.getElementById('id_outbound-subject').value = button.dataset.requestSubject;
+            document.getElementById('id_outbound-message').value = button.dataset.requestMessage;
+            document.getElementById('compose-message-label').textContent =
+              'Create Message: ' + (button.dataset.requestSubject || 'Prayer Request');
+          });
+        });
+
+        {% if open_message_modal_id %}
+        new bootstrap.Modal(modal).show();
+        {% endif %}
+      });
+    </script>
   {% endblock %}

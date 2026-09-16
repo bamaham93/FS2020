@@ -315,21 +315,64 @@ def prayer_requests(request) -> render:
     from prayer.forms import NewPrayerRequestForm
 
     form = NewPrayerRequestForm()
+    outbound_message_form = NewMessageForm(prefix="outbound")
+    open_message_modal_id = None
     if request.method == "POST":
-        form = NewPrayerRequestForm(request.POST)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            # Use authenticated user's name for the request
-            user = request.user
-            if user.first_name or user.last_name:
-                instance.name = f"{user.first_name} {user.last_name}".strip()
-            else:
-                instance.name = user.username
-            instance.save()
-            messages.success(request, "Your prayer request was submitted.")
-            return redirect("prayer:prayer_requests")
+        source_request_id = request.POST.get("outbound_request_id")
+        if source_request_id:
+            if not request.user.is_staff:
+                return HttpResponseForbidden()
+
+            try:
+                source_request = get_object_or_404(
+                    PrayerMessage, pk=int(source_request_id)
+                )
+            except ValueError:
+                return HttpResponse(status=400)
+            outbound_message_form = NewMessageForm(request.POST, prefix="outbound")
+            open_message_modal_id = source_request.id
+
+            if outbound_message_form.is_valid():
+                if request.POST.get("outbound_action") != "send":
+                    outbound_message_form.add_error(
+                        None, "This form can only send a message."
+                    )
+                elif not (
+                    outbound_message_form.cleaned_data["groups"]
+                    or outbound_message_form.cleaned_data["direct_recipients"]
+                ):
+                    outbound_message_form.add_error(
+                        None,
+                        "Select at least one group or one-off recipient before sending.",
+                    )
+                else:
+                    outbound_message = outbound_message_form.save(commit=False)
+                    outbound_message.submitted_by = request.user
+                    outbound_message.save()
+                    outbound_message_form.save_m2m()
+                    _show_delivery_result(
+                        request,
+                        _deliver_prayer_message(outbound_message, request.user),
+                    )
+                    return redirect("prayer:prayer_requests")
+
+            if not outbound_message_form.non_field_errors():
+                messages.warning(request, "There was a problem with your submission.")
         else:
-            messages.warning(request, "There was a problem with your submission.")
+            form = NewPrayerRequestForm(request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                # Use authenticated user's name for the request
+                user = request.user
+                if user.first_name or user.last_name:
+                    instance.name = f"{user.first_name} {user.last_name}".strip()
+                else:
+                    instance.name = user.username
+                instance.save()
+                messages.success(request, "Your prayer request was submitted.")
+                return redirect("prayer:prayer_requests")
+            else:
+                messages.warning(request, "There was a problem with your submission.")
 
     # Determine which requests to show: staff see all, others see their own
     if request.user.is_staff:
@@ -339,7 +382,12 @@ def prayer_requests(request) -> render:
             "-id"
         )
 
-    context = {"form": form, "prayer_requests": requests_qs}
+    context = {
+        "form": form,
+        "prayer_requests": requests_qs,
+        "outbound_message_form": outbound_message_form,
+        "open_message_modal_id": open_message_modal_id,
+    }
     return render(request, "prayer/prayer_request.html", context)
 
 

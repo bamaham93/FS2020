@@ -985,6 +985,81 @@ class TestPrayerRegression(TestCase):
         self.assertEqual(pm.answer_text, "Got it")
         self.assertIsNotNone(pm.answered_at)
 
+    def test_staff_can_send_a_message_from_a_prayer_request(self):
+        """The request page can compose and send without visiting Messages."""
+        from unittest.mock import patch
+
+        request = PrayerMessage.objects.create(
+            subject="Hospital visit",
+            message="Please pray for a successful procedure.",
+            name="Requestor",
+            submitted_by=self.user,
+        )
+        group = PrayerGroup.objects.create(name="Prayer Chain", short_description="P")
+        recipient = Person.objects.create(
+            first_name="Jane",
+            last_name="Doe",
+            phone_number="555-111-2222",
+            sms_consent=True,
+        )
+
+        client = TestPrayerRegression.client
+        client.force_login(self.staff)
+        with patch(
+            "prayer.views._deliver_prayer_message",
+            return_value={
+                "eligible_count": 1,
+                "success_count": 1,
+                "failure_count": 0,
+                "error": "",
+            },
+        ) as deliver:
+            response = client.post(
+                reverse("prayer:prayer_requests"),
+                {
+                    "outbound_request_id": request.id,
+                    "outbound-name": request.name,
+                    "outbound-subject": request.subject,
+                    "outbound-message": request.message,
+                    "outbound-groups": [group.id],
+                    "outbound-direct_recipients": [recipient.id],
+                    "outbound_action": "send",
+                },
+            )
+
+        self.assertRedirects(
+            response,
+            reverse("prayer:prayer_requests"),
+            fetch_redirect_response=False,
+        )
+        outbound_message = PrayerMessage.objects.exclude(pk=request.id).get()
+        self.assertEqual(outbound_message.submitted_by, self.staff)
+        self.assertEqual(list(outbound_message.groups.all()), [group])
+        self.assertEqual(list(outbound_message.direct_recipients.all()), [recipient])
+        deliver.assert_called_once_with(outbound_message, self.staff)
+
+    def test_regular_users_cannot_send_messages_from_prayer_requests(self):
+        """The staff-only composer cannot be reached by a forged form post."""
+        request = PrayerMessage.objects.create(
+            subject="Private request",
+            message="Please pray.",
+            name="Requestor",
+            submitted_by=self.user,
+        )
+
+        client = TestPrayerRegression.client
+        client.force_login(self.user)
+        response = client.post(
+            reverse("prayer:prayer_requests"),
+            {
+                "outbound_request_id": request.id,
+                "outbound_action": "send",
+            },
+        )
+
+        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+        self.assertEqual(PrayerMessage.objects.count(), 1)
+
 
 class TestPrayerLegalLinks(TestCase):
     """Tests for privacy policy and terms links in prayer app UI."""
