@@ -30,23 +30,53 @@
       <div class="col-md-6">
         <div class="rudder-viz">
           <div class="rudder-canvas">
-            <svg id="rudder-svg" class="rudder-svg" viewBox="0 0 360 200">
-              <!-- hinge (pivot) -->
-              <circle id="hinge" cx="180" cy="140" r="6" class="hinge" />
+            <svg
+              id="rudder-svg"
+              class="rudder-svg"
+              viewBox="0 0 420 260"
+              role="img"
+              aria-labelledby="rudder-viz-title rudder-viz-desc"
+              data-chord="{% if chord_val %}{{ chord_val }}{% elif form.rudder_chord.value %}{{ form.rudder_chord.value }}{% endif %}"
+              data-angle="{% if form.travel_deg.value %}{{ form.travel_deg.value }}{% endif %}"
+              data-travel="{% if result %}{{ result.travel_in }}{% endif %}"
+            >
+              <title id="rudder-viz-title">Rudder travel diagram</title>
+              <desc id="rudder-viz-desc">Graphic showing neutral rudder position, deflected rudder position, angular travel, and linear trailing-edge travel.</desc>
+              <defs>
+                <marker id="arrow-start" markerWidth="9" markerHeight="9" refX="2" refY="4.5" orient="auto">
+                  <path d="M8,0 L0,4 L8,8" class="rudder-arrow" />
+                </marker>
+                <marker id="arrow-end" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+                  <path d="M0,0 L8,4 L0,8" class="rudder-arrow" />
+                </marker>
+                <marker id="travel-arrow-start" markerWidth="11" markerHeight="11" refX="2" refY="5.5" orient="auto">
+                  <path d="M10,0 L0,5.5 L10,11" class="travel-arrow-head" />
+                </marker>
+                <marker id="travel-arrow-end" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+                  <path d="M0,0 L10,5.5 L0,11" class="travel-arrow-head" />
+                </marker>
+              </defs>
 
-              <!-- rudder as a vertical rectangle (trailing edge at top) -->
-              <rect id="rudder-rect" x="170" y="44" width="20" height="96" rx="3" class="rudder-rect" />
+              <rect x="1" y="1" width="418" height="258" rx="8" class="viz-frame" />
+              <line x1="38" y1="198" x2="382" y2="198" class="hinge-axis" />
+              <line id="neutral-centerline" x1="210" y1="198" x2="210" y2="58" class="neutral-centerline" />
+              <line id="neutral-rudder" class="neutral-rudder" x1="210" y1="198" x2="210" y2="68" />
+              <line id="deflected-rudder" class="deflected-rudder" x1="210" y1="198" x2="210" y2="68" />
+              <line id="deflected-centerline" x1="210" y1="198" x2="210" y2="58" class="deflected-centerline" />
 
-              <!-- original chord line (hinge to trailing edge) -->
-              <line id="chord-line" class="chord-line" x1="180" y1="140" x2="180" y2="44" />
-              <text id="chord-label" class="dimension-label" x="186" y="94">{% if chord_val %}Chord: {{ chord_val }} in{% elif form.rudder_chord.value %}Chord: {{ form.rudder_chord.value }} in{% else %}Chord: -- in{% endif %}</text>
+              <path id="angle-arc" class="angle-arc" d="" />
+              <text id="angle-label" class="angle-label" x="232" y="154">Angle: -- deg</text>
 
-              <!-- travel line between original and rotated trailing edge -->
-              <line id="travel-line" class="travel-line" x1="180" y1="44" x2="180" y2="44" />
-              <text id="travel-label" class="travel-label" x="180" y="34">{% if result %}{{ result.travel_in }} in{% else %}—{% endif %}</text>
+              <line id="chord-line" class="chord-line" x1="210" y1="198" x2="210" y2="68" />
+              <text id="chord-label" class="dimension-label" x="126" y="128">Chord: -- in</text>
 
-              <!-- decorative axis or guide -->
-              <line x1="30" y1="140" x2="330" y2="140" stroke="rgba(255,255,255,0.06)" />
+              <line id="travel-line" class="travel-line" x1="210" y1="68" x2="210" y2="68" />
+              <circle id="neutral-tip" cx="210" cy="68" r="4" class="neutral-tip" />
+              <circle id="deflected-tip" cx="210" cy="68" r="4" class="deflected-tip" />
+              <text id="travel-label" class="travel-label" x="220" y="52">Travel: -- in</text>
+
+              <circle id="hinge" cx="210" cy="198" r="7" class="hinge" />
+              <text class="hinge-label" x="224" y="218">Hinge</text>
             </svg>
           </div>
         </div>
@@ -58,4 +88,226 @@
 {% block extra_head %}
 {% endblock %}
 
-{# animation removed: no client-side script needed #}
+{% block extra_scripts %}
+<style>
+  .rudder-viz {
+    height: 100%;
+  }
+
+  .rudder-canvas {
+    min-height: 300px;
+  }
+
+  .rudder-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 280px;
+  }
+
+  .viz-frame {
+    fill: #f8fafc;
+    stroke: #d0d7de;
+  }
+
+  .hinge-axis {
+    stroke: #a9b4c0;
+    stroke-dasharray: 5 6;
+  }
+
+  .neutral-rudder {
+    fill: none;
+    stroke: #2563eb;
+    stroke-linecap: round;
+    stroke-width: 8;
+    opacity: 0.45;
+  }
+
+  .deflected-rudder {
+    fill: none;
+    stroke: #c2410c;
+    stroke-linecap: round;
+    stroke-width: 8;
+  }
+
+  .neutral-centerline,
+  .deflected-centerline,
+  .chord-line {
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .neutral-centerline {
+    stroke: #2563eb;
+    stroke-dasharray: 6 5;
+    stroke-width: 2;
+  }
+
+  .deflected-centerline {
+    stroke: #c2410c;
+    stroke-width: 3;
+  }
+
+  .chord-line {
+    stroke: #334155;
+    stroke-width: 2;
+    marker-start: url(#arrow-start);
+    marker-end: url(#arrow-end);
+  }
+
+  .travel-line {
+    stroke: #065f46;
+    stroke-width: 1.75;
+    stroke-dasharray: 5 4;
+    stroke-linecap: round;
+    marker-start: url(#travel-arrow-start);
+    marker-end: url(#travel-arrow-end);
+  }
+
+  .angle-arc {
+    fill: none;
+    stroke: #7c3aed;
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+
+  .rudder-arrow {
+    fill: currentColor;
+  }
+
+  .travel-arrow-head {
+    fill: #0f766e;
+    stroke: #064e3b;
+    stroke-width: 1.75;
+  }
+
+  .hinge {
+    fill: #111827;
+    stroke: #ffffff;
+    stroke-width: 2;
+  }
+
+  .neutral-tip {
+    fill: #2563eb;
+  }
+
+  .deflected-tip {
+    fill: #c2410c;
+  }
+
+  .dimension-label,
+  .travel-label,
+  .angle-label,
+  .hinge-label {
+    fill: #1f2937;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .travel-label {
+    fill: #0f766e;
+  }
+
+  .angle-label {
+    fill: #6d28d9;
+  }
+</style>
+
+<script>
+  (function () {
+    const svg = document.getElementById("rudder-svg");
+    if (!svg) {
+      return;
+    }
+
+    const chordInput = document.getElementById("id_rudder_chord");
+    const angleInput = document.getElementById("id_travel_deg");
+    const resultOutput = document.getElementById("rudder-result");
+    const pivot = { x: 210, y: 198 };
+    const chordPixels = 130;
+    const neutralTip = { x: pivot.x, y: pivot.y - chordPixels };
+
+    const elements = {
+      deflectedRudder: document.getElementById("deflected-rudder"),
+      deflectedCenterline: document.getElementById("deflected-centerline"),
+      chordLabel: document.getElementById("chord-label"),
+      travelLine: document.getElementById("travel-line"),
+      travelLabel: document.getElementById("travel-label"),
+      angleArc: document.getElementById("angle-arc"),
+      angleLabel: document.getElementById("angle-label"),
+      neutralTip: document.getElementById("neutral-tip"),
+      deflectedTip: document.getElementById("deflected-tip"),
+    };
+
+    function parseNumber(value) {
+      const number = parseFloat(String(value || "").replace(",", ""));
+      return Number.isFinite(number) ? number : null;
+    }
+
+    function formatNumber(value) {
+      return Number.isInteger(value) ? String(value) : value.toFixed(2);
+    }
+
+    function pointAt(angleDeg, length) {
+      const radians = angleDeg * Math.PI / 180;
+      return {
+        x: pivot.x + Math.sin(radians) * length,
+        y: pivot.y - Math.cos(radians) * length,
+      };
+    }
+
+    function updateDiagram() {
+      const chord = parseNumber(chordInput ? chordInput.value : svg.dataset.chord);
+      const angle = parseNumber(angleInput ? angleInput.value : svg.dataset.angle);
+      const hasInputs = chord !== null && chord > 0 && angle !== null && angle >= 0;
+      const clampedAngle = hasInputs ? Math.min(angle, 60) : 0;
+      const tip = pointAt(clampedAngle, chordPixels);
+      const arcRadius = 46;
+      const arcStart = pointAt(0, arcRadius);
+      const arcEnd = pointAt(clampedAngle, arcRadius);
+      const travel = hasInputs ? 2 * chord * Math.sin((angle * Math.PI / 180) / 2) : null;
+
+      elements.deflectedRudder.setAttribute("x1", pivot.x);
+      elements.deflectedRudder.setAttribute("y1", pivot.y);
+      elements.deflectedRudder.setAttribute("x2", tip.x.toFixed(1));
+      elements.deflectedRudder.setAttribute("y2", tip.y.toFixed(1));
+      elements.deflectedCenterline.setAttribute("x1", pivot.x);
+      elements.deflectedCenterline.setAttribute("y1", pivot.y);
+      elements.deflectedCenterline.setAttribute("x2", tip.x.toFixed(1));
+      elements.deflectedCenterline.setAttribute("y2", tip.y.toFixed(1));
+
+      elements.neutralTip.setAttribute("cx", neutralTip.x);
+      elements.neutralTip.setAttribute("cy", neutralTip.y);
+      elements.deflectedTip.setAttribute("cx", tip.x.toFixed(1));
+      elements.deflectedTip.setAttribute("cy", tip.y.toFixed(1));
+
+      elements.travelLine.setAttribute("x1", neutralTip.x);
+      elements.travelLine.setAttribute("y1", neutralTip.y);
+      elements.travelLine.setAttribute("x2", tip.x.toFixed(1));
+      elements.travelLine.setAttribute("y2", tip.y.toFixed(1));
+      elements.travelLabel.setAttribute("x", ((neutralTip.x + tip.x) / 2 + 8).toFixed(1));
+      elements.travelLabel.setAttribute("y", (Math.min(neutralTip.y, tip.y) - 14).toFixed(1));
+
+      elements.angleArc.setAttribute("d", "M " + arcStart.x.toFixed(1) + " " + arcStart.y.toFixed(1) + " A " + arcRadius + " " + arcRadius + " 0 0 1 " + arcEnd.x.toFixed(1) + " " + arcEnd.y.toFixed(1));
+      elements.angleLabel.setAttribute("x", (pivot.x + 38).toFixed(1));
+      elements.angleLabel.setAttribute("y", (pivot.y - 34).toFixed(1));
+
+      elements.chordLabel.textContent = hasInputs ? "Chord: " + formatNumber(chord) + " in" : "Chord: -- in";
+      elements.travelLabel.textContent = hasInputs ? "Travel: " + travel.toFixed(2) + " in" : "Travel: -- in";
+      elements.angleLabel.textContent = hasInputs ? "Angle: " + formatNumber(angle) + " deg" : "Angle: -- deg";
+
+      if (resultOutput && hasInputs) {
+        resultOutput.textContent = travel.toFixed(2) + " in";
+      }
+    }
+
+    updateDiagram();
+    if (chordInput) {
+      chordInput.addEventListener("input", updateDiagram);
+    }
+    if (angleInput) {
+      angleInput.addEventListener("input", updateDiagram);
+    }
+  }());
+</script>
+{% endblock %}
