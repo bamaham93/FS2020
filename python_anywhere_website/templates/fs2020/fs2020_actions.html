@@ -1,8 +1,8 @@
-<div class="fs2020-actions d-flex flex-wrap gap-2 mb-3">
-  <a class="btn btn-primary" href="{% url 'fs2020:index' %}">Overview</a>
-  <a class="btn btn-primary" href="{% url 'fs2020:flights' %}">Flights</a>
-  <a class="btn btn-primary" href="{% url 'fs2020:o2_calculator' %}">O2 Calculator</a>
-  <a class="btn btn-primary" href="{% url 'fs2020:notams' %}">NOTAMS</a>
-  <a class="btn btn-primary" href="{% url 'fs2020:aircraft_add' %}">Add Aircraft</a>
-  <a class="btn btn-primary" href="{% url 'fs2020:rudder_calculator' %}">Rudder Calculator</a>
-</div>
+<nav class="fs2020-actions" aria-label="FS2020 tools">
+  <a href="{% url 'fs2020:index' %}">Overview</a>
+  <a href="{% url 'fs2020:flights' %}">Flights</a>
+  <a href="{% url 'fs2020:o2_calculator' %}">O2 Calculator</a>
+  <a href="{% url 'fs2020:notams' %}">NOTAMS</a>
+  <a href="{% url 'fs2020:aircraft_add' %}">Add Aircraft</a>
+  <a href="{% url 'fs2020:rudder_calculator' %}">Rudder Calculator</a>
+</nav>

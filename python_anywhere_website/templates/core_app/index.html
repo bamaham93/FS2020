@@ -1,41 +1,40 @@
 {% extends 'core_app/core_base.html' %}
 
+{% block body_class %}site-shell site-home{% endblock %}
+{% block main_class %}site-main--full{% endblock %}
+
 {% block section1 %}
+<section class="site-hero home-hero" style="--hero-image: url('https://images.unsplash.com/photo-1551633166-23c7aed83e48?auto=format&amp;fit=crop&amp;w=1800&amp;q=85');">
+  <div class="site-hero__content">
+    <p class="eyebrow">A personal archive</p>
+    <h1 id="index-header">Flight, work, and the things worth keeping.</h1>
+    <p class="site-hero__lede">Notes from aviation, photography, software, and everyday life.</p>
+  </div>
+</section>
 
-<div id="bg-img" class="bg-img" style="background-image: url(https://images.unsplash.com/photo-1551633166-23c7aed83e48?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1374&q=80);"></div>
+<section class="site-section site-section--home">
+  <div class="section-heading">
+    <p class="eyebrow">Start here</p>
+    <h2>Tools and stories with a point of view.</h2>
+  </div>
+  <div class="home-feature-grid" id="index-page-card-container">
+    <article class="card home-card">
+      <div class="card-body">
+        <p class="eyebrow">FS2020</p>
+        <h3 class="card-title">A virtual hangar, kept like a real one.</h3>
+        <p class="card-text">Aircraft locations, flight history, aviation references, and practical cockpit tools in one place.</p>
+        <a href="{% url 'fs2020:index' %}" class="btn btn-primary">Open the hangar <span aria-hidden="true">→</span></a>
+      </div>
+    </article>
 
-    <h1 id="index-header">Welcome to Jacob-McGowin.us!</h1>
-    <div class="container-fluid" id="index-page-card-container">
-        <div class="row">
-            <div class="card home-card col-lg m-2 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">FS2020</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Tools and Tracking</h6>
-                    <p class="card-text">Aircraft listing and location as well as flight history.</p>
-                    <a href="{% url 'fs2020:index' %}" class="card-link btn btn-primary">FS2020 Page</a>
-                </div>
-            </div>
-
-            <div class="card home-card col-lg m-2 shadow-sm">
-                <div class="card-body">
-                  <h5 class="card-title">From the Blog</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">Aviation, software, and life in between</h6>
-                  <p class="card-text">Welcome! I write about the things I fly, build, and learn along the way. Subscribe to get new posts delivered straight to your inbox.</p>
-                  <div style="min-height: 58px;max-width: 440px;margin: 0 auto;width: 100%"><script src="https://cdn.jsdelivr.net/ghost/signup-form@~0.3/umd/signup-form.min.js" data-button-color="#FF1A75" data-button-text-color="#FFFFFF" data-site="https://blog.jacob-mcgowin.us/" data-locale="en" async></script></div>
-                </div>
-            </div>
-
-                        {% comment %}
-                        <div class="card home-card col-lg m-2 shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title">NAPA Indycar Series</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">Forza Motorsports 7</h6>
-                                    <p class="card-text">Welcome to the home of the NAPA Indycar Series racing league!</p>
-                                    <a href="{% url 'racing:index' %}" class="card-link btn btn-primary">NAPA Indycar Home</a>
-                                </div>
-                        </div>
-                        {% endcomment %}
-
-        </div>
-    </div>
+    <article class="card home-card home-card--newsletter">
+      <div class="card-body">
+        <p class="eyebrow">From the blog</p>
+        <h3 class="card-title">Aviation, software, and life in between.</h3>
+        <p class="card-text">Occasional notes on what I fly, build, and learn. Subscribe for new posts as they arrive.</p>
+        <div class="newsletter-form"><script src="https://cdn.jsdelivr.net/ghost/signup-form@~0.3/umd/signup-form.min.js" data-button-color="#9a4e2c" data-button-text-color="#fffdf7" data-site="https://blog.jacob-mcgowin.us/" data-locale="en" async></script></div>
+      </div>
+    </article>
+  </div>
+</section>
 {% endblock %}
