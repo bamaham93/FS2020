@@ -24,6 +24,12 @@ def index(request):
     return render(request, "core_app/index.html", context)
 
 
+@public_view
+def start_here(request):
+    """Display the primary entry points for the site."""
+    return render(request, "core_app/start_here.html")
+
+
 def profile(request):
     """ """
     return render(request, "Hello.")
