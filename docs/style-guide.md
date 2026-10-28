@@ -37,20 +37,53 @@ pattern belongs to more than one page.
 
 The source of truth is the `:root` block in `my_style.css`.
 
-| Token | Use |
-| --- | --- |
-| `--paper`, `--paper-bright`, `--paper-deep` | Page backgrounds and light surfaces |
-| `--ink`, `--ink-soft` | Primary and secondary text |
-| `--sky`, `--sky-deep` | Aviation and photographic depth |
-| `--rust`, `--rust-dark` | Primary actions, links, and small editorial accents |
-| `--gold` | Small highlights and accessible contrast accents |
-| `--success` | Positive operational state |
-| `--line` | Borders and separators |
-| `--shadow` | Elevated cards, menus, and modals |
-| `--radius` | Shared corner treatment |
+| Token | Hex value | Use |
+| --- | --- | --- |
+| `--paper` | `#F5F0E7` | Primary page background |
+| `--paper-bright` | `#FFFDF8` | Cards, fields, and light text on images |
+| `--paper-deep` | `#E8DDCB` | Secondary paper surfaces and quiet fills |
+| `--ink` | `#202A32` | Primary text and dark contrast surface |
+| `--ink-soft` | `#53606A` | Secondary text and metadata |
+| `--sky` | `#55717C` | Aviation and photographic depth |
+| `--sky-deep` | `#263E4C` | Deep aviation surface or dark secondary field |
+| `--rust` | `#9A4E2C` | Primary action, brand mark, and editorial accent |
+| `--rust-dark` | `#783817` | Hover state and darker link color |
+| `--gold` | `#C58E44` | Small highlights and accessibility accents |
+| `--success` | `#2F6B57` | Positive operational state |
+| `--line` | `#2F3B41` at 17% opacity | Borders and separators |
+| `--shadow` | `#2A281F` at 10% opacity | Elevated cards, menus, and modals |
+| `--radius` | `0.25rem` | Shared corner treatment |
 
 Use tokens rather than introducing a new hex value. A new color needs a named
 semantic purpose, not just a visual preference.
+
+### Graphic-production palette
+
+Use these exact values for graphics, social imagery, slide backgrounds, photo
+overlays, and other non-web assets. The intended look is warm archival paper
+against deep aviation color—not a bright or saturated aviation brand.
+
+| Role | Hex value | Recommended use |
+| --- | --- | --- |
+| Paper | `#F5F0E7` | Main light background, print-like texture base |
+| Bright paper | `#FFFDF8` | Headline text over dark photos, cards, negative space |
+| Aged paper | `#E8DDCB` | Secondary panel, image mat, subtle background variation |
+| Ink | `#202A32` | Headline and body text on paper; deep overlay base |
+| Soft ink | `#53606A` | Captions, supporting text, fine rules |
+| Aviation blue | `#55717C` | Secondary color field, route or map detail |
+| Deep aviation | `#263E4C` | Full-bleed dark field, dark secondary background |
+| Rust | `#9A4E2C` | Primary callout, button, marker, or monogram color |
+| Dark rust | `#783817` | Darker rust type or secondary emphasis |
+| Brass | `#C58E44` | Small highlight, eyebrow rule, or restrained badge |
+| Operational green | `#2F6B57` | Positive status only; do not use as a decorative accent |
+
+For photo-led graphics, place a dark overlay behind type rather than applying
+heavy filtering to the photo. Use a vertical gradient from `#141E1F` at 6%
+opacity to `#182020` at 76% opacity. Set major hero type in `#FFFDF8` and the
+small label or rule in `#F3D19D`.
+
+Do not use pure black, pure white, neon teal, or saturated primary blue. Use
+Rust as the default accent; Brass should remain sparse so it retains emphasis.
 
 ## Typography
 
