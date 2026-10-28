@@ -13,23 +13,27 @@
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto align-items-lg-center site-nav-links">
-        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="https://blog.jacob-mcgowin.us">Blog</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'start_here' %}">Start Here</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://blog.jacob-mcgowin.us">Field Notes</a></li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="/fs2020/" id="fs2020Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">FS2020</a>
+          <a class="nav-link dropdown-toggle" href="/fs2020/" id="fs2020Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Aviation</a>
           <ul class="dropdown-menu" aria-labelledby="fs2020Dropdown">
-            <li><a class="dropdown-item" href="{% url 'fs2020:index' %}">Overview</a></li>
+            <li><a class="dropdown-item" href="{% url 'fs2020:index' %}">FS2020 Overview</a></li>
             <li><a class="dropdown-item" href="{% url 'fs2020:o2_calculator' %}">O2 Calculator</a></li>
             <li><a class="dropdown-item" href="{% url 'fs2020:rudder_calculator' %}">Rudder Calculator</a></li>
             <li><a class="dropdown-item" href="{% url 'fs2020:notams' %}">NOTAMS</a></li>
           </ul>
         </li>
-        <li class="nav-item"><a class="nav-link" href="/bible/">Bible</a></li>
-        <li class="nav-item"><a class="nav-link" href="/hymns/">Hymns</a></li>
-        <li class="nav-item"><a class="nav-link" href="/media/">Media</a></li>
         <li class="nav-item"><a class="nav-link" href="/photography/">Photography</a></li>
-        <li class="nav-item"><a class="nav-link" href="/resume/">Resume</a></li>
-        <li class="nav-item"><a class="nav-link" href="/prayer/">Prayer</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="/media/" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tools</a>
+          <ul class="dropdown-menu" aria-labelledby="toolsDropdown">
+            <li><a class="dropdown-item" href="/media/">Media Library</a></li>
+            <li><a class="dropdown-item" href="/bible/">Bible Reader</a></li>
+            <li><a class="dropdown-item" href="/hymns/">Hymns</a></li>
+            <li><a class="dropdown-item" href="/prayer/">Prayer</a></li>
+          </ul>
+        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="accountsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Accounts</a>
           <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
