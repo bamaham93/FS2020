@@ -323,6 +323,159 @@ h6,
   background: linear-gradient(145deg, #d9e3df 0%, #edf0e5 100%);
 }
 
+.start-here-hero {
+  min-height: clamp(25rem, 54vh, 38rem);
+}
+
+.start-here-hero h1 {
+  max-width: 46rem;
+  font-size: clamp(3rem, 6.7vw, 5.8rem);
+}
+
+.start-here-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.start-here-card {
+  position: relative;
+  display: flex;
+  min-height: 29rem;
+  overflow: hidden;
+  align-items: end;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--paper-bright);
+  background-color: var(--sky-deep);
+  background-position: center;
+  background-size: cover;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.start-here-card::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 30, 31, 0.04) 20%, rgba(24, 32, 32, 0.86) 100%);
+  content: "";
+}
+
+.start-here-card--aviation {
+  background-image: url("https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1100&q=85");
+}
+
+.start-here-card--photography {
+  background-image: url("https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?auto=format&fit=crop&w=1100&q=85");
+}
+
+.start-here-card--tools {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(197, 142, 68, 0.27), transparent 29%),
+    linear-gradient(145deg, #d9e3df 0%, #edf0e5 100%);
+}
+
+.start-here-card--tools::before {
+  display: none;
+}
+
+.start-here-card:hover,
+.start-here-card:focus-within {
+  color: var(--paper-bright);
+  box-shadow: 0 7px 0 rgba(58, 54, 43, 0.05), 0 24px 54px rgba(42, 40, 31, 0.16);
+  transform: translateY(-4px) rotate(-0.12deg);
+}
+
+.start-here-card--tools:hover,
+.start-here-card--tools:focus-within {
+  color: var(--ink);
+}
+
+.start-here-card__content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: clamp(1.5rem, 3vw, 2.3rem);
+}
+
+.start-here-card .eyebrow {
+  margin-bottom: 0.55rem;
+  color: #f3d19d;
+}
+
+.start-here-card--tools .eyebrow {
+  color: var(--rust);
+}
+
+.start-here-card__title {
+  display: block;
+  margin: 0;
+  color: inherit;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  letter-spacing: -0.025em;
+  line-height: 1.03;
+}
+
+.start-here-card__copy {
+  display: block;
+  margin: 0.9rem 0 1.5rem;
+  color: inherit;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.start-here-card__link,
+.start-here-card__links a {
+  color: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.start-here-card__links {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1.35rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.start-here-card__links a {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+  border-top: 1px solid var(--line);
+  color: var(--rust-dark);
+}
+
+.field-notes-prompt {
+  display: flex;
+  gap: 2rem;
+  align-items: end;
+  justify-content: space-between;
+  padding-top: clamp(3rem, 6vw, 5rem);
+  border-top: 1px solid var(--line);
+}
+
+.field-notes-prompt > div {
+  max-width: 38rem;
+}
+
+.field-notes-prompt h2 {
+  margin-bottom: 0.65rem;
+  font-size: clamp(2.1rem, 4vw, 3.5rem);
+}
+
+.field-notes-prompt p:last-child {
+  margin-bottom: 0;
+  color: var(--ink-soft);
+}
+
 .newsletter-form {
   max-width: 29rem;
   min-height: 58px;
@@ -711,12 +864,14 @@ label {
   }
 
   .home-feature-grid,
-  .aircraft-grid {
+  .aircraft-grid,
+  .start-here-grid {
     grid-template-columns: 1fr;
   }
 
   .section-heading--inline,
-  .site-footer__content {
+  .site-footer__content,
+  .field-notes-prompt {
     align-items: flex-start;
     flex-direction: column;
   }

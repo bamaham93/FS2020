@@ -1,0 +1,64 @@
+{% extends 'core_app/core_base.html' %}
+
+{% block title %}Start Here | Jacob McGowin{% endblock %}
+{% block body_class %}site-shell site-start-here{% endblock %}
+{% block main_class %}site-main--full{% endblock %}
+
+{% block section1 %}
+<section class="site-hero start-here-hero" style="--hero-image: url('https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&amp;fit=crop&amp;w=1800&amp;q=85');">
+  <div class="site-hero__content">
+    <p class="eyebrow">Start here</p>
+    <h1>A place for what I build, document, and keep learning.</h1>
+    <p class="site-hero__lede">Follow the work through aviation, photography, and practical tools.</p>
+  </div>
+</section>
+
+<section class="site-section start-here-section">
+  <div class="section-heading">
+    <p class="eyebrow">Choose a path</p>
+    <h2>Three ways into the archive.</h2>
+  </div>
+
+  <div class="start-here-grid">
+    <a class="start-here-card start-here-card--aviation" href="{% url 'fs2020:index' %}">
+      <span class="start-here-card__content">
+        <span class="eyebrow">Aviation</span>
+        <span class="start-here-card__title">The virtual hangar</span>
+        <span class="start-here-card__copy">Flight history, aircraft locations, planning references, and cockpit tools.</span>
+        <span class="start-here-card__link">Explore aviation <span aria-hidden="true">→</span></span>
+      </span>
+    </a>
+
+    <a class="start-here-card start-here-card--photography" href="{% url 'photography:dashboard' %}">
+      <span class="start-here-card__content">
+        <span class="eyebrow">Photography</span>
+        <span class="start-here-card__title">Stories in frames</span>
+        <span class="start-here-card__copy">Photo essays, galleries, and observations from the places worth noticing.</span>
+        <span class="start-here-card__link">View photography <span aria-hidden="true">→</span></span>
+      </span>
+    </a>
+
+    <article class="start-here-card start-here-card--tools">
+      <div class="start-here-card__content">
+        <p class="eyebrow">Tools</p>
+        <h3 class="start-here-card__title">Useful things, kept close.</h3>
+        <p class="start-here-card__copy">A small collection of resources and utilities for reading, planning, and keeping track.</p>
+        <ul class="start-here-card__links" aria-label="Tools">
+          <li><a href="{% url 'media:index' %}">Media library <span aria-hidden="true">→</span></a></li>
+          <li><a href="{% url 'bible:index' %}">Bible reader <span aria-hidden="true">→</span></a></li>
+          <li><a href="{% url 'hymns:index' %}">Hymns <span aria-hidden="true">→</span></a></li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="site-section field-notes-prompt">
+  <div>
+    <p class="eyebrow">Field Notes</p>
+    <h2>The running record.</h2>
+    <p>Occasional notes on the projects, places, and questions that do not fit neatly anywhere else.</p>
+  </div>
+  <a href="https://blog.jacob-mcgowin.us" class="btn btn-primary">Read Field Notes <span aria-hidden="true">→</span></a>
+</section>
+{% endblock %}
