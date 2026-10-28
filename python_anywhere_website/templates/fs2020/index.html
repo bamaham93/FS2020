@@ -3,65 +3,79 @@
 {% load static %}
 
 {% block section1 %}
-    
-    <div class="bg-img" style="background-image: url(https://images.unsplash.com/photo-1568214672761-e4ffc3b53dcc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80); background-size: cover;">
-    {% include "fs2020/fs2020_actions.html" %}
-    <h1 id="fs2020-index-header" class="rounded">Welcome to my FS2020 Home!</h1>
-    <div class="d-flex p-3 m-3 gap-4">
-        {% for plane in aircraft %}
-            <div class="card" style="width: 18rem;" id="flight-card">
-                <div class="card-body">
-                <h5 class="card-title">{{ plane.n_num }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ plane.icao_location }} - {{ plane.make }} {{ plane.model }}</h6>
-                <p class="card-text">{{plane.notes}}</p>
-                <div id="metar-container-{{ forloop.counter0 }}" class="alert alert-light p-2 small" data-icao="{{ plane.icao_location }}">
-                  <span class="text-muted">Loading METAR...</span>
-                </div>
-                <div class="d-flex flex-column gap-2 border">
-                    <a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="btn btn-primary">Chart</a>
-                    <a href="http://airnav.com/airport/{{plane.icao_location}}" class=" btn btn-primary">Chart Supplement</a>
-                    <a href="{% url 'fs2020:flights' n_number=plane.id %}" class="btn btn-primary">Flight History</a>
-                </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-    <hr>
+<section class="site-hero fs2020-hero" style="--hero-image: url('https://images.unsplash.com/photo-1568214672761-e4ffc3b53dcc?auto=format&amp;fit=crop&amp;w=1800&amp;q=85');">
+  <div class="site-hero__content">
+    <p class="eyebrow">Personal flight operations</p>
+    <h1 id="fs2020-index-header">The virtual hangar.</h1>
+    <p class="site-hero__lede">A living record of aircraft, airports, weather, and the flights between them.</p>
+  </div>
+</section>
 
-        <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Legend
-</button>
+<section class="site-section fs2020-section">
+  {% include "fs2020/fs2020_actions.html" %}
+  <div class="section-heading section-heading--inline">
+    <div>
+      <p class="eyebrow">Fleet status</p>
+      <h2>Aircraft at a glance.</h2>
+    </div>
+    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">How to read the hangar</button>
+  </div>
+  <div class="aircraft-grid">
+    {% for plane in aircraft %}
+      <article class="card fs2020-aircraft-card">
+        <div class="card-body">
+          <div class="aircraft-card__heading">
+            <div>
+              <p class="eyebrow">{{ plane.icao_location }}</p>
+              <h3 class="card-title">{{ plane.n_num }}</h3>
+            </div>
+            <span class="aircraft-card__status">{{ plane.status|default:"Available" }}</span>
+          </div>
+          <p class="card-subtitle">{{ plane.make }} {{ plane.model }}</p>
+          {% if plane.notes %}<p class="card-text">{{ plane.notes }}</p>{% endif %}
+          <div id="metar-container-{{ forloop.counter0 }}" class="aircraft-metar" data-icao="{{ plane.icao_location }}">
+            <span class="text-muted">Loading METAR...</span>
+          </div>
+          <div class="aircraft-card__actions">
+            <a href="http://www.skyvector.com/airport/{{ plane.icao_location }}">Chart</a>
+            <a href="http://airnav.com/airport/{{ plane.icao_location }}">Supplement</a>
+            <a href="{% url 'fs2020:flights' n_number=plane.id %}">Flight history</a>
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      <p class="empty-state">No aircraft are currently in the hangar.</p>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}
 
 {% block footer %}
-    <a href="https://www.flightsimulator.com/">Flight Simulator Product Page</a>
+  <footer class="site-footer">
+    <div class="site-footer__rule"></div>
+    <div class="site-footer__content">
+      <span>FS2020 flight operations</span>
+      <a href="https://www.flightsimulator.com/">Flight Simulator product page</a>
+    </div>
+  </footer>
 {% endblock %}
 
 {% block section2 %}
-<!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Legend</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Each card represents an aircraft. The first item is the aircraft registration number, which start with an N for US registered aircraft.
-          The next item is the airport code, usually starting with a K for US airports. After this you will find the aircraft make and model information.
-          The Chart button will take you to aviation charts centered on the airport where the airplane is located. The Chart Supplement button will take you to the chart supplement for the airport where the airplane is located.
-          The Flight History button will display a record of flights made by that specific aircraft. 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="exampleModalLabel">Reading the hangar</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Each card represents an aircraft. Its registration, current airport, make and model appear first, followed by its latest weather observation.</p>
+        <p class="mb-0">Chart and Supplement open aviation references for the aircraft's airport. Flight history shows its recorded flights.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
+</div>
 {% endblock %}
-
-
-<!--<a href="http://www.skyvector.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart</a>-->
-<!--<a href="http://airnav.com/airport/{{plane.icao_location}}" class="card-link btn btn-primary">Chart Supplement</a>-->
-<!--<a href="#" class="btn btn-primary card-link">Flight History</a>-->

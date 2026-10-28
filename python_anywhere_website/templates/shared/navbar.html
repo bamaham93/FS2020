@@ -1,20 +1,23 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top site-navbar">
+<nav class="navbar navbar-expand-lg navbar-light sticky-top site-navbar">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="{% static 'img/favicon.ico' %}" alt="logo" width="36" height="36" class="me-2 rounded">
-      <span>FS2020</span>
+      <span class="site-mark" aria-hidden="true">JM</span>
+      <span class="site-brand-copy">
+        <span class="site-brand-name">Jacob McGowin</span>
+        <span class="site-brand-kicker">Field notes &amp; tools</span>
+      </span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
-      <ul class="navbar-nav ms-auto align-items-lg-center">
+      <ul class="navbar-nav ms-auto align-items-lg-center site-nav-links">
         <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="https://blog.jacob-mcgowin.us">Blog</a></li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="/fs2020/" id="fs2020Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">FS2020</a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="fs2020Dropdown">
+          <ul class="dropdown-menu" aria-labelledby="fs2020Dropdown">
             <li><a class="dropdown-item" href="{% url 'fs2020:index' %}">Overview</a></li>
             <li><a class="dropdown-item" href="{% url 'fs2020:o2_calculator' %}">O2 Calculator</a></li>
             <li><a class="dropdown-item" href="{% url 'fs2020:rudder_calculator' %}">Rudder Calculator</a></li>
@@ -29,7 +32,7 @@
         <li class="nav-item"><a class="nav-link" href="/prayer/">Prayer</a></li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="accountsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Accounts</a>
-          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="accountsDropdown">
+          <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
             {% if user.is_authenticated %}
               {% if user.is_staff %}
                 <li><a class="dropdown-item" href="/admin/">Admin</a></li>
